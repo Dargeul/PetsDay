@@ -1,9 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/nameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mine_name"
+            android:textColor="@color/colorGray"
+            android:textSize="40dp"/>
+
+        <ImageView
+            android:id="@+id/editIV"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="16dp"
+            android:src="@mipmap/edit"
+            android:scaleType="fitXY"
+            android:maxHeight="40dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/title_notifications"/>
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="遛宠"
+            android:textSize="20dp"
+            android:textColor="@color/colorBlack"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:padding="20dp">
+
+        <lecho.lib.hellocharts.view.LineChartView
+            android:id="@+id/chart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp">
+
+        <TextView
+            android:id="@+id/mypetTV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="我的宠物"
+            android:textColor="@color/colorBlack"
+            android:textSize="20dp"/>
+
+        <ImageView
+            android:id="@+id/addpetIV"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@mipmap/add"/>
+        <TextView
+            android:id="@+id/addpetTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加宠物"
+            android:textSize="16dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+        <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/mypetRV"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:visibility="visible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp">
+
+        <TextView
+            android:id="@+id/followpetTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="关注的宠物"
+            android:textColor="@color/colorBlack"
+            android:textSize="20dp"/>
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/followpetRV"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:visibility="visible" />
+        </LinearLayout>
+
 </LinearLayout>
