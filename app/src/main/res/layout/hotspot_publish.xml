@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
@@ -13,12 +12,13 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-        <!--点击进入消息界面查看消息-->
+
+        <!--返回键-->
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="@drawable/ic_notifications_black_24dp"
-            android:id="@+id/notification"/>
+            android:background="@drawable/ic_back_50"
+            android:id="@+id/back"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,25 +28,40 @@
             android:layout_gravity = "center"
             android:textSize="20sp"
             android:textAlignment="center"/>
-        <!--publish，点击进入发布动态界面-->
+        <!--发布按钮，点击发布-->
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="@mipmap/add"
+            android:background="@drawable/ic_tick_box_50"
             android:layout_marginRight="16dp"
             android:id="@+id/publish"
             android:layout_gravity="end"/>
     </android.support.v7.widget.Toolbar>
-
-    <SearchView
+    <!--要发布的动态内容-->
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/search"/>
+        android:layout_height="200dp"
+        android:hint="说点什么……"
+        android:id="@+id/publishContent"
+        android:gravity="top|left"/>
+    <!--选择照片-->
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/ic_picture_50"
+        android:id="@+id/choosePicture"
+        android:layout_marginLeft="16dp"/>
 
-    <!--下拉刷新，上拉加载，使用可参见http://blog.csdn.net/lisdye2/article/details/51384159-->
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
+    <!--点击进入图片选择页面，hotspot_publish_choosepicture-->
+    <!--图片选择要不要从网上拉一个开源项目-->
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/hotSpotRecyclerView"
-        android:layout_margin="8dp"/>
+        android:layout_marginLeft="18dp"
+        android:textAlignment="center"
+        android:text="相册"/>
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/hotspotImage"/>
 </LinearLayout>

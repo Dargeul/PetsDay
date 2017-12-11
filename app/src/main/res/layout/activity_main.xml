@@ -8,24 +8,6 @@
     android:orientation="vertical"
     tools:context="com.example.gypc.petsday.MainActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorWhite"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorBlack"
-            android:text="@string/app_name"
-            android:layout_gravity = "center"
-            android:textSize="20sp"
-            android:textAlignment="center"/>
-    </android.support.v7.widget.Toolbar>
-
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
