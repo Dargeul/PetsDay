@@ -7,6 +7,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.youth.banner.Banner;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private Banner banner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(mOnPageChangeListener);
         setupViewPager(viewPager);
     }
+
     //添加fragment，进行页面切换
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());

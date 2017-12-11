@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/marketgoodsLL"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/contentLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/goodsIV"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@mipmap/good"
+            android:layout_marginRight="20dp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/goodnameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="good's name"
+                android:textSize="20dp"
+                android:textColor="@color/colorBlack"/>
+
+            <TextView
+                android:id="@+id/goodpriceTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:text="good's price"
+                android:textSize="18dp"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/loveIV"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@mipmap/love"
+            android:layout_margin="16dp"/>
+    </LinearLayout>
+
+</LinearLayout>

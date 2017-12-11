@@ -31,5 +31,7 @@ dependencies {
     compile 'com.github.lecho:hellocharts-android:v1.5.8'
     compile 'com.android.support:recyclerview-v7:25.0.0'
     compile 'com.github.anzaizai:EasySwipeMenuLayout:1.1.2'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.youth.banner:banner:1.4.10'
     testCompile 'junit:junit:4.12'
 }

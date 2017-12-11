@@ -84,7 +84,8 @@
         android:layout_width="match_parent"
         android:layout_height="200dp">
 
-        <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        <ListView
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/mypetRV"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -109,7 +110,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+            <ListView
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/followpetRV"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"

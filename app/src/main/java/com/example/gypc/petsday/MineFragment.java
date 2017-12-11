@@ -42,7 +42,7 @@ public class MineFragment extends Fragment {
         getAxisPoints();//获取坐标点
         initLineChart();//初始化
 
-        return inflater.inflate(R.layout.fragment_mine, container, false);
+        return view;
     }
 
     /**
@@ -69,9 +69,9 @@ public class MineFragment extends Fragment {
 //	    axisX.setTextColor(Color.WHITE);  //设置字体颜色
         axisX.setTextColor(Color.parseColor("#D6D6D9"));//灰色
 
-	    axisX.setName("遛宠");  //表格名称
-        axisX.setTextSize(20);//设置字体大小
-        axisX.setMaxLabelChars(mAxisXValues.size()); //最多几个X轴坐标，意思就是你的缩放让X轴上数据的个数7<=x<=mAxisValues.length
+//	    axisX.setName("遛宠");  //表格名称
+//      axisX.setTextSize(10);//设置字体大小
+        axisX.setMaxLabelChars(7); //最多几个X轴坐标，意思就是你的缩放让X轴上数据的个数7<=x<=mAxisValues.length
         axisX.setValues(mAxisXValues);  //填充X轴的坐标名称
         data.setAxisXBottom(axisX); //x 轴在底部
 //	    data.setAxisXTop(axisX);  //x 轴在顶部
@@ -80,7 +80,7 @@ public class MineFragment extends Fragment {
 
         Axis axisY = new Axis();  //Y轴
         axisY.setName("时长");//y轴标注
-        axisY.setTextSize(11);//设置字体大小
+        axisY.setTextSize(10);//设置字体大小
         data.setAxisYLeft(axisY);  //Y轴设置在左边
         //data.setAxisYRight(axisY);  //y轴设置在右边
         //设置行为属性，支持缩放、滑动以及平移
@@ -101,10 +101,10 @@ public class MineFragment extends Fragment {
          * 并且Y轴是根据数据的大小自动设置Y轴上限
          * 若这儿不设置 v.right= 7; 这句话，则图表刚开始就会尽可能的显示所有数据，交互性太差
          */
-        //Viewport v = new Viewport(lineChart.getMaximumViewport());
-        //v.left = 0;
-        //v.right= 7;
-        //lineChart.setCurrentViewport(v);
+        Viewport v = new Viewport(lineChart.getMaximumViewport());
+        v.left = 0;
+        v.right= 7;
+        lineChart.setCurrentViewport(v);
     }
 
     /**
