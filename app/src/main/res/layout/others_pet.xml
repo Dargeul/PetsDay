@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/marketgoodsLL"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/followpetLL"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <!--商城商品列表项-->
+    <!--他人宠物列表项-->
     <LinearLayout
         android:id="@+id/contentLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="20dp">
-
         <ImageView
-            android:id="@+id/goodsIV"
+            android:id="@+id/headIV"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@mipmap/good"
+            android:src="@mipmap/pet_default"
             android:layout_marginRight="20dp"/>
 
         <LinearLayout
@@ -26,28 +26,27 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/goodnameTV"
+                android:id="@+id/petnameTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="good's name"
+                android:layout_marginTop="18dp"
+                android:text="pet's type"
                 android:textSize="20dp"
                 android:textColor="@color/colorBlack"/>
-
-            <TextView
-                android:id="@+id/goodpriceTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:text="good's price"
-                android:textSize="18dp"/>
         </LinearLayout>
 
         <ImageView
             android:id="@+id/loveIV"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@mipmap/love"
+            android:src="@drawable/ic_heart_50"
             android:layout_margin="16dp"/>
-    </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="follownum"
+            android:textSize="18dp"
+            android:paddingTop="20dp"/>
+    </LinearLayout>
 </LinearLayout>

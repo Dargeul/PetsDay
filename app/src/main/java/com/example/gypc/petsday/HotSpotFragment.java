@@ -16,20 +16,35 @@ import android.widget.ImageView;
 
 public class HotSpotFragment extends Fragment {
     private ImageView addIV;
+    private ImageView notificationIV;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_hotspot, container, false);
     }
+
+    public void initWidget(){
+        addIV =(ImageView) getView().findViewById(R.id.publish);
+        notificationIV = (ImageView)getView().findViewById(R.id.notification);
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        initWidget();
 
-        addIV =(ImageView) getView().findViewById(R.id.publish);
         addIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),PublishActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        notificationIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),NotificationActivity.class);
                 startActivity(intent);
             }
         });

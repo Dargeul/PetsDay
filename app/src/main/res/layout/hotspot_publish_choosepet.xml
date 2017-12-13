@@ -12,23 +12,34 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
         <!--返回键-->
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/ic_back_50"
             android:id="@+id/back"/>
-    </android.support.v7.widget.Toolbar>
 
-    <!--选择图片列表-->
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/picture"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"
+            android:text="@string/app_name"
+            android:layout_gravity = "center"
+            android:textSize="20sp"
+            android:textAlignment="center"/>
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_checkmark_50"
+            android:layout_marginRight="16dp"
+            android:id="@+id/finishChoose"
+            android:layout_gravity="end"/>
+    </android.support.v7.widget.Toolbar>
+    <!--listview可多选,实现可参考http://blog.csdn.net/ydpzg/article/details/38787541-->
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:columnWidth="90dp"
-        android:stretchMode="columnWidth"
-        android:gravity="center" />
+        android:choiceMode="multipleChoice"
+        android:id="@+id/petList"/>
 </LinearLayout>

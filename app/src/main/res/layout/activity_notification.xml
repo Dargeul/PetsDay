@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
-    <!--选择宠物列表-->
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!--通知列表,下拉刷新-->
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,15 +20,8 @@
             android:id="@+id/back"/>
     </android.support.v7.widget.Toolbar>
 
-    <!--选择图片列表-->
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/picture"
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:columnWidth="90dp"
-        android:stretchMode="columnWidth"
-        android:gravity="center" />
+        android:id="@+id/notificationList"/>
 </LinearLayout>

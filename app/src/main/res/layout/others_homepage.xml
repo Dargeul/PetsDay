@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
-    <!--选择宠物列表-->
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!--他人主页-->
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,6 +12,7 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
         <!--返回键-->
         <ImageView
             android:layout_width="32dp"
@@ -20,15 +21,25 @@
             android:id="@+id/back"/>
     </android.support.v7.widget.Toolbar>
 
-    <!--选择图片列表-->
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/picture"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:columnWidth="90dp"
-        android:stretchMode="columnWidth"
-        android:gravity="center" />
+        android:textSize="30dp"
+        android:id="@+id/userNickname"
+        android:text="Susanda"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="TA的宠物"
+        android:textSize="20sp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorLightGray"/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/petList"/>
 </LinearLayout>
