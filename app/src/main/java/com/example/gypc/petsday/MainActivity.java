@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private Banner banner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
