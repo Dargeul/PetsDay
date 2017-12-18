@@ -23,6 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PublishActivity"/>
+        <activity android:name=".ChoosePetActivity"/>
+        <activity android:name=".ChoosePictureActivity"/>
+        <activity android:name=".NotificationActivity"/>
     </application>
 
 </manifest>

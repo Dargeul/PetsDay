@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent">
-
+    <!--选择宠物列表-->
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,12 +12,13 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-        <!--点击进入消息界面查看消息-->
+
+        <!--返回键-->
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="@drawable/ic_notifications_black_24dp"
-            android:id="@+id/notification"/>
+            android:background="@drawable/ic_back_50"
+            android:id="@+id/back"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,25 +28,18 @@
             android:layout_gravity = "center"
             android:textSize="20sp"
             android:textAlignment="center"/>
-        <!--publish，点击进入发布动态界面-->
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="@mipmap/add"
+            android:background="@drawable/ic_checkmark_50"
             android:layout_marginRight="16dp"
-            android:id="@+id/publish"
+            android:id="@+id/finishChoose"
             android:layout_gravity="end"/>
     </android.support.v7.widget.Toolbar>
-
-    <SearchView
+    <!--listview可多选,实现可参考http://blog.csdn.net/ydpzg/article/details/38787541-->
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/search"/>
-
-    <!--下拉刷新，上拉加载，使用可参见http://blog.csdn.net/lisdye2/article/details/51384159-->
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/hotSpotRecyclerView"
-        android:layout_margin="8dp"/>
+        android:choiceMode="multipleChoice"
+        android:id="@+id/petList"/>
 </LinearLayout>
