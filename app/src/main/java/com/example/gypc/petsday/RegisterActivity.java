@@ -20,6 +20,11 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText confirmPwdEditText;
     private Button confirmBtn;
 
+    public static final int REGISTER_OK = 6;
+
+    private static final String SUBMIT_OK = "ok";
+    private static final String SUBMIT_FAIL_USERNAME = "name";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,11 +38,15 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private String submitRegister(String name, String nickname, String pwd) {
-        return "";
+        // test
+        if (name.equals("hhhh"))
+            return SUBMIT_FAIL_USERNAME;
+        return SUBMIT_OK;
     }
 
     private void registerOk() {
-        startActivity(new Intent(RegisterActivity.this, LoginRegisterNavigateActivity.class));
+        setResult(RegisterActivity.REGISTER_OK);
+        finish();
     }
 
     private void confirmRegister() {
@@ -72,16 +81,16 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         String submitStatus = submitRegister(username, nickname, password);
-        if (submitStatus.equals("ok")) {
+        if (submitStatus.equals(SUBMIT_OK)) {
             registerOk();
-        } else if (submitStatus.equals("name")) {
+        } else if (submitStatus.equals(SUBMIT_FAIL_USERNAME)) {
             msgNotify("用户名已存在！");
         }
     }
 
     private void initControls() {
         usernameEditText = (EditText)findViewById(R.id.registerUsernameEditText);
-        nicknameEditText = (EditText)findViewById(R.id.registerUsernameEditText);
+        nicknameEditText = (EditText)findViewById(R.id.registerNicknameEditText);
         pwdEditText = (EditText)findViewById(R.id.registerPwdEditText);
         confirmPwdEditText = (EditText)findViewById(R.id.confirmPwdEditText);
         confirmBtn = (Button)findViewById(R.id.registerBtn);
