@@ -7,15 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.gypc.petsday.helper.GlideImageLoader;
 import com.youth.banner.Banner;
-import com.youth.banner.BannerConfig;
-import com.youth.banner.Transformer;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import lecho.lib.hellocharts.model.PointValue;
 
 /**
  * Created by gypc on 2017/12/7.
