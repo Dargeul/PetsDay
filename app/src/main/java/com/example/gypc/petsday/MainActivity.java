@@ -1,13 +1,16 @@
 package com.example.gypc.petsday;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import com.example.gypc.petsday.utils.AppContext;
 import com.youth.banner.Banner;
 
 import java.util.ArrayList;
@@ -15,9 +18,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int LOGIN_REQ_CODE = 1;
+
     private ViewPager viewPager;
     private MenuItem menuItem;
     private BottomNavigationView navigation;
+    private Banner banner;
 
     //为底部导航栏添加监听，当导航栏有所改动时，设置相应的Fragment
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -61,12 +67,31 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private Banner banner;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        try {
+            if (!isLogin()) {
+                navigateToLoginRegisterPage();
+            } else {
+                init();
+            }
+        } catch (Exception e) {
+            Log.e("MainActivity", "onCreate", e);
+        }
+    }
 
+    private boolean isLogin() {
+        AppContext app = AppContext.getInstance();
+        String name = app.getLoginUsername();
+        return name != null;
+    }
+
+    // 控件初始化
+    private void init() {
         viewPager = (ViewPager) findViewById(R.id.vPager);
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -81,5 +106,20 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new MarketFragment());
         adapter.addFragment(new MineFragment());
         viewPager.setAdapter(adapter);
+    }
+
+    private void navigateToLoginRegisterPage() {
+        startActivityForResult(new Intent(this, LoginRegisterNavigateActivity.class), MainActivity.LOGIN_REQ_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int reqCode, int resCode, Intent dataIntent) {
+        if (reqCode == MainActivity.LOGIN_REQ_CODE) {
+            if (resCode == LoginRegisterNavigateActivity.LOGIN_OK) {
+                init();
+            } else if (resCode == LoginRegisterNavigateActivity.QUIT_RES_CODE) {
+                finish();
+            }
+        }
     }
 }
