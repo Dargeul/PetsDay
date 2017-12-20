@@ -33,5 +33,6 @@ dependencies {
     compile 'com.github.anzaizai:EasySwipeMenuLayout:1.1.2'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.youth.banner:banner:1.4.10'
+    compile 'cn.aigestudio.datepicker:DatePicker:2.2.0'
     testCompile 'junit:junit:4.12'
 }

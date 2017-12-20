@@ -27,6 +27,8 @@
         <activity android:name=".ChoosePetActivity"/>
         <activity android:name=".ChoosePictureActivity"/>
         <activity android:name=".NotificationActivity"/>
+        <activity android:name=".RegistLoginActivity"/>
+        <activity android:name=".NewpetActivity"/>
     </application>
 
 </manifest>

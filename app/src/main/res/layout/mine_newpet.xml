@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/nicknameET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="nickname"
+        android:layout_margin="20dp"/>
+
+    <EditText
+        android:id="@+id/typeET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="type"
+        android:layout_margin="20dp"/>
+
+    <RadioGroup
+        android:id="@+id/sexRG"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/boyRB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="boy"
+            android:textSize="20dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="20dp"/>
+
+        <RadioButton
+            android:id="@+id/girlRB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="girl"
+            android:textSize="20dp"
+            android:layout_weight="1"
+            android:layout_marginRight="20dp"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="20dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择宠物体重："
+            android:textSize="20dp"
+            android:layout_gravity="center_vertical"/>
+        <NumberPicker
+            android:id="@+id/weightNP"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:padding="20dp">
+        </NumberPicker>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/dateBT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="点击选择宠物生日"
+        android:textSize="20dp"
+        android:layout_gravity="center_horizontal"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="提交"
+        android:textSize="20dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="32dp"/>
+
+</LinearLayout>
