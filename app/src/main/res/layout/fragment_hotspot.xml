@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
@@ -44,9 +44,16 @@
         android:id="@+id/search"/>
 
     <!--下拉刷新，上拉加载，使用可参见http://blog.csdn.net/lisdye2/article/details/51384159-->
-    <android.support.v7.widget.RecyclerView
+    <com.ajguan.library.EasyRefreshLayout
+        android:id="@+id/easylayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/hotSpotRecyclerView"
-        android:layout_margin="8dp"/>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/hotSpotRecyclerView"
+            android:layout_margin="8dp"/>
+    </com.ajguan.library.EasyRefreshLayout>
+
 </LinearLayout>

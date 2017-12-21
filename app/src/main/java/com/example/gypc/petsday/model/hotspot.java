@@ -15,6 +15,12 @@ public class hotspot {
     private int hs_id;
     private Bitmap hs_photo;
 
+    public hotspot(int hs_user,Bitmap hs_photo,String hs_content){
+        this.hs_user = hs_user;
+        this.hs_photo = hs_photo;
+        this.hs_content = hs_content;
+    }
+
     public Date getHs_time() {
         return hs_time;
     }
