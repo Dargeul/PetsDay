@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import com.example.gypc.petsday.utils.AppContext;
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem menuItem;
     private BottomNavigationView navigation;
     private Banner banner;
+
+    private boolean hasInit = false;
 
     //为底部导航栏添加监听，当导航栏有所改动时，设置相应的Fragment
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -92,11 +95,15 @@ public class MainActivity extends AppCompatActivity {
 
     // 控件初始化
     private void init() {
+        if (hasInit)
+            return;
         viewPager = (ViewPager) findViewById(R.id.vPager);
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         viewPager.addOnPageChangeListener(mOnPageChangeListener);
         setupViewPager(viewPager);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        hasInit = true;
     }
 
     //添加fragment，进行页面切换
