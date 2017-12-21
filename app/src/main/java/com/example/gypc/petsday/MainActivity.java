@@ -85,6 +85,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("MainActivity", "onCreate", e);
         }
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+                        | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private boolean isLogin() {
