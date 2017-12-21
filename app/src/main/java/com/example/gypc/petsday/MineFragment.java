@@ -1,6 +1,7 @@
 package com.example.gypc.petsday;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -77,6 +78,14 @@ public class MineFragment extends Fragment {
         followpetRV.setLayoutManager(new LinearLayoutManager(context));
         followPetAdapter = new FollowPetAdapter(followpets, context);
         followpetRV.setAdapter(followPetAdapter);
+
+        addpetLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), NewpetActivity.class);
+                startActivity(intent);
+            }
+        });
 
         // 设置myPet列表点击监听事件
         myPetAdapter.setOnItemClickListener(new MyPetAdapter.OnItemClickListener() {

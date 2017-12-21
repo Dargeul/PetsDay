@@ -39,7 +39,6 @@
         <activity android:name=".ChoosePetActivity"/>
         <activity android:name=".ChoosePictureActivity"/>
         <activity android:name=".NotificationActivity"/>
-        <activity android:name=".RegistLoginActivity"/>
         <activity android:name=".NewpetActivity"/>
 
         <!--在Android N上安装Apk文件权限-->

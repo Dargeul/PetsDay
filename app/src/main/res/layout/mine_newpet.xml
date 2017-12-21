@@ -3,6 +3,20 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.example.gypc.petsday.helper.XCRoundImageView
+        android:id="@+id/headRIV"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@mipmap/pet_default"
+        android:layout_gravity="center_horizontal"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="点击图片上传头像"
+        android:textSize="16dp"
+        android:layout_gravity="center_horizontal"/>
+
     <EditText
         android:id="@+id/nicknameET"
         android:layout_width="match_parent"
