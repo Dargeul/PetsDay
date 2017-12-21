@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import com.example.gypc.petsday.utils.AppContext;
@@ -82,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("MainActivity", "onCreate", e);
         }
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+                        | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private boolean isLogin() {
