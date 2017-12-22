@@ -67,12 +67,14 @@
             android:text="选择宠物体重："
             android:textSize="20dp"
             android:layout_gravity="center_vertical"/>
-        <NumberPicker
-            android:id="@+id/weightNP"
+        <EditText
+            android:id="@+id/weightEditText"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:padding="20dp">
-        </NumberPicker>
+            android:layout_height="wrap_content"
+            android:hint="输入千克数"
+            android:inputType="number"
+            >
+        </EditText>
     </LinearLayout>
 
     <Button
