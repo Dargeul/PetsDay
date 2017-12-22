@@ -2,13 +2,11 @@ package com.example.gypc.petsday;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +20,6 @@ import com.example.gypc.petsday.model.Pet;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import lecho.lib.hellocharts.gesture.ZoomType;
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.AxisValue;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.ValueShape;
-import lecho.lib.hellocharts.model.Viewport;
-import lecho.lib.hellocharts.view.LineChartView;
 
 /**
  * Created by gypc on 2017/12/7.
@@ -49,6 +37,8 @@ public class MineFragment extends Fragment {
     private FollowPetAdapter followPetAdapter;
 
     private Context context;
+
+    public static final int ADD_NEW_PET_REQ_CODE = 1;
 
     @Nullable
     @Override
@@ -83,7 +73,7 @@ public class MineFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), NewpetActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, MineFragment.ADD_NEW_PET_REQ_CODE);
             }
         });
 
