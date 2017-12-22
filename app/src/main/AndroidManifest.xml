@@ -39,7 +39,9 @@
         <activity android:name=".ChoosePetActivity"/>
         <activity android:name=".ChoosePictureActivity"/>
         <activity android:name=".NotificationActivity"/>
-        <activity android:name=".NewpetActivity"/>
+        <activity android:name=".NewpetActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan"
+            />
 
         <!--在Android N上安装Apk文件权限-->
         <provider
