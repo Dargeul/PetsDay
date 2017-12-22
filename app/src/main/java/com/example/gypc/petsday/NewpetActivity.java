@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -54,7 +53,7 @@ public class NewpetActivity extends BaseActivity {
     private EditText typeET;
     private RadioGroup sexRG;
     private EditText weightEditText;
-    private Button dateBT;
+    private EditText dateET;
 
     private static final int REQUEST_CODE_CHOOSE = 23;
     private static final int REQUEST_CODE_CAMERA = 32;
@@ -69,7 +68,7 @@ public class NewpetActivity extends BaseActivity {
         typeET = (EditText)findViewById(R.id.typeET);
         sexRG = (RadioGroup)findViewById(R.id.sexRG);
         weightEditText = (EditText)findViewById(R.id.weightEditText);
-        dateBT = (Button) findViewById(R.id.dateBT);
+        dateET = (EditText) findViewById(R.id.dateET);
 
         headRIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +77,7 @@ public class NewpetActivity extends BaseActivity {
             }
         });
 
-        dateBT.setOnClickListener(new View.OnClickListener() {
+        dateET.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final AlertDialog dialog = new AlertDialog.Builder(NewpetActivity.this).create();
@@ -89,7 +88,7 @@ public class NewpetActivity extends BaseActivity {
                 picker.setOnDatePickedListener(new DatePicker.OnDatePickedListener() {
                     @Override
                     public void onDatePicked(String date) {
-                        Toast.makeText(NewpetActivity.this, date, Toast.LENGTH_LONG).show();
+                        dateET.setText(date);
                         dialog.dismiss();
                     }
                 });
@@ -133,7 +132,9 @@ public class NewpetActivity extends BaseActivity {
     }
 
     private void pictureForVanGogh() {//从相册选择
-        requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 0x0002);
+        requestPermission(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
+                0x0002);
     }
 
     @Override
@@ -165,7 +166,8 @@ public class NewpetActivity extends BaseActivity {
                         .withResultSize(1024, 1024)
                         .cropEnable(true, VanCropType.CROP_TYPE_RECTANGLE)//第一个参数为TRUE时，则可选中数量被设为1，此时maxSelectable(9)无效；第一个参数为FALSE时，第二个参数无效
                         .theme(R.style.VanTheme_Dracula)
-                        .addFilter(new GifSizeFilter(320, 320, 5 * VanMediaFilter.K * VanMediaFilter.K))
+                        .addFilter(new GifSizeFilter(320, 320,
+                                5 * VanMediaFilter.K * VanMediaFilter.K))
                         .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
                         .thumbnailScale(0.85f)
                         .imageLoader(new GlideImageLoader())

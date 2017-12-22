@@ -5,16 +5,17 @@
 
     <com.example.gypc.petsday.helper.XCRoundImageView
         android:id="@+id/headRIV"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:src="@mipmap/pet_default"
+        android:layout_margin="12dp"
         android:layout_gravity="center_horizontal"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="点击图片上传头像"
-        android:textSize="16dp"
+        android:textSize="12dp"
         android:layout_gravity="center_horizontal"/>
 
     <EditText
@@ -22,14 +23,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="nickname"
-        android:layout_margin="20dp"/>
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginLeft="24dp" />
 
     <EditText
         android:id="@+id/typeET"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="type"
-        android:layout_margin="20dp"/>
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="24dp" />
 
     <RadioGroup
         android:id="@+id/sexRG"
@@ -60,7 +66,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="20dp">
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="24dp" >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,18 +81,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="输入千克数"
-            android:inputType="number"
-            >
-        </EditText>
+            android:inputType="number"/>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/dateBT"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/dateET"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="点击选择宠物生日"
-        android:textSize="20dp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginLeft="24dp"
+        android:focusable="false"
+        android:hint="点击选择宠物生日"
+        android:inputType="date"
+        android:textAlignment="center" />
 
     <Button
         android:layout_width="wrap_content"
@@ -91,6 +102,6 @@
         android:text="提交"
         android:textSize="20dp"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="32dp"/>
+        android:layout_margin="24dp"/>
 
 </LinearLayout>
