@@ -53,7 +53,7 @@ public class NewpetActivity extends BaseActivity {
     private EditText nicknameET;
     private EditText typeET;
     private RadioGroup sexRG;
-    private NumberPicker weightNP;
+    private EditText weightEditText;
     private Button dateBT;
 
     private static final int REQUEST_CODE_CHOOSE = 23;
@@ -68,7 +68,7 @@ public class NewpetActivity extends BaseActivity {
         nicknameET = (EditText)findViewById(R.id.nicknameET);
         typeET = (EditText)findViewById(R.id.typeET);
         sexRG = (RadioGroup)findViewById(R.id.sexRG);
-        weightNP = (NumberPicker)findViewById(R.id.weightNP);
+        weightEditText = (EditText)findViewById(R.id.weightEditText);
         dateBT = (Button) findViewById(R.id.dateBT);
 
         headRIV.setOnClickListener(new View.OnClickListener() {
