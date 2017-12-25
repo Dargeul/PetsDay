@@ -1,6 +1,7 @@
 package com.example.gypc.petsday;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -10,9 +11,11 @@ import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -26,21 +29,31 @@ import com.alley.van.model.VanConfig;
 import com.baoyz.actionsheet.ActionSheet;
 import com.bumptech.glide.Glide;
 import com.example.gypc.petsday.base.BaseActivity;
+import com.example.gypc.petsday.factory.ImageServiceFactory;
 import com.example.gypc.petsday.helper.GifSizeFilter;
 import com.example.gypc.petsday.helper.GlideImageLoader;
 import com.example.gypc.petsday.helper.XCRoundImageView;
+import com.example.gypc.petsday.service.ImageService;
+import com.example.gypc.petsday.utils.ImageMultipartGenerator;
 import com.kevin.crop.UCrop;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import cn.aigestudio.datepicker.cons.DPMode;
-import cn.aigestudio.datepicker.views.DatePicker;
+import retrofit2.adapter.rxjava.Result;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+//import cn.aigestudio.datepicker.cons.DPMode;
+//import cn.aigestudio.datepicker.views.DatePicker;
 
 /**
  * Created by StellaSong on 2017/12/18.
@@ -54,14 +67,26 @@ public class NewpetActivity extends BaseActivity {
     private RadioGroup sexRG;
     private EditText weightEditText;
     private EditText dateET;
+    private Button newPetSubmitBtn;
+    private DatePicker dialogDatePicker;
 
     private static final int REQUEST_CODE_CHOOSE = 23;
     private static final int REQUEST_CODE_CAMERA = 32;
+
+    private Uri imgUri = null;
+
+    private ImageService imageService;
+
+    private String avatarUploadResultString;
+
+    private boolean uploadLock = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mine_newpet);
+
+        imageService = ImageServiceFactory.getService();
 
         headRIV = (XCRoundImageView)findViewById(R.id.headRIV);
         nicknameET = (EditText)findViewById(R.id.nicknameET);
@@ -69,6 +94,7 @@ public class NewpetActivity extends BaseActivity {
         sexRG = (RadioGroup)findViewById(R.id.sexRG);
         weightEditText = (EditText)findViewById(R.id.weightEditText);
         dateET = (EditText) findViewById(R.id.dateET);
+        newPetSubmitBtn = (Button)findViewById(R.id.newPetSubmitBtn);
 
         headRIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,24 +106,112 @@ public class NewpetActivity extends BaseActivity {
         dateET.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final AlertDialog dialog = new AlertDialog.Builder(NewpetActivity.this).create();
-                dialog.show();
-                DatePicker picker = new DatePicker(NewpetActivity.this);
-                picker.setDate(2017, 12);
-                picker.setMode(DPMode.SINGLE);
-                picker.setOnDatePickedListener(new DatePicker.OnDatePickedListener() {
-                    @Override
-                    public void onDatePicked(String date) {
-                        dateET.setText(date);
-                        dialog.dismiss();
-                    }
-                });
-                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                dialog.getWindow().setContentView(picker, params);
-                dialog.getWindow().setGravity(Gravity.CENTER);
+                showDatePickerDialog();
             }
         });
+
+        newPetSubmitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitForm();
+            }
+        });
+    }
+
+    private void showDatePickerDialog() {
+        View view = LayoutInflater.from(NewpetActivity.this).inflate(R.layout.date_picker_dialog, null);
+        dialogDatePicker = (DatePicker)view.findViewById(R.id.dialogDatePicker);
+        dialogDatePicker.setMaxDate(Calendar.getInstance().getTimeInMillis());
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(NewpetActivity.this);
+        dialogBuilder.setView(view);
+        dialogBuilder
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String date = String.valueOf(dialogDatePicker.getYear()) + "-" +
+                                String.valueOf(dialogDatePicker.getMonth()) + "-" +
+                                String.valueOf(dialogDatePicker.getDayOfMonth());
+                        dateET.setText(date);
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .create()
+                .show();
+    }
+
+    private void submitForm() {
+        String nickname = nicknameET.getText().toString();
+        String type = typeET.getText().toString();
+        String sex = (sexRG.getCheckedRadioButtonId() == R.id.boyRB) ? "boy" : "girl";
+        String weight = weightEditText.getText().toString();
+        String birthday = dateET.getText().toString();
+
+        if (nickname.isEmpty()) {
+            msgNotify("请输入昵称！");
+        } else if (type.isEmpty()) {
+            msgNotify("请输入宠物类型！");
+        } else if (weight.isEmpty()) {
+            msgNotify("请输入宠物体重");
+        } else if (birthday.isEmpty()) {
+            msgNotify("请选择宠物生日！");
+        }
+
+        try {
+            if (imgUri != null) {
+                uploadAvatar();
+            } else {
+
+            }
+        } catch (Exception e) {
+            Log.e("NewpetActivity", "submitForm", e);
+        }
+    }
+
+    private void submitFinish() {
+        uploadLock = false;
+        if (avatarUploadResultString.equals(ImageServiceFactory.SUCCESS)) {
+            msgNotify("头像上传成功！");
+        } else {
+            msgNotify("头像上传失败，请重试！");
+        }
+    }
+
+    private void uploadAvatar() {
+        if (uploadLock)
+            return;
+        uploadLock = true;
+        avatarUploadResultString = "";
+        imageService
+                .uploadAvatar(ImageMultipartGenerator.getParts(imgUri.getPath()))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result<String>>() {
+                    @Override
+                    public void onCompleted() {
+                        submitFinish();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("NewpetActivity", "uploadAvatar", e);
+                        msgNotify("头像上传失败！");
+                    }
+
+                    @Override
+                    public void onNext(Result<String> stringResult) {
+                        if (stringResult.isError()) {
+                            Log.e("NewpetActivity", "uploadAvatar: onNext: ", stringResult.error());
+                        }
+                        if (stringResult.response() == null)
+                            return;
+                        avatarUploadResultString = stringResult.response().body();
+                        Log.i("NewpetActivity", "uploadAvatar: " + avatarUploadResultString);
+                    }
+                });
+    }
+
+    private void msgNotify(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     //==============================动态图片选择=============================================
@@ -265,6 +379,8 @@ public class NewpetActivity extends BaseActivity {
     }
 
     private void display(Uri uri) {
+        imgUri = uri; // 设置选择的URI
+
         Glide.with(this)
                 .load(uri)
                 .asBitmap()
