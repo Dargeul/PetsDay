@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PetsDay.iml" filepath="$PROJECT_DIR$/PetsDay.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\Study\Android\finTerm\PetsDay\finTerm-PetsDay.iml" filepath="D:\Study\Android\finTerm\PetsDay\finTerm-PetsDay.iml" />
     </modules>
   </component>
 </project>

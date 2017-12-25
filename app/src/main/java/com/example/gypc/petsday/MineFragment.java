@@ -19,6 +19,7 @@ import com.example.gypc.petsday.adapter.MyPetAdapter;
 import com.example.gypc.petsday.model.Pet;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -55,11 +56,17 @@ public class MineFragment extends Fragment {
         //列表初始化
         mypets = new ArrayList<Pet>();
         followpets = new ArrayList<Pet>();
-        mypets.add(new Pet("Toto", "Cat", 666));
-        mypets.add(new Pet("Juju", "Rabbit", 777));
-        followpets.add(new Pet("Coco", "gia", 766));
-        followpets.add(new Pet("Pipi", "bip", 766));
-        followpets.add(new Pet("Giga", "oew", 766));
+        final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
+        mypets.add(new Pet(1, "Toto", 1, "Cat",
+                12, "boy", new Date(), bitmap, 666));
+        mypets.add(new Pet(1, "Toto", 1, "Cat",
+                12, "boy", new Date(), bitmap, 666));
+        followpets.add(new Pet(1, "Toto", 1, "Cat",
+                12, "boy", new Date(), bitmap, 666));
+        followpets.add(new Pet(1, "Toto", 1, "Cat",
+                12, "boy", new Date(), bitmap, 666));
+        followpets.add(new Pet(1, "Toto", 1, "Cat",
+                12, "boy", new Date(), bitmap, 666));
 
         // 设置adapter
         mypetRV.setLayoutManager(new LinearLayoutManager(context));
@@ -82,6 +89,8 @@ public class MineFragment extends Fragment {
             @Override
             public void onClickList(int position) {
                 Toast.makeText(context, "myPet列表第" + position + "项被点击了", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getActivity(), PetDetailActivity.class);
+                startActivity(intent);
             }
 
             @Override

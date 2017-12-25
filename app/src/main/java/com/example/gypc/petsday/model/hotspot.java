@@ -13,12 +13,19 @@ public class hotspot {
     private int hs_user;
     private String hs_content;
     private int hs_id;
-    private Bitmap hs_photo;
+    private String hs_photo;
+    private int hs_like;
+    private boolean hs_islike;
 
-    public hotspot(int hs_user,Bitmap hs_photo,String hs_content){
+    public hotspot(Date hs_time, int hs_user, String hs_content, int hs_id, String hs_photo,
+                   int hs_like, boolean hs_islike){
+        this.hs_time = hs_time;
         this.hs_user = hs_user;
-        this.hs_photo = hs_photo;
         this.hs_content = hs_content;
+        this.hs_id = hs_id;
+        this.hs_photo = hs_photo;
+        this.hs_like = hs_like;
+        this.hs_islike = hs_islike;
     }
 
     public Date getHs_time() {
@@ -37,7 +44,15 @@ public class hotspot {
         return hs_id;
     }
 
-    public Bitmap getHs_photo() {
+    public String getHs_photo() {
         return hs_photo;
+    }
+
+    public int getHs_like() {
+        return hs_like;
+    }
+
+    public boolean getHs_islike() {
+        return hs_islike;
     }
 }

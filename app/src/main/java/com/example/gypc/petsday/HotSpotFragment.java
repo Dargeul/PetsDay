@@ -22,6 +22,7 @@ import com.example.gypc.petsday.adapter.HotSpotAdapter;
 import com.example.gypc.petsday.model.hotspot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -75,13 +76,14 @@ public class HotSpotFragment extends Fragment {
         * 以下是动态数据列表和Adapter的设置。
         * 动态列表的数据类型是hotspot这个model
         * */
-        final Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_1);
+        //final Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_1);
+        final String bmp = "http://h.hiphotos.baidu.com/image/crop%3D0%2C0%2C1024%2C643/sign=fe44dd1c01fa513d45e5369e005d79cb/4afbfbedab64034f173b8ac6a6c379310b551d7f.jpg";
         datas = new ArrayList<hotspot>(){
             {
-                add(new hotspot(1,bmp,"I like it"));
-                add(new hotspot(1,bmp,"I like it"));
-                add(new hotspot(1,bmp,"I like it"));
-                add(new hotspot(1,bmp,"I like it"));
+                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 666, true));
+                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 666, true));
+                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 666, true));
+                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 666, true));
             }
         };
 
@@ -111,14 +113,15 @@ public class HotSpotFragment extends Fragment {
             @Override
             public void onLoadMore() {
                 final List<hotspot> list = new ArrayList<>();
-                final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_2);
+                //final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_2);
+                final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         //添加2个列表项到动态的数据列表中
                         for (int j = 0; j < 2; j++) {
-                            list.add(new hotspot(2,bitmap,"Loaded"));
-                            datas.add(new hotspot(2,bitmap,"Loaded"));
+                            list.add(new hotspot(new Date(), 1, "Loaded", 1, bitmap, 666, true));
+                            datas.add(new hotspot(new Date(), 1, "Loaded", 1, bitmap, 666, true));;
                         }
 
                         easyRefreshLayout.loadMoreComplete(new EasyRefreshLayout.Event() {
@@ -144,10 +147,11 @@ public class HotSpotFragment extends Fragment {
                     @Override
                     public void run() {
                         //添加2个列表项到动态的数据列表中
-                        final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_3);
+                        //final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_3);
+                        final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
                         List<hotspot> list = new ArrayList<>();
                         for (int i = 0; i < 2; i++) {
-                            list.add(new hotspot(1,bitmap,"Refresh"));
+                            list.add(new hotspot(new Date(), 1, "Refresh", 1, bitmap, 666, true));
                         }
                         list.addAll(datas);
                         datas.removeAll(datas);
