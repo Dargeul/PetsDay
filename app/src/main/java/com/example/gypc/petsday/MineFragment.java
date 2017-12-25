@@ -110,4 +110,10 @@ public class MineFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent dataIntent) {
+        super.onActivityResult(requestCode, resultCode, dataIntent);
+
+    }
 }
