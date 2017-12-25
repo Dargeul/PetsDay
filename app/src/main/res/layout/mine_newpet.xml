@@ -41,16 +41,18 @@
         android:id="@+id/sexRG"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:checkedButton="@+id/boyRB"
+        >
 
         <RadioButton
             android:id="@+id/boyRB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="boy"
-            android:textSize="20dp"
+            android:layout_marginLeft="20dp"
             android:layout_weight="1"
-            android:layout_marginLeft="20dp"/>
+            android:text="boy"
+            android:textSize="20dp" />
 
         <RadioButton
             android:id="@+id/girlRB"
@@ -97,6 +99,7 @@
         android:textAlignment="center" />
 
     <Button
+        android:id="@+id/newPetSubmitBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="提交"
