@@ -96,11 +96,15 @@ public class MineFragment extends Fragment {
             @Override
             public void onClickEditButton(int position) {
                 Toast.makeText(context, "myPet列表第" + position + "项编辑按钮被点击了", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getActivity(), NewpetActivity.class);
+                startActivity(intent);
             }
 
             @Override
             public void onClickDeleteButton(int position) {
                 Toast.makeText(context, "myPet列表第" + position + "项删除按钮被点击了", Toast.LENGTH_LONG).show();
+                mypets.remove(position);
+                myPetAdapter.notifyDataSetChanged();
             }
         });
 
@@ -109,11 +113,15 @@ public class MineFragment extends Fragment {
             @Override
             public void onClickList(int position) {
                 Toast.makeText(context, "followPet列表第" + position + "项被点击了", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getActivity(), PetDetailActivity.class);
+                startActivity(intent);
             }
 
             @Override
             public void onClickDeleteButton(int position) {
                 Toast.makeText(context, "followPet列表第" + position + "项删除按钮被点击了", Toast.LENGTH_LONG).show();
+                followpets.remove(position);
+                followPetAdapter.notifyDataSetChanged();
             }
         });
 
@@ -123,6 +131,5 @@ public class MineFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent dataIntent) {
         super.onActivityResult(requestCode, resultCode, dataIntent);
-
     }
 }

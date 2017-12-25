@@ -1,6 +1,8 @@
 package com.example.gypc.petsday.adapter;
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +14,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.example.gypc.petsday.R;
 import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.model.hotspot;
 
 import java.util.List;
 
