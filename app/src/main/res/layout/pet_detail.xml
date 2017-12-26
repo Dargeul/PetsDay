@@ -44,10 +44,11 @@
             android:background="@drawable/ic_heart_outline_50"
             android:layout_gravity="center_vertical"/>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -148,8 +149,21 @@
         android:layout_height="12dp"
         android:background="@color/colorLightGray"/>
 
-    <android.support.v7.widget.RecyclerView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/petHotSpot"/>
+        android:layout_height="600dp">
+
+        <com.ajguan.library.EasyRefreshLayout
+            android:id="@+id/easylayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/petHotSpot"/>
+        </com.ajguan.library.EasyRefreshLayout>
+    </LinearLayout>
+
+
 </LinearLayout>

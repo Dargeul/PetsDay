@@ -39,6 +39,7 @@
         <activity android:name=".ChoosePetActivity"/>
         <activity android:name=".ChoosePictureActivity"/>
         <activity android:name=".NotificationActivity"/>
+        <activity android:name=".PetDetailActivity"/>
         <activity android:name=".NewpetActivity"
             android:windowSoftInputMode="stateVisible|adjustPan"
             />

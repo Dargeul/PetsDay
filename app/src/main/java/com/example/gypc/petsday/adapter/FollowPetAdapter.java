@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.example.gypc.petsday.R;
 import com.example.gypc.petsday.model.Pet;
 
@@ -36,7 +38,8 @@ public class FollowPetAdapter extends RecyclerView.Adapter<FollowPetAdapter.Foll
 
     @Override
     public FollowPetAdapter.FollowPetViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new FollowPetAdapter.FollowPetViewHolder(LayoutInflater.from(context).inflate(R.layout.mine_followpet, parent, false));
+        return new FollowPetAdapter.FollowPetViewHolder(LayoutInflater.from(context)
+                .inflate(R.layout.mine_followpet, parent, false));
     }
 
     @Override
@@ -44,7 +47,7 @@ public class FollowPetAdapter extends RecyclerView.Adapter<FollowPetAdapter.Foll
         holder.pet_nickname.setText(pets.get(position).getPet_nickname());
         holder.pet_type.setText(pets.get(position).getPet_type());
         holder.pet_follow.setText("" + pets.get(position).getPet_follow());
-        holder.pet_photo.setImageBitmap(pets.get(position).getPet_photo());
+        Glide.with(context).load(pets.get(position).getPet_photo()).priority(Priority.HIGH).into(holder.pet_photo);
         holder.deleteBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

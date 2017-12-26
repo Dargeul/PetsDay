@@ -16,12 +16,19 @@ public class Pet {
     private int pet_weight;
     private String pet_sex;
     private Date pet_birth;
-    private Bitmap pet_photo;
+    private String pet_photo;
     private int pet_follow; // 需要SELECT数据库
 
-    public Pet(String pet_nickname, String pet_type, int pet_follow) {
+    public Pet(int pet_id, String pet_nickname, int pet_owner, String pet_type, int pet_weight,
+               String pet_sex, Date pet_birth, String pet_photo, int pet_follow) {
+        this.pet_id = pet_id;
         this.pet_nickname = pet_nickname;
+        this.pet_owner = pet_owner;
         this.pet_type = pet_type;
+        this.pet_weight = pet_weight;
+        this.pet_sex = pet_sex;
+        this.pet_birth = pet_birth;
+        this.pet_photo = pet_photo;
         this.pet_follow = pet_follow;
     }
 
@@ -42,7 +49,7 @@ public class Pet {
         return pet_birth;
     }
 
-    public Bitmap getPet_photo() {
+    public String getPet_photo() {
         return pet_photo;
     }
 

@@ -1,6 +1,8 @@
 package com.example.gypc.petsday.adapter;
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +12,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.example.gypc.petsday.R;
 import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.model.hotspot;
 
 import java.util.List;
 
@@ -45,7 +52,7 @@ public class MyPetAdapter extends RecyclerView.Adapter<MyPetAdapter.MyPetViewHol
         holder.pet_nickname.setText(pets.get(position).getPet_nickname());
         holder.pet_type.setText(pets.get(position).getPet_type());
         holder.pet_follow.setText("" + pets.get(position).getPet_follow());
-        holder.pet_photo.setImageBitmap(pets.get(position).getPet_photo());
+        Glide.with(context).load(pets.get(position).getPet_photo()).priority(Priority.HIGH).into(holder.pet_photo);
         holder.editBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
