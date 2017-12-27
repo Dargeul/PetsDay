@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
             if (resCode == NewpetActivity.SUCCESS_RES_CODE) {
                 final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
                 MineFragment.getInstance().addPet(new Pet(1, "hhhh", 1, "Cat",
-                        12, "boy", new Date(), bitmap, 666));
+                        12, "boy","2017-12-12", bitmap, 666));
             }
         } else if (reqCode == EDIT_PET_CODE) {
 

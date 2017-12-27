@@ -56,15 +56,15 @@ public class MineFragment extends Fragment {
         followpets = new ArrayList<Pet>();
         final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
         mypets.add(new Pet(1, "Toto", 1, "Cat",
-                12, "boy", new Date(), bitmap, 666));
+                12, "boy", "2017-12-12", bitmap, 666));
         mypets.add(new Pet(1, "Toto", 1, "Cat",
-                12, "boy", new Date(), bitmap, 666));
+                12, "boy", "2017-12-12", bitmap, 666));
         followpets.add(new Pet(1, "Toto", 1, "Cat",
-                12, "boy", new Date(), bitmap, 666));
+                12, "boy", "2017-12-12", bitmap, 666));
         followpets.add(new Pet(1, "Toto", 1, "Cat",
-                12, "boy", new Date(), bitmap, 666));
+                12, "boy","2017-12-12", bitmap, 666));
         followpets.add(new Pet(1, "Toto", 1, "Cat",
-                12, "boy", new Date(), bitmap, 666));
+                12, "boy", "2017-12-12", bitmap, 666));
 
         // 设置adapter
         mypetRV.setLayoutManager(new LinearLayoutManager(context));

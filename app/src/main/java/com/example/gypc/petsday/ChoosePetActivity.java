@@ -53,9 +53,9 @@ public class ChoosePetActivity extends AppCompatActivity {
         pets = new ArrayList<Pet>(){
             {
                 add(new Pet(1, "Toto", 1, "Cat",
-                        12, "boy", new Date(), bitmap, 666));
+                        12, "boy", "2017-12-12", bitmap, 666));
                 add(new Pet(1, "Toto", 1, "Cat",
-                        12, "boy", new Date(), bitmap, 666));
+                        12, "boy", "2017-12-12", bitmap, 666));
             }
         };
         pets_choose = new ArrayList<Pet>();

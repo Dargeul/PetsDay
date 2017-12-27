@@ -15,12 +15,12 @@ public class Pet {
     private String pet_type;
     private int pet_weight;
     private String pet_sex;
-    private Date pet_birth;
+    private String pet_birth;
     private String pet_photo;
     private int pet_follow; // 需要SELECT数据库
 
     public Pet(int pet_id, String pet_nickname, int pet_owner, String pet_type, int pet_weight,
-               String pet_sex, Date pet_birth, String pet_photo, int pet_follow) {
+               String pet_sex, String pet_birth, String pet_photo, int pet_follow) {
         this.pet_id = pet_id;
         this.pet_nickname = pet_nickname;
         this.pet_owner = pet_owner;
@@ -45,7 +45,7 @@ public class Pet {
         return pet_owner;
     }
 
-    public Date getPet_birth() {
+    public String getPet_birth() {
         return pet_birth;
     }
 
