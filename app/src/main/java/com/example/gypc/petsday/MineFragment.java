@@ -39,8 +39,6 @@ public class MineFragment extends Fragment {
 
     private Context context;
 
-    public static final int ADD_NEW_PET_REQ_CODE = 1;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,7 +78,7 @@ public class MineFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), NewpetActivity.class);
-                startActivityForResult(intent, MineFragment.ADD_NEW_PET_REQ_CODE);
+                getActivity().startActivityForResult(intent, MainActivity.ADD_PET_REQ_CODE);
             }
         });
 
@@ -89,6 +87,17 @@ public class MineFragment extends Fragment {
             @Override
             public void onClickList(int position) {
                 Toast.makeText(context, "myPet列表第" + position + "项被点击了", Toast.LENGTH_LONG).show();
+
+                Bundle bundle = new Bundle();
+                Pet pet = mypets.get(position);
+                bundle.putInt("id", pet.getPet_id());
+                bundle.putString("photo", pet.getPet_photo());
+                bundle.putString("nickname", pet.getPet_nickname());
+                bundle.putString("type", pet.getPet_type());
+                bundle.putBoolean("sex", pet.getPet_sex().equals("boy"));
+                bundle.putInt("weight", pet.getPet_weight());
+//                bundle.putString("birth", pet.getPet_birth());
+
                 Intent intent = new Intent(getActivity(), PetDetailActivity.class);
                 startActivity(intent);
             }
@@ -97,7 +106,7 @@ public class MineFragment extends Fragment {
             public void onClickEditButton(int position) {
                 Toast.makeText(context, "myPet列表第" + position + "项编辑按钮被点击了", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getActivity(), NewpetActivity.class);
-                startActivity(intent);
+                getActivity().startActivityForResult(intent, MainActivity.EDIT_PET_CODE);
             }
 
             @Override
@@ -125,11 +134,18 @@ public class MineFragment extends Fragment {
             }
         });
 
+        instance = this;
+
         return view;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent dataIntent) {
-        super.onActivityResult(requestCode, resultCode, dataIntent);
+    private static MineFragment instance;
+    public static MineFragment getInstance() {
+        return instance;
+    }
+
+    public void addPet(Pet pet) {
+        mypets.add(pet);
+        myPetAdapter.notifyDataSetChanged();
     }
 }
