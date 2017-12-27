@@ -17,6 +17,7 @@ import com.example.gypc.petsday.adapter.ChoosePetAdapter;
 import com.example.gypc.petsday.model.Pet;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,10 +49,13 @@ public class ChoosePetActivity extends AppCompatActivity {
         initWidget();
 
         //----------测试用------------
+        final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
         pets = new ArrayList<Pet>(){
             {
-                add(new Pet("Jackieee","哈士奇",320));
-                add(new Pet("Kackieee","中华田园犬",320));
+                add(new Pet(1, "Toto", 1, "Cat",
+                        12, "boy", new Date(), bitmap, 666));
+                add(new Pet(1, "Toto", 1, "Cat",
+                        12, "boy", new Date(), bitmap, 666));
             }
         };
         pets_choose = new ArrayList<Pet>();
