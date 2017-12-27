@@ -41,6 +41,10 @@ public class Pet {
         return pet_nickname;
     }
 
+    public void setPet_nickname(String pet_nickname) {
+        this.pet_nickname = pet_nickname;
+    }
+
     public int getPet_owner() {
         return pet_owner;
     }
@@ -53,8 +57,16 @@ public class Pet {
         return pet_photo;
     }
 
+    public void setPet_photo(String pet_photo) {
+        this.pet_photo = pet_photo;
+    }
+
     public int getPet_weight() {
         return pet_weight;
+    }
+
+    public void setPet_weight(int weight) {
+        this.pet_weight = weight;
     }
 
     public String getPet_sex() {
@@ -67,5 +79,9 @@ public class Pet {
 
     public int getPet_follow() {
         return pet_follow;
+    }
+
+    public void setPet_follow(int follow) {
+        this.pet_follow = follow;
     }
 }

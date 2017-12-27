@@ -20,6 +20,7 @@ import com.ajguan.library.EasyRefreshLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.HotSpotAdapter;
 import com.example.gypc.petsday.model.hotspot;
+import com.example.gypc.petsday.utils.AppContext;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +39,8 @@ public class HotSpotFragment extends Fragment {
 
     private List<hotspot> datas;
 
+    private AppContext app;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,6 +57,8 @@ public class HotSpotFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        app = AppContext.getInstance();
+
         initWidget();
 
         addIV.setOnClickListener(new View.OnClickListener() {
@@ -78,14 +83,11 @@ public class HotSpotFragment extends Fragment {
         * */
         //final Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_1);
         final String bmp = "http://h.hiphotos.baidu.com/image/crop%3D0%2C0%2C1024%2C643/sign=fe44dd1c01fa513d45e5369e005d79cb/4afbfbedab64034f173b8ac6a6c379310b551d7f.jpg";
-        datas = new ArrayList<hotspot>(){
-            {
-                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-            }
-        };
+        datas = app.getDatas();
+        datas.add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+        datas.add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+        datas.add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+        datas.add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);

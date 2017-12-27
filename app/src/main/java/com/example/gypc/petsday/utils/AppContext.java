@@ -4,6 +4,12 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.model.hotspot;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by XUJIJUN on 2017/12/19.
  */
@@ -14,11 +20,19 @@ public class AppContext extends Application {
     private static LoginController loginController;
     private String username;
 
+    private List<Pet> mypets;
+    private List<Pet> followpets;
+    private List<hotspot> datas;
+
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
         loginController = new LoginController();
+
+        mypets = new ArrayList<Pet>();
+        followpets = new ArrayList<Pet>();
+        datas = new ArrayList<hotspot>();
     }
 
     public static AppContext getInstance() {
@@ -63,5 +77,17 @@ public class AppContext extends Application {
                 return false;
             }
         }
+    }
+
+    public List<Pet> getMypets() {
+        return mypets;
+    }
+
+    public List<Pet> getFollowpets() {
+        return followpets;
+    }
+
+    public List<hotspot> getDatas() {
+        return datas;
     }
 }
