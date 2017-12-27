@@ -11,15 +11,20 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.example.gypc.petsday.model.Pet;
 import com.example.gypc.petsday.utils.AppContext;
 import com.youth.banner.Banner;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int LOGIN_REQ_CODE = 1;
+    public static final int
+            LOGIN_REQ_CODE = 1,
+            ADD_PET_REQ_CODE = 2,
+            EDIT_PET_CODE = 3;
 
     private ViewPager viewPager;
     private MenuItem menuItem;
@@ -119,17 +124,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void navigateToLoginRegisterPage() {
-        startActivityForResult(new Intent(this, LoginRegisterNavigateActivity.class), MainActivity.LOGIN_REQ_CODE);
+        startActivityForResult(new Intent(this, LoginRegisterNavigateActivity.class), LOGIN_REQ_CODE);
     }
 
     @Override
     protected void onActivityResult(int reqCode, int resCode, Intent dataIntent) {
-        if (reqCode == MainActivity.LOGIN_REQ_CODE) {
+        if (reqCode == LOGIN_REQ_CODE) {
             if (resCode == LoginRegisterNavigateActivity.LOGIN_OK) {
                 init();
             } else if (resCode == LoginRegisterNavigateActivity.QUIT_RES_CODE) {
                 finish();
             }
+        } else if (reqCode == ADD_PET_REQ_CODE) {
+            if (resCode == NewpetActivity.SUCCESS_RES_CODE) {
+                final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
+                MineFragment.getInstance().addPet(new Pet(1, "hhhh", 1, "Cat",
+                        12, "boy", new Date(), bitmap, 666));
+            }
+        } else if (reqCode == EDIT_PET_CODE) {
+
         }
     }
 }
