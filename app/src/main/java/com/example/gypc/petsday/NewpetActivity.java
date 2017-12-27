@@ -79,7 +79,7 @@ public class NewpetActivity extends BaseActivity {
 
     private String avatarUploadResultString;
 
-    private boolean uploadLock = false;
+    public static final int SUCCESS_RES_CODE = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,35 +151,41 @@ public class NewpetActivity extends BaseActivity {
         } else if (type.isEmpty()) {
             msgNotify("请输入宠物类型！");
         } else if (weight.isEmpty()) {
-            msgNotify("请输入宠物体重");
+            msgNotify("请输入宠物体重！");
+        } else if (Integer.parseInt(weight) <= 0) {
+            msgNotify("请输入正确的宠物体重！");
         } else if (birthday.isEmpty()) {
             msgNotify("请选择宠物生日！");
-        }
-
-        try {
-            if (imgUri != null) {
-                uploadAvatar();
-            } else {
-
+        } else {
+            try {
+                if (imgUri != null) {
+                    uploadAvatar();
+                } else {
+                    Log.i("NewpetActivity", "submitForm: 图片文件路径为空");
+                }
+            } catch (Exception e) {
+                Log.e("NewpetActivity", "submitForm", e);
             }
-        } catch (Exception e) {
-            Log.e("NewpetActivity", "submitForm", e);
         }
     }
 
+    private void uploadForm() {
+
+    }
+
     private void submitFinish() {
-        uploadLock = false;
+        newPetSubmitBtn.setEnabled(true);
         if (avatarUploadResultString.equals(ImageServiceFactory.SUCCESS)) {
             msgNotify("头像上传成功！");
+            setResult(SUCCESS_RES_CODE);
+            finish();
         } else {
             msgNotify("头像上传失败，请重试！");
         }
     }
 
     private void uploadAvatar() {
-        if (uploadLock)
-            return;
-        uploadLock = true;
+        newPetSubmitBtn.setEnabled(false);
         avatarUploadResultString = "";
         imageService
                 .uploadAvatar(ImageMultipartGenerator.getParts(imgUri.getPath()))
