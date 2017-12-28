@@ -81,6 +81,8 @@ public class NewpetActivity extends BaseActivity {
 
     public static final int SUCCESS_RES_CODE = 4;
 
+    private int failUploadTimes = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,7 +182,12 @@ public class NewpetActivity extends BaseActivity {
             setResult(SUCCESS_RES_CODE);
             finish();
         } else {
-            msgNotify("头像上传失败，请重试！");
+            if (failUploadTimes == 3) {
+                msgNotify("头像上传失败，请重试！");
+            } else {
+                failUploadTimes++;
+                uploadAvatar();
+            }
         }
     }
 
@@ -352,6 +359,8 @@ public class NewpetActivity extends BaseActivity {
             e.printStackTrace();
         }
         headRIV.setImageBitmap(bitmap);
+
+        imgUri = resultUri;
     }
 
     /**
