@@ -32,6 +32,15 @@ public class HotSpotDetailActivity extends AppCompatActivity {
             add(new Comment(1,1,"Amy","2017-12-28","Nothing"));
             add(new Comment(2,2,"Cmy","2017-12-28","EMMMMMM"));
             add(new Comment(3,3,"Bmy","2017-12-28","EEEEEEE"));
+            add(new Comment(2,2,"Cmy","2017-12-28","EMMMMMM"));
+            add(new Comment(3,3,"Bmy","2017-12-28","EEEEEEE"));
+            add(new Comment(2,2,"Cmy","2017-12-28","EMMMMMM"));
+            add(new Comment(3,3,"Bmy","2017-12-28","EEEEEEE"));
+            add(new Comment(2,2,"Cmy","2017-12-28","EMMMMMM"));
+            add(new Comment(3,3,"Bmy","2017-12-28","EEEEEEE"));
+            add(new Comment(2,2,"Cmy","2017-12-28","EMMMMMM"));
+            add(new Comment(3,3,"Bmy","2017-12-28","EEEEEEE"));
+
         }
     };
 
@@ -84,16 +93,16 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         commentAdapter.addData(comments);
         commentAreaRV.setLayoutManager(layoutManager);
         commentAreaRV.setAdapter(commentAdapter);
-        commentAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-                String str = commentAdapter.getItem(i).getCom_user()+"";
-                yourCommentET.requestFocus();
-                yourCommentET.setHint("回复 "+str);
-                InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.showSoftInput(yourCommentET,inputMethodManager.SHOW_IMPLICIT);
-            }
-        });
+//        commentAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
+//                String str = commentAdapter.getItem(i).getCom_user()+"";
+//                yourCommentET.requestFocus();
+//                yourCommentET.setHint("回复 "+str);
+//                InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//                inputMethodManager.showSoftInput(yourCommentET,inputMethodManager.SHOW_IMPLICIT);
+//            }
+//        });
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(HotSpotDetailActivity.this);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);

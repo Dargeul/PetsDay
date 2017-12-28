@@ -30,5 +30,6 @@ public class CommentAdapter extends BaseQuickAdapter<Comment,BaseViewHolder> {
         helper.setText(R.id.commentTime,item.getCom_time());
         helper.setText(R.id.comment,item.getCom_content());
         int position = helper.getLayoutPosition();
+        helper.setText(R.id.layerNum,position+1+" L");
     }
 }
