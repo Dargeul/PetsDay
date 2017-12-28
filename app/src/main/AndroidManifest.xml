@@ -43,6 +43,8 @@
         <activity android:name=".NewpetActivity"
             android:windowSoftInputMode="stateVisible|adjustPan"
             />
+        <activity android:name=".HotSpotDetailActivity"
+            android:windowSoftInputMode="adjustPan"/>
 
         <!--在Android N上安装Apk文件权限-->
         <provider
