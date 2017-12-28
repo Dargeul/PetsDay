@@ -54,6 +54,8 @@ public class PublishActivity extends BaseActivity {
     private static final int REQUEST_CODE_CAMERA = 32;
 //    private UriAdapter mAdapter;
 
+    private Uri imgUri;
+
     public void initWidget(){
         choosePet = (ImageView)findViewById(R.id.choosePet);
         choosePicture = (ImageView)findViewById(R.id.choosePicture);
@@ -220,6 +222,8 @@ public class PublishActivity extends BaseActivity {
         }
         hotSpotImage.setVisibility(View.VISIBLE);
         hotSpotImage.setImageBitmap(bitmap);
+
+        imgUri = resultUri;
     }
 
     /**
@@ -253,6 +257,7 @@ public class PublishActivity extends BaseActivity {
     }
 
     private void display(Uri uri) {
+        imgUri = uri;
         hotSpotImage.setVisibility(View.VISIBLE);
         Glide.with(this)
                 .load(uri)
