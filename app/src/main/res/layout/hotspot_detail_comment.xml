@@ -4,50 +4,60 @@
     android:layout_height="80dp"
     android:orientation="vertical">
 
-    <!--评论-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical">
-        <!--评论者的昵称-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/userNickname"
-            android:layout_marginRight="8dp"
-            android:text="NICKNAME"/>
-        <!--评论发布时间-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/commentTime"
-            android:text="COMMENTTIME"/>
-
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="68sp"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                android:id="@+id/layerNum"
+                android:textSize="16dp"/>
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorGray"/>
+        </LinearLayout>
+        <!--评论-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:layout_marginRight="16dp">
+            android:layout_marginLeft="4dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical">
+                <!--评论者的昵称-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/userNickname"
+                    android:textSize="16sp"
+                    android:layout_marginRight="8dp"
+                    android:text="NICKNAME"/>
+                <!--评论发布时间-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:id="@+id/commentTime"
+                    android:text="COMMENTTIME"/>
+            </LinearLayout>
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="reply"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="8dp"/>
-            <!--点击reply按钮回复该评论-->
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:background="@drawable/ic_reply_50"
-                android:gravity="end"
-                android:id="@+id/reply"/>
+                android:layout_margin="4dp"
+                android:id="@+id/comment"
+                android:text="COMMENT"/>
         </LinearLayout>
     </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:id="@+id/comment"
-        android:text="COMMENT"/>
 </LinearLayout>
