@@ -41,9 +41,12 @@ public class HotSpotFragment extends Fragment {
 
     private AppContext app;
 
+    private static HotSpotFragment instance;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        instance = this;
         return inflater.inflate(R.layout.fragment_hotspot, container, false);
     }
 
@@ -65,7 +68,7 @@ public class HotSpotFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),PublishActivity.class);
-                startActivity(intent);
+                getActivity().startActivityForResult(intent, MainActivity.NEW_HOTSPOT_REQ_CODE);
             }
         });
 
@@ -82,12 +85,12 @@ public class HotSpotFragment extends Fragment {
         * 动态列表的数据类型是hotspot这个model
         * */
         //final Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_1);
-        final String bmp = "http://h.hiphotos.baidu.com/image/crop%3D0%2C0%2C1024%2C643/sign=fe44dd1c01fa513d45e5369e005d79cb/4afbfbedab64034f173b8ac6a6c379310b551d7f.jpg";
+        final String bmp = "keji";
         datas = app.getDatas();
-        datas.add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-        datas.add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-        datas.add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-        datas.add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+        datas.add(new hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888, 666, true));
+        datas.add(new hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888, 666, true));
+        datas.add(new hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888, 666, true));
+        datas.add(new hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888, 666, true));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -116,14 +119,14 @@ public class HotSpotFragment extends Fragment {
             public void onLoadMore() {
                 final List<hotspot> list = new ArrayList<>();
                 //final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_2);
-                final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
+                final String bitmap = "keji";
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         //添加2个列表项到动态的数据列表中
                         for (int j = 0; j < 2; j++) {
-                            list.add(new hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));
-                            datas.add(new hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));;
+                            list.add(new hotspot(new Date().toString(), 1, "Loaded", 1, bitmap, 888, 666, true));
+                            datas.add(new hotspot(new Date().toString(), 1, "Loaded", 1, bitmap, 888, 666, true));;
                         }
 
                         easyRefreshLayout.loadMoreComplete(new EasyRefreshLayout.Event() {
@@ -150,10 +153,10 @@ public class HotSpotFragment extends Fragment {
                     public void run() {
                         //添加2个列表项到动态的数据列表中
                         //final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_3);
-                        final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
+                        final String bitmap = "keji";
                         List<hotspot> list = new ArrayList<>();
                         for (int i = 0; i < 2; i++) {
-                            list.add(new hotspot(new Date(), 1, "Refresh", 1, bitmap, 888, 666, true));
+                            list.add(new hotspot(new Date().toString(), 1, "Refresh", 1, bitmap, 888, 666, true));
                         }
                         list.addAll(datas);
                         datas.removeAll(datas);
@@ -169,5 +172,24 @@ public class HotSpotFragment extends Fragment {
 
         hotSpotRecyclerView.setAdapter(hotSpotAdapter);
 
+    }
+
+    public static HotSpotFragment getInstance() {
+        return instance;
+    }
+
+    public void addHotspot(Bundle bundle) {
+        /*
+        * bundle.putInt("id", hotspotId);
+            bundle.putString("content", publishContent);
+            bundle.putString("photo", imageFilename);
+            bundle.putString("time", publishTime);
+        * */
+        String data =
+                "id = " + String.valueOf(bundle.getInt("id")) + "\n" +
+                "content = " + bundle.getString("content") + "\n" +
+                "photo = " + bundle.getString("photo") + "\n" +
+                "time = " + bundle.getString("time");
+        Log.i("HotSpotFragment", "addHotspot: data:\n" + data);
     }
 }
