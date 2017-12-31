@@ -14,11 +14,11 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <!--返回键-->
-        <ImageView
+        <ImageButton
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/ic_back_50"
-            android:id="@+id/back"/>
+            android:id="@+id/newHotspotBackBtn"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -29,12 +29,12 @@
             android:textSize="20sp"
             android:textAlignment="center"/>
         <!--发布按钮，点击发布-->
-        <ImageView
+        <ImageButton
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/ic_tick_box_50"
             android:layout_marginRight="16dp"
-            android:id="@+id/publish"
+            android:id="@+id/submitHotspotBtn"
             android:layout_gravity="end"/>
     </android.support.v7.widget.Toolbar>
     <!--要发布的动态内容-->
@@ -42,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:hint="说点什么……"
-        android:id="@+id/publishContent"
+        android:id="@+id/publishContentEditText"
         android:gravity="top|left"/>
 
 
@@ -99,5 +99,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:id="@+id/displayHotspotPet"/>
+        android:id="@+id/displayChosenPetsTextView"/>
 </LinearLayout>
