@@ -1,5 +1,6 @@
 package com.example.gypc.petsday;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.ChoosePetAdapter;
 import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.utils.AppContext;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,8 +29,10 @@ import java.util.List;
 
 public class ChoosePetActivity extends AppCompatActivity {
 
-    private ImageView finishChooseIV;
-    private ImageView backIV;
+    public static final int CHOOSE_SUCCESS = 2;
+
+    private ImageButton finishChooseBtn;
+    private ImageButton backBtn;
     private RecyclerView petList;
     private ChoosePetAdapter choosePetAdapter;
 
@@ -36,8 +41,8 @@ public class ChoosePetActivity extends AppCompatActivity {
 
 
     public void initWidget(){
-        finishChooseIV = (ImageView)findViewById(R.id.finishChoose);
-        backIV = (ImageView)findViewById(R.id.back);
+        finishChooseBtn = (ImageButton) findViewById(R.id.finishChoosePetBtn);
+        backBtn = (ImageButton) findViewById(R.id.choosePetBackBtn);
         petList = (RecyclerView) findViewById(R.id.petList);
     }
 
@@ -49,16 +54,10 @@ public class ChoosePetActivity extends AppCompatActivity {
         initWidget();
 
         //----------测试用------------
-        final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
-        pets = new ArrayList<Pet>(){
-            {
-                add(new Pet(1, "Toto", 1, "Cat",
-                        12, "boy", "2017-12-12", bitmap, 666));
-                add(new Pet(1, "Toto", 1, "Cat",
-                        12, "boy", "2017-12-12", bitmap, 666));
-            }
-        };
+
+        pets = AppContext.getInstance().getMypets();
         pets_choose = new ArrayList<Pet>();
+
         //----------测试用-----------
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(ChoosePetActivity.this);
@@ -90,12 +89,41 @@ public class ChoosePetActivity extends AppCompatActivity {
         });
 
         //确定键，点击完数据传回发布动态页面
-        finishChooseIV.setOnClickListener(new View.OnClickListener() {
+        finishChooseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                confirmChosen();
+            }
+        });
 
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }
 
+    private void confirmChosen() {
+        if (pets_choose.isEmpty()) {
+            Toast.makeText(this, "至少选择一个宠物！", Toast.LENGTH_SHORT).show();
+        } else {
+            ArrayList<Integer> petIds = new ArrayList<>();
+            ArrayList<String> petNicknames = new ArrayList<>();
+
+            for (Pet pet : pets_choose) {
+                petIds.add(pet.getPet_id());
+                petNicknames.add(pet.getPet_nickname());
+            }
+
+            Bundle bundle = new Bundle();
+            bundle.putIntegerArrayList("petIds", petIds);
+            bundle.putStringArrayList("petNicknames", petNicknames);
+
+            Intent intent = new Intent();
+            intent.putExtras(bundle);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+    }
 }
