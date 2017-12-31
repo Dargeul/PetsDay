@@ -10,10 +10,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -30,23 +28,30 @@ import com.baoyz.actionsheet.ActionSheet;
 import com.bumptech.glide.Glide;
 import com.example.gypc.petsday.base.BaseActivity;
 import com.example.gypc.petsday.factory.ImageServiceFactory;
+import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.helper.GifSizeFilter;
 import com.example.gypc.petsday.helper.GlideImageLoader;
 import com.example.gypc.petsday.helper.XCRoundImageView;
 import com.example.gypc.petsday.service.ImageService;
+import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.ImageMultipartGenerator;
+import com.example.gypc.petsday.utils.ImageUriConverter;
+import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
 import com.kevin.crop.UCrop;
 
-import java.io.File;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
+import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -73,9 +78,8 @@ public class NewpetActivity extends BaseActivity {
     private static final int REQUEST_CODE_CHOOSE = 23;
     private static final int REQUEST_CODE_CAMERA = 32;
 
-    private Uri imgUri = null;
-
     private ImageService imageService;
+    private ObjectService objectService;
 
     private String avatarUploadResultString;
 
@@ -83,12 +87,30 @@ public class NewpetActivity extends BaseActivity {
 
     private int failUploadTimes = 0;
 
+    private boolean
+            isAvatarUploadComplete = false,
+            isFormUploadComplete = false,
+            isAvatarUploadOK = false,
+            isFormUploadOK = false;
+
+
+    private int positionInList = -1;
+    private int petId = -1;
+    private String imageFilename;
+    private String nickname;
+    private String type;
+    private String sex;
+    private int weight;
+    private String birth;
+    private int owner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mine_newpet);
 
         imageService = ImageServiceFactory.getService();
+        objectService = ObjectServiceFactory.getService();
 
         headRIV = (XCRoundImageView)findViewById(R.id.headRIV);
         nicknameET = (EditText)findViewById(R.id.nicknameET);
@@ -118,6 +140,47 @@ public class NewpetActivity extends BaseActivity {
                 submitForm();
             }
         });
+
+        initInfoEdit();
+    }
+
+    private void initInfoEdit() {
+        Bundle initDataBundle = getIntent().getExtras();
+
+        if (initDataBundle == null) {
+            Log.e("NewpetActivity", "initInfoEdit:bundle null");
+            return;
+        }
+
+        owner = initDataBundle.getInt("owner");
+
+        if (!initDataBundle.containsKey("id")) {
+            return;
+        }
+        positionInList = initDataBundle.getInt("position");
+        petId = initDataBundle.getInt("id");
+        imageFilename = initDataBundle.getString("photo");
+        nickname = initDataBundle.getString("nickname");
+        type = initDataBundle.getString("type");
+        sex = initDataBundle.getBoolean("sex") ? "boy" : "girl";
+        weight = initDataBundle.getInt("weight");
+        birth = initDataBundle.getString("birth");
+
+
+        try {
+             Uri avatarUri = ImageUriConverter.getCacheFileUriFromName(this, imageFilename);
+             display(avatarUri);
+        } catch (NullPointerException e) {
+            Log.e("NewpetActivity", "initInfoEdit", e);
+            String path = ImageUriConverter.getImgRemoteUriFromName(imageFilename);
+            displayAvatarFromRemote(path);
+        }
+
+        nicknameET.setText(nickname);
+        typeET.setText(type);
+        sexRG.check(sex.equals("boy") ? R.id.boyRB : R.id.girlRB);
+        weightEditText.setText(String.valueOf(weight));
+        dateET.setText(birth);
     }
 
     private void showDatePickerDialog() {
@@ -131,7 +194,7 @@ public class NewpetActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String date = String.valueOf(dialogDatePicker.getYear()) + "-" +
-                                String.valueOf(dialogDatePicker.getMonth()) + "-" +
+                                String.valueOf(dialogDatePicker.getMonth() + 1) + "-" +
                                 String.valueOf(dialogDatePicker.getDayOfMonth());
                         dateET.setText(date);
                     }
@@ -142,48 +205,163 @@ public class NewpetActivity extends BaseActivity {
     }
 
     private void submitForm() {
-        String nickname = nicknameET.getText().toString();
-        String type = typeET.getText().toString();
-        String sex = (sexRG.getCheckedRadioButtonId() == R.id.boyRB) ? "boy" : "girl";
-        String weight = weightEditText.getText().toString();
-        String birthday = dateET.getText().toString();
+        nickname = nicknameET.getText().toString();
+        type = typeET.getText().toString();
+        sex = (sexRG.getCheckedRadioButtonId() == R.id.boyRB) ? "boy" : "girl";
+        String weightText = weightEditText.getText().toString();
+        birth = dateET.getText().toString();
 
         if (nickname.isEmpty()) {
             msgNotify("请输入昵称！");
         } else if (type.isEmpty()) {
             msgNotify("请输入宠物类型！");
-        } else if (weight.isEmpty()) {
+        } else if (weightText.isEmpty()) {
             msgNotify("请输入宠物体重！");
-        } else if (Integer.parseInt(weight) <= 0) {
+        } else if ((weight = Integer.parseInt(weightText)) <= 0) {
             msgNotify("请输入正确的宠物体重！");
-        } else if (birthday.isEmpty()) {
+        } else if (birth.isEmpty()) {
             msgNotify("请选择宠物生日！");
+        } else if (imageFilename == null){
+            msgNotify("请选择头像图片！");
         } else {
             try {
-                if (imgUri != null) {
-                    uploadAvatar();
-                } else {
-                    Log.i("NewpetActivity", "submitForm: 图片文件路径为空");
-                }
+                uploadData();
             } catch (Exception e) {
-                Log.e("NewpetActivity", "submitForm", e);
+                Log.e("NewpetActivity", "uploadData", e);
             }
         }
     }
 
-    private void uploadForm() {
+    private void uploadData() {
+        newPetSubmitBtn.setEnabled(false);
+        avatarUploadResultString = "";
+        uploadAvatar();
+        uploadForm();
+    }
 
+    private void navigateToPrePage() {
+        Bundle bundle = new Bundle();
+
+        if (positionInList != -1)
+            bundle.putInt("position", positionInList);
+        bundle.putInt("id", petId);
+        bundle.putString("photo", imageFilename);
+        bundle.putString("nickname", nickname);
+        bundle.putString("type", type);
+        bundle.putBoolean("sex", sex.equals("boy"));
+        bundle.putInt("weight", weight);
+        bundle.putString("birth", birth);
+        bundle.putInt("owner", owner);
+
+        Intent data = new Intent();
+        data.putExtras(bundle);
+        setResult(SUCCESS_RES_CODE, data);
+        finish();
     }
 
     private void submitFinish() {
-        newPetSubmitBtn.setEnabled(true);
-        if (avatarUploadResultString.equals(ImageServiceFactory.SUCCESS)) {
-            msgNotify("头像上传成功！");
-            setResult(SUCCESS_RES_CODE);
-            finish();
+        if (isFormUploadComplete && isAvatarUploadComplete) {
+            if (!isFormUploadOK) {
+                msgNotify("信息上传失败，请重试！");
+                newPetSubmitBtn.setEnabled(true);
+            } else if (!isAvatarUploadOK) {
+                msgNotify("头像上传失败，请重试！");
+                newPetSubmitBtn.setEnabled(true);
+            } else {
+                navigateToPrePage();
+            }
+        }
+    }
+
+    private void uploadFormFinish() {
+        isFormUploadComplete = true;
+        submitFinish();
+    }
+
+    private void uploadForm() {
+        if (isFormUploadOK)
+            return;
+
+        HashMap<String, Object> petData = new HashMap<>();
+        petData.put("pet_id", petId);
+        petData.put("pet_photo", imageFilename);
+        petData.put("pet_nickname", nickname);
+        petData.put("pet_type", type);
+        petData.put("pet_sex", sex);
+        petData.put("pet_weight", weight);
+        petData.put("pet_birth", birth);
+        petData.put("pet_owner", owner);
+
+        if (petId == -1) {
+            objectService
+                    .insertPet(JSONRequestBodyGenerator.getBody(petData))
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Result<Integer>>() {
+                        @Override
+                        public void onCompleted() {
+                            uploadFormFinish();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("NewpetActivity", "insertPet", e);
+                        }
+
+                        @Override
+                        public void onNext(Result<Integer> integerResult) {
+                            if (integerResult.isError()) {
+                                Log.e("NewpetActivity", "insertPet", integerResult.error());
+                            }
+                            if (integerResult.response() == null)
+                                return;
+                            petId = integerResult.response().body();
+                            isFormUploadOK = true;
+                        }
+                    });
+        } else {
+            objectService
+                    .updatePet(JSONRequestBodyGenerator.getBody(petData))
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<ResponseBody>() {
+                        @Override
+                        public void onCompleted() {
+                            uploadFormFinish();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("NewpetActivity", "updatePet", e);
+                        }
+
+                        @Override
+                        public void onNext(ResponseBody responseBody) {
+                            try {
+                                String res = responseBody.string();
+                                Log.i("NewpetActivity", "update response json:\n" + res);
+                                JSONObject jsonObject = new JSONObject(res);
+                                int affectedRows = jsonObject.getInt("affectedRows");
+                                if (affectedRows == 1)
+                                    isFormUploadOK = true;
+                            } catch (Exception e) {
+                                Log.e("NewpetActivity", "updatePet", e);
+                            }
+                        }
+                    });
+        }
+
+        isFormUploadComplete = true;
+    }
+
+    private void uploadAvatarFinish() {
+        if (isAvatarUploadOK) {
+            isAvatarUploadComplete = true;
+            submitFinish();
         } else {
             if (failUploadTimes == 3) {
-                msgNotify("头像上传失败，请重试！");
+                isAvatarUploadComplete = true;
+                submitFinish();
             } else {
                 failUploadTimes++;
                 uploadAvatar();
@@ -192,22 +370,25 @@ public class NewpetActivity extends BaseActivity {
     }
 
     private void uploadAvatar() {
-        newPetSubmitBtn.setEnabled(false);
-        avatarUploadResultString = "";
+        if (isAvatarUploadOK)
+            return;
         imageService
-                .uploadAvatar(ImageMultipartGenerator.getParts(imgUri.getPath()))
+                .uploadAvatar(
+                        ImageMultipartGenerator.getParts(
+                                ImageUriConverter.getCacheFileUriFromName(this, imageFilename).getPath()
+                        )
+                )
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Result<String>>() {
                     @Override
                     public void onCompleted() {
-                        submitFinish();
+                        uploadAvatarFinish();
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.e("NewpetActivity", "uploadAvatar", e);
-                        msgNotify("头像上传失败！");
                     }
 
                     @Override
@@ -219,6 +400,7 @@ public class NewpetActivity extends BaseActivity {
                             return;
                         avatarUploadResultString = stringResult.response().body();
                         Log.i("NewpetActivity", "uploadAvatar: " + avatarUploadResultString);
+                        isAvatarUploadOK = avatarUploadResultString.equals(ImageServiceFactory.SUCCESS);
                     }
                 });
     }
@@ -359,8 +541,6 @@ public class NewpetActivity extends BaseActivity {
             e.printStackTrace();
         }
         headRIV.setImageBitmap(bitmap);
-
-        imgUri = resultUri;
     }
 
     /**
@@ -383,9 +563,11 @@ public class NewpetActivity extends BaseActivity {
      */
     private void startCropActivity(Uri source) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);
-        String imageFileName = "IMG_" + dateFormat.format(new Date());
+        imageFilename = "IMG_" + dateFormat.format(new Date());
 
-        Uri uri = Uri.fromFile(new File(getCacheDir(), imageFileName.concat(".jpeg")));
+        Log.i("NewpetActivity", "startCropActivity: filename = " + imageFilename);
+
+        Uri uri = ImageUriConverter.getCacheFileUriFromName(this, imageFilename);
         UCrop.of(source, uri)
                 .withAspectRatio(1, 1)
                 .withMaxResultSize(1024, 1024)
@@ -394,10 +576,18 @@ public class NewpetActivity extends BaseActivity {
     }
 
     private void display(Uri uri) {
-        imgUri = uri; // 设置选择的URI
+        imageFilename = ImageUriConverter.getFilenameFromUri(uri);
+        Log.i("NewpetActivity", "display: filename = " + imageFilename);
 
         Glide.with(this)
                 .load(uri)
+                .asBitmap()
+                .into(headRIV);
+    }
+
+    private void displayAvatarFromRemote(String path) {
+        Glide.with(this)
+                .load(path)
                 .asBitmap()
                 .into(headRIV);
     }
