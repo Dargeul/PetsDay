@@ -59,10 +59,10 @@ public class MineFragment extends Fragment {
         //列表初始化
 
         final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
-        mypets.add(new Pet(1, "Toto", 1, "Cat",
-                12, "boy", "2017-12-12", bitmap, 666));
-        mypets.add(new Pet(1, "Toto", 1, "Cat",
-                12, "boy", "2017-12-12", bitmap, 666));
+//        mypets.add(new Pet(1, "Toto", 1, "Cat",
+//                12, "boy", "2017-12-12", bitmap, 666));
+//        mypets.add(new Pet(1, "Toto", 1, "Cat",
+//                12, "boy", "2017-12-12", bitmap, 666));
         followpets.add(new Pet(1, "Toto", 1, "Cat",
                 12, "boy", "2017-12-12", bitmap, 666));
         followpets.add(new Pet(1, "Toto", 1, "Cat",
@@ -82,6 +82,9 @@ public class MineFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), NewpetActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("owner", getOwnerId());
+                intent.putExtras(bundle);
                 getActivity().startActivityForResult(intent, MainActivity.ADD_PET_REQ_CODE);
             }
         });
@@ -91,25 +94,27 @@ public class MineFragment extends Fragment {
             @Override
             public void onClickList(int position) {
                 Toast.makeText(context, "myPet列表第" + position + "项被点击了", Toast.LENGTH_LONG).show();
-
-                Bundle bundle = new Bundle();
-                Pet pet = mypets.get(position);
-                bundle.putInt("id", pet.getPet_id());
-                bundle.putString("photo", pet.getPet_photo());
-                bundle.putString("nickname", pet.getPet_nickname());
-                bundle.putString("type", pet.getPet_type());
-                bundle.putBoolean("sex", pet.getPet_sex().equals("boy"));
-                bundle.putInt("weight", pet.getPet_weight());
-//                bundle.putString("birth", pet.getPet_birth());
-
                 Intent intent = new Intent(getActivity(), PetDetailActivity.class);
                 startActivity(intent);
             }
 
             @Override
             public void onClickEditButton(int position) {
-                Toast.makeText(context, "myPet列表第" + position + "项编辑按钮被点击了", Toast.LENGTH_LONG).show();
+                Bundle bundle = new Bundle();
+                Pet pet = mypets.get(position);
+                bundle.putInt("position", position);
+                bundle.putInt("id", pet.getPet_id());
+                bundle.putString("photo", pet.getPet_photo());
+                bundle.putString("nickname", pet.getPet_nickname());
+                bundle.putString("type", pet.getPet_type());
+                bundle.putBoolean("sex", pet.getPet_sex().equals("boy"));
+                bundle.putInt("weight", pet.getPet_weight());
+                bundle.putString("birth", pet.getPet_birth());
+                bundle.putInt("owner", pet.getPet_owner());
+
                 Intent intent = new Intent(getActivity(), NewpetActivity.class);
+                intent.putExtras(bundle);
+
                 getActivity().startActivityForResult(intent, MainActivity.EDIT_PET_CODE);
             }
 
@@ -143,13 +148,44 @@ public class MineFragment extends Fragment {
         return view;
     }
 
+    private int getOwnerId() {
+        return 1;
+    }
+
     private static MineFragment instance;
     public static MineFragment getInstance() {
         return instance;
     }
 
-    public void addPet(Pet pet) {
-        mypets.add(pet);
+    public void addPet(Bundle bundle) {
+        // ???
+        int petFollow = 0;
+
+        Pet petToAdded = new Pet(
+                bundle.getInt("id"),
+                bundle.getString("nickname"),
+                bundle.getInt("owner"),
+                bundle.getString("type"),
+                bundle.getInt("weight"),
+                bundle.getBoolean("sex") ? "boy" : "girl",
+                bundle.getString("birth"),
+                bundle.getString("photo"),
+                petFollow
+        );
+        mypets.add(petToAdded);
+        myPetAdapter.notifyDataSetChanged();
+    }
+
+    public void updatePet(Bundle bundle) {
+        int pos = bundle.getInt("position");
+        Pet oldPet = mypets.get(pos);
+        oldPet.setPet_nickname(bundle.getString("nickname"));
+        oldPet.setPet_type(bundle.getString("type"));
+        oldPet.setPet_weight(bundle.getInt("weight"));
+        oldPet.setPet_sex(bundle.getBoolean("sex") ? "boy" : "girl");
+        oldPet.setPet_birth(bundle.getString("birth"));
+        oldPet.setPet_photo(bundle.getString("photo"));
+        mypets.set(pos, oldPet);
         myPetAdapter.notifyDataSetChanged();
     }
 }
