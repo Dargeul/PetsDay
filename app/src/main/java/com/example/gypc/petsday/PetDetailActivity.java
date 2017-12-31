@@ -68,10 +68,10 @@ public class PetDetailActivity extends AppCompatActivity {
         final String bmp = "http://h.hiphotos.baidu.com/image/crop%3D0%2C0%2C1024%2C643/sign=fe44dd1c01fa513d45e5369e005d79cb/4afbfbedab64034f173b8ac6a6c379310b551d7f.jpg";
         datas = new ArrayList<hotspot>(){
             {
-                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+//                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+//                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+//                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+//                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
             }
         };
 
@@ -108,8 +108,8 @@ public class PetDetailActivity extends AppCompatActivity {
                     public void run() {
                         //添加2个列表项到动态的数据列表中
                         for (int j = 0; j < 2; j++) {
-                            list.add(new hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));
-                            datas.add(new hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));;
+//                            list.add(new hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));
+//                            datas.add(new hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));
                         }
 
                         easyRefreshLayout.loadMoreComplete(new EasyRefreshLayout.Event() {
@@ -139,7 +139,7 @@ public class PetDetailActivity extends AppCompatActivity {
                         final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
                         List<hotspot> list = new ArrayList<>();
                         for (int i = 0; i < 2; i++) {
-                            list.add(new hotspot(new Date(), 1, "Refresh", 1, bitmap, 888, 666, true));
+//                            list.add(new hotspot(new Date(), 1, "Refresh", 1, bitmap, 888, 666, true));
                         }
                         list.addAll(datas);
                         datas.removeAll(datas);
