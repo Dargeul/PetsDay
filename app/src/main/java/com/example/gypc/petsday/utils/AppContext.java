@@ -9,6 +9,9 @@ import com.example.gypc.petsday.model.hotspot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 /**
  * Created by XUJIJUN on 2017/12/19.
@@ -24,6 +27,8 @@ public class AppContext extends Application {
     private List<Pet> followpets;
     private List<hotspot> datas;
 
+    private static OkHttpClient httpClient;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -33,10 +38,19 @@ public class AppContext extends Application {
         mypets = new ArrayList<Pet>();
         followpets = new ArrayList<Pet>();
         datas = new ArrayList<hotspot>();
+        httpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .build();
     }
 
     public static AppContext getInstance() {
         return instance;
+    }
+
+    public OkHttpClient getHttpClient() {
+        return httpClient;
     }
 
     public String getLoginUsername() {
