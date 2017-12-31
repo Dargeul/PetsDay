@@ -1,6 +1,7 @@
 package com.example.gypc.petsday.factory;
 
 import com.example.gypc.petsday.service.ImageService;
+import com.example.gypc.petsday.utils.AppContext;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -19,9 +20,8 @@ public class ImageServiceFactory {
     public static final String FORMAT_ERR= "formatError";
     public static final String SUCCESS = "success";
 
-    private static final String BASE_URL = "http://159.89.140.129:3000";
+    private static final String BASE_URL = "http://120.78.169.206:4000";
     private static ImageService service;
-    private static OkHttpClient httpClient;
 
     public static ImageService getService() {
         if (service == null)
@@ -30,13 +30,7 @@ public class ImageServiceFactory {
     }
 
     private static OkHttpClient createHttpClient() {
-        if (httpClient == null)
-            httpClient = new OkHttpClient.Builder()
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(10, TimeUnit.SECONDS)
-                    .build();
-        return httpClient;
+        return AppContext.getInstance().getHttpClient();
     }
 
     private static Retrofit createRetrofit() {
@@ -51,3 +45,4 @@ public class ImageServiceFactory {
                 .build();
     }
 }
+
