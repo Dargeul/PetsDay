@@ -9,7 +9,7 @@ import java.util.Date;
  */
 
 public class hotspot {
-    private Date hs_time;
+    private String hs_time;
     private int hs_user;
     private String hs_content;
     private int hs_id;
@@ -18,7 +18,7 @@ public class hotspot {
     private int hs_like;
     private boolean hs_islike;
 
-    public hotspot(Date hs_time, int hs_user, String hs_content, int hs_id, String hs_photo,
+    public hotspot(String hs_time, int hs_user, String hs_content, int hs_id, String hs_photo,
                    int hs_comment, int hs_like, boolean hs_islike){
         this.hs_time = hs_time;
         this.hs_user = hs_user;
@@ -30,7 +30,7 @@ public class hotspot {
         this.hs_islike = hs_islike;
     }
 
-    public Date getHs_time() {
+    public String getHs_time() {
         return hs_time;
     }
 
