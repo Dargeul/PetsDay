@@ -24,7 +24,8 @@ public class MainActivity extends AppCompatActivity {
     public static final int
             LOGIN_REQ_CODE = 1,
             ADD_PET_REQ_CODE = 2,
-            EDIT_PET_CODE = 3;
+            EDIT_PET_CODE = 3,
+            NEW_HOTSPOT_REQ_CODE = 4;
 
     private ViewPager viewPager;
     private MenuItem menuItem;
@@ -137,12 +138,16 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (reqCode == ADD_PET_REQ_CODE) {
             if (resCode == NewpetActivity.SUCCESS_RES_CODE) {
-                final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
-                MineFragment.getInstance().addPet(new Pet(1, "hhhh", 1, "Cat",
-                        12, "boy","2017-12-12", bitmap, 666));
+                MineFragment.getInstance().addPet(dataIntent.getExtras());
             }
         } else if (reqCode == EDIT_PET_CODE) {
-
+            if (resCode == NewpetActivity.SUCCESS_RES_CODE) {
+                MineFragment.getInstance().updatePet(dataIntent.getExtras());
+            }
+        } else if (reqCode == NEW_HOTSPOT_REQ_CODE) {
+            if (resCode == PublishActivity.PUBLISH_SUCCESS) {
+                HotSpotFragment.getInstance().addHotspot(dataIntent.getExtras());
+            }
         }
     }
 }
