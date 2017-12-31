@@ -1,9 +1,9 @@
 package com.example.gypc.petsday.adapter;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +14,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.example.gypc.petsday.R;
 import com.example.gypc.petsday.model.Pet;
-import com.example.gypc.petsday.model.hotspot;
+import com.example.gypc.petsday.utils.ImageUriConverter;
 
 import java.util.List;
 
@@ -52,7 +50,24 @@ public class MyPetAdapter extends RecyclerView.Adapter<MyPetAdapter.MyPetViewHol
         holder.pet_nickname.setText(pets.get(position).getPet_nickname());
         holder.pet_type.setText(pets.get(position).getPet_type());
         holder.pet_follow.setText("" + pets.get(position).getPet_follow());
-        Glide.with(context).load(pets.get(position).getPet_photo()).priority(Priority.HIGH).into(holder.pet_photo);
+
+        Uri localImageUri;
+        String remoteImagePath;
+
+        localImageUri = ImageUriConverter.getCacheFileUriFromName(context, pets.get(position).getPet_photo());
+        remoteImagePath = ImageUriConverter.getImgRemoteUriFromName(pets.get(position).getPet_photo());
+
+        Log.i("MyPetAdapter", "imageUri: " + ((localImageUri == null) ? remoteImagePath : localImageUri.getPath()));
+
+        Glide
+                .with((context))
+                .load(localImageUri != null ? localImageUri : remoteImagePath)
+                .placeholder(R.mipmap.pet_default)
+                .error(R.drawable.error_img)
+                .priority(Priority.HIGH)
+                .into(holder.pet_photo);
+
+
         holder.editBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
