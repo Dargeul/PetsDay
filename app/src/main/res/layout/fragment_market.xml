@@ -39,7 +39,7 @@
         android:textSize="20dp"
         android:padding="5dp"/>
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/goodsRV"
         android:layout_width="fill_parent"

@@ -5,13 +5,14 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    <!--他人宠物列表项-->
+
     <LinearLayout
         android:id="@+id/contentLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="20dp">
+
         <ImageView
             android:id="@+id/headIV"
             android:layout_width="60dp"
@@ -29,20 +30,28 @@
                 android:id="@+id/petnameTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:text="pet's type"
+                android:text="pet's name"
                 android:textSize="20dp"
                 android:textColor="@color/colorBlack"/>
+
+            <TextView
+                android:id="@+id/pettypeTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:text="pet's type"
+                android:textSize="18dp"/>
         </LinearLayout>
 
         <ImageView
             android:id="@+id/loveIV"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_heart_50"
+            android:src="@mipmap/love"
             android:layout_margin="16dp"/>
 
         <TextView
+            android:id="@+id/followTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="follownum"

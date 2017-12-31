@@ -106,6 +106,8 @@ public class HotSpotFragment extends Fragment {
         hotSpotAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(getActivity(),HotSpotDetailActivity.class);
+                startActivity(intent);
                 Toast.makeText(getActivity(), "HotSpot:" + position, Toast.LENGTH_SHORT).show();
             }
         });
@@ -128,7 +130,6 @@ public class HotSpotFragment extends Fragment {
                             list.add(new hotspot(new Date().toString(), 1, "Loaded", 1, bitmap, 888, 666, true));
                             datas.add(new hotspot(new Date().toString(), 1, "Loaded", 1, bitmap, 888, 666, true));;
                         }
-
                         easyRefreshLayout.loadMoreComplete(new EasyRefreshLayout.Event() {
                             @Override
                             public void complete() {

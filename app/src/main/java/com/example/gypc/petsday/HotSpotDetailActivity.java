@@ -1,6 +1,7 @@
 package com.example.gypc.petsday;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -93,16 +94,6 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         commentAdapter.addData(comments);
         commentAreaRV.setLayoutManager(layoutManager);
         commentAreaRV.setAdapter(commentAdapter);
-//        commentAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-//                String str = commentAdapter.getItem(i).getCom_user()+"";
-//                yourCommentET.requestFocus();
-//                yourCommentET.setHint("回复 "+str);
-//                InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//                inputMethodManager.showSoftInput(yourCommentET,inputMethodManager.SHOW_IMPLICIT);
-//            }
-//        });
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(HotSpotDetailActivity.this);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -118,6 +109,14 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                 yourCommentET.setHint("你的评论");
                 InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.showSoftInput(yourCommentET,inputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+
+        userNicknameTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HotSpotDetailActivity.this,OthersHomePageActivity.class);
+                startActivity(intent);
             }
         });
     }
