@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,9 +28,14 @@ import com.alley.van.model.VanConfig;
 import com.baoyz.actionsheet.ActionSheet;
 import com.bumptech.glide.Glide;
 import com.example.gypc.petsday.base.BaseActivity;
+import com.example.gypc.petsday.factory.ImageServiceFactory;
 import com.example.gypc.petsday.helper.GifSizeFilter;
 import com.example.gypc.petsday.helper.GlideImageLoader;
+import com.example.gypc.petsday.service.ImageService;
+import com.example.gypc.petsday.utils.ImageUriConverter;
 import com.kevin.crop.UCrop;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,24 +51,43 @@ import java.util.Locale;
  */
 
 public class PublishActivity extends BaseActivity {
+    private static final int PET_CHOSEN_REQ_CODE = 1;
+    public static final int PUBLISH_SUCCESS = 2;
+
     private ImageView choosePicture;
     private ImageView choosePet;
-    private ImageView publish;
-    private ImageView back;
+    private ImageButton submitHotspotBtn;
+    private ImageButton newHotspotBackBtn;
     private ImageView hotSpotImage;
 
     private static final int REQUEST_CODE_CHOOSE = 23;
     private static final int REQUEST_CODE_CAMERA = 32;
 //    private UriAdapter mAdapter;
 
-    private Uri imgUri;
+    private TextView displayChosenPetsTextView;
+
+    private EditText publishContentEditText;
+
+    private ArrayList<Integer> chosenPetIds;
+
+    private boolean isFormUploadComplete = false;
+    private boolean isImageUploadComplete = false;
+
+    private ImageService imageService;
+
+    private int hotspotId = -1;
+    private String imageFilename = "";
+    private String publishTime;
+    private String publishContent = "";
 
     public void initWidget(){
         choosePet = (ImageView)findViewById(R.id.choosePet);
         choosePicture = (ImageView)findViewById(R.id.choosePicture);
-        publish = (ImageView)findViewById(R.id.publish);
-        back = (ImageView)findViewById(R.id.back);
+        submitHotspotBtn = (ImageButton)findViewById(R.id.submitHotspotBtn);
+        newHotspotBackBtn = (ImageButton) findViewById(R.id.newHotspotBackBtn);
         hotSpotImage = (ImageView)findViewById(R.id.displayHotspotImage);
+        displayChosenPetsTextView = (TextView)findViewById(R.id.displayChosenPetsTextView);
+        publishContentEditText = (EditText)findViewById(R.id.publishContentEditText);
         hotSpotImage.setVisibility(View.INVISIBLE);
     }
 
@@ -81,7 +107,7 @@ public class PublishActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PublishActivity.this,ChoosePetActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, PET_CHOSEN_REQ_CODE);
             }
         });
         hotSpotImage.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +116,81 @@ public class PublishActivity extends BaseActivity {
                 choosePicturesActionSheet();
             }
         });
+
+        newHotspotBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        submitHotspotBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitHotspot();
+            }
+        });
+
+        chosenPetIds = new ArrayList<>();
+        imageService = ImageServiceFactory.getService();
+    }
+
+    private void submitHotspot() {
+        publishContent = publishContentEditText.getText().toString();
+        if (publishContent.isEmpty()) {
+            msgNotify("请输入动态内容！");
+        } else if (chosenPetIds.isEmpty()) {
+            msgNotify("请选择宠物！");
+        } else if (imageFilename.isEmpty()) {
+            msgNotify("请选择照片！");
+        } else {
+            uploadData();
+        }
+    }
+
+    private void submitFinish() {
+        if (isImageUploadComplete && isFormUploadComplete) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("id", hotspotId);
+            bundle.putString("content", publishContent);
+            bundle.putString("photo", imageFilename);
+            bundle.putString("time", publishTime);
+            Intent intent = new Intent();
+            intent.putExtras(bundle);
+            setResult(PUBLISH_SUCCESS, intent);
+            finish();
+        }
+    }
+
+    private void uploadData() {
+        isImageUploadComplete = false;
+        isFormUploadComplete = false;
+        uploadImage();
+        uploadForm();
+    }
+
+    private void uploadImageFinish() {
+        isImageUploadComplete = true;
+        submitFinish();
+    }
+
+    private void uploadImage() {
+        uploadImageFinish();
+    }
+
+    private void uploadFormFinish() {
+        isFormUploadComplete = true;
+        submitFinish();
+    }
+
+    private void uploadForm() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        publishTime = dateFormat.format(new Date());
+        uploadFormFinish();
+    }
+
+    private void msgNotify(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     //==============================动态图片选择=============================================
@@ -194,6 +295,16 @@ public class PublishActivity extends BaseActivity {
             } else {//拍照之后跳转到裁剪页面
                 startCropActivity(contentUri);
             }
+        } else if (requestCode == PET_CHOSEN_REQ_CODE) {
+            Log.i("PublishActivity", "choose pet success");
+            Bundle bundle = data.getExtras();
+            chosenPetIds = bundle.getIntegerArrayList("petIds");
+            ArrayList<String> petNicknames = bundle.getStringArrayList("petNicknames");
+            String nicknamesToDisplay = "";
+            for (String nickname: petNicknames) {
+                nicknamesToDisplay +=  nickname + " ";
+            }
+            displayChosenPetsTextView.setText(nicknamesToDisplay);
         }
     }
 
@@ -222,8 +333,6 @@ public class PublishActivity extends BaseActivity {
         }
         hotSpotImage.setVisibility(View.VISIBLE);
         hotSpotImage.setImageBitmap(bitmap);
-
-        imgUri = resultUri;
     }
 
     /**
@@ -246,9 +355,9 @@ public class PublishActivity extends BaseActivity {
      */
     private void startCropActivity(Uri source) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);
-        String imageFileName = "IMG_" + dateFormat.format(new Date());
+        imageFilename = "IMG_" + dateFormat.format(new Date());
 
-        Uri uri = Uri.fromFile(new File(getCacheDir(), imageFileName.concat(".jpeg")));
+        Uri uri = ImageUriConverter.getCacheFileUriFromName(this, imageFilename);
         UCrop.of(source, uri)
                 .withAspectRatio(1, 1)
                 .withMaxResultSize(1024, 1024)
@@ -257,7 +366,9 @@ public class PublishActivity extends BaseActivity {
     }
 
     private void display(Uri uri) {
-        imgUri = uri;
+
+        imageFilename = ImageUriConverter.getFilenameFromUri(uri);
+
         hotSpotImage.setVisibility(View.VISIBLE);
         Glide.with(this)
                 .load(uri)
