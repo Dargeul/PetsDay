@@ -14,11 +14,11 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <!--返回键-->
-        <ImageView
+        <ImageButton
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/ic_back_50"
-            android:id="@+id/back"/>
+            android:id="@+id/choosePetBackBtn"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,12 +28,12 @@
             android:layout_gravity = "center"
             android:textSize="20sp"
             android:textAlignment="center"/>
-        <ImageView
+        <ImageButton
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/ic_checkmark_50"
             android:layout_marginRight="16dp"
-            android:id="@+id/finishChoose"
+            android:id="@+id/finishChoosePetBtn"
             android:layout_gravity="end"/>
     </android.support.v7.widget.Toolbar>
     <!--listview可多选,实现可参考http://blog.csdn.net/ydpzg/article/details/38787541-->
