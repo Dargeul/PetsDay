@@ -53,6 +53,10 @@ public class Pet {
         return pet_birth;
     }
 
+    public void setPet_birth(String pet_birth) {
+        this.pet_birth = pet_birth;
+    }
+
     public String getPet_photo() {
         return pet_photo;
     }
@@ -73,8 +77,16 @@ public class Pet {
         return pet_sex;
     }
 
+    public void setPet_sex(String pet_sex) {
+        this.pet_sex = pet_sex;
+    }
+
     public String getPet_type() {
         return pet_type;
+    }
+
+    public void setPet_type(String pet_type) {
+        this.pet_type = pet_type;
     }
 
     public int getPet_follow() {
