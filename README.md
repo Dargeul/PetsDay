@@ -1,12 +1,12 @@
 > phpmyadmin管理界面
-
+>
 > url:120.78.169.206/phpmyadmin
-
+>
 > username:root
-
+>
 > password:xiaomixm
-
-> database:cat?
+>
+> database:cat
 
 ### 获取列表当中的相关数据
 
@@ -88,10 +88,13 @@ curl -X GET 120.78.169.206:3000/hotspot
 curl -X GET 120.78.169.206:3000/hotspot\?hs_id=1
 ```
 
-> 登录验证(返回true/false)
+> 登录注册验证(返回查询的数组)
 
 ```
-curl -X POST --data "password=1234&&user_id=1&&status=1" 120.78.169.206:3000/user
+//登录用户名和密码验证
+curl -X POST --data "password=1234&&username=1&&status=1" 120.78.169.206:3000/user
+//注册用户名唯一
+curl -X POST --data "username=name1&&status=2" 120.78.169.206:3000/user
 ```
 
 > 查看动态详情里面的相关评论
