@@ -1,7 +1,11 @@
 > phpmyadmin管理界面
+
 > url:120.78.169.206/phpmyadmin
+
 > username:root
+
 > password:xiaomixm
+
 > database:cat?
 
 ### 获取列表当中的相关数据
@@ -115,5 +119,6 @@ curl -X GET 120.78.169.206:3000/notification\?user_id=1
 ```
 
 > 查看宠物的粉丝
-
+```
 curl -X GET 120.78.169.206:3000/pet\?pet_id=1
+```
