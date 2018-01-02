@@ -29,7 +29,7 @@ curl -X GET  120.78.169.206:3000/like
 
 ```bash
 //0表示插入
-curl -X POST --data "password=123&&user_nickname=丁同学&&status=0" 120.78.169.206:3000/user
+curl -X POST --data "password=123&&username=name&&user_nickname=丁同学&&status=0" 120.78.169.206:3000/user
 
 curl -X POST --data "pet_nickname=小美&&pet_owner=1&&pet_type=美短&&pet_weight=20&&pet_sex=female&&pet_birth=2010-01-02&&pet_photo=test.jpg" 120.78.169.206:3000/pet
 
