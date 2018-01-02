@@ -1,9 +1,11 @@
 package com.example.gypc.petsday;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -75,7 +77,7 @@ public class PetDetailActivity extends AppCompatActivity {
             }
         };
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(PetDetailActivity.this);
+        MyLayoutManager layoutManager = new MyLayoutManager(PetDetailActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         hotSpotRecyclerView.setLayoutManager(layoutManager);
         hotSpotAdapter = new HotSpotAdapter(R.layout.hotspot_item_others,datas);
@@ -126,7 +128,6 @@ public class PetDetailActivity extends AppCompatActivity {
 
 
             }
-
 
             // 下拉刷新，每次刷新都会新出现2个列表项，并且更新到动态列表中
             @Override
@@ -233,6 +234,22 @@ public class PetDetailActivity extends AppCompatActivity {
     private void getAxisPoints(){
         for (int i = 0; i < score.length; i++) {
             mPointValues.add(new PointValue(i, score[i]));
+        }
+    }
+
+    class MyLayoutManager extends LinearLayoutManager {
+        public MyLayoutManager(Context context) {
+            super(context);
+        }
+        @Override
+        public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state, int widthSpec, int heightSpec) {
+            final int width = RecyclerView.LayoutManager.chooseSize(widthSpec,
+                    getPaddingLeft() + getPaddingRight(),
+                    ViewCompat.getMinimumWidth(hotSpotRecyclerView));
+            final int height = RecyclerView.LayoutManager.chooseSize(heightSpec,
+                    getPaddingTop() + getPaddingBottom(),
+                    ViewCompat.getMinimumHeight(hotSpotRecyclerView));
+            setMeasuredDimension(width, height * datas.size());
         }
     }
 }
