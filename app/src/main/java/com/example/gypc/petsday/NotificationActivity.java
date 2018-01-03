@@ -10,10 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.example.gypc.petsday.adapter.GoodAdapter;
 import com.example.gypc.petsday.adapter.NotificationAdapter;
-import com.example.gypc.petsday.model.Notification;
-import com.example.gypc.petsday.model.Notification;
+import com.example.gypc.petsday.model.UserNotification;
 import com.example.gypc.petsday.utils.AppContext;
 
 import java.util.ArrayList;
@@ -28,9 +26,9 @@ public class NotificationActivity extends AppCompatActivity {
     private RecyclerView notificationsReadedRV;
     private NotificationAdapter notificationAdapter;
     private NotificationAdapter notificationReadedAdapter;
-    private List<Notification> notifications;//通知列表
-    private List<Notification> notificationsNotReaded;//未读列表
-    private List<Notification> notificationsReaded;//已读列表
+    private List<UserNotification> notifications;//通知列表
+    private List<UserNotification> notificationsNotReaded;//未读列表
+    private List<UserNotification> notificationsReaded;//已读列表
 
     private AppContext app;
 
@@ -48,21 +46,21 @@ public class NotificationActivity extends AppCompatActivity {
         //获取通知列表，按照notice_status分为已读和未读两个通知列表。
         notifications = app.getNotifications();
 
-        notificationsNotReaded = new ArrayList<Notification>();
-        notificationsNotReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsNotReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsNotReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsNotReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsNotReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsNotReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsNotReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsNotReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsReaded = new ArrayList<Notification>();
-        notificationsReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
-        notificationsReaded.add(new Notification(1,1,1,1,1,"Amy","2017-12-28","Nothing"));
+        notificationsNotReaded = new ArrayList<UserNotification>();
+        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsReaded = new ArrayList<UserNotification>();
+        notificationsReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
+        notificationsReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
 
         MyLayoutManager layoutManager = new MyLayoutManager(NotificationActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
