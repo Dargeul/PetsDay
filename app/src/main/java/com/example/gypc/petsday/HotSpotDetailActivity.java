@@ -3,6 +3,7 @@ package com.example.gypc.petsday;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,18 +31,17 @@ import java.util.List;
 public class HotSpotDetailActivity extends AppCompatActivity {
     private List<Comment> comments = new ArrayList<Comment>(){
         {
-            add(new Comment(1,1,"Amy","2017-12-28","Nothing"));
-            add(new Comment(2,2,"Cmy","2017-12-28","EMMMMMM"));
-            add(new Comment(3,3,"Bmy","2017-12-28","EEEEEEE"));
-            add(new Comment(2,2,"Cmy","2017-12-28","EMMMMMM"));
-            add(new Comment(3,3,"Bmy","2017-12-28","EEEEEEE"));
-            add(new Comment(2,2,"Cmy","2017-12-28","EMMMMMM"));
-            add(new Comment(3,3,"Bmy","2017-12-28","EEEEEEE"));
-            add(new Comment(2,2,"Cmy","2017-12-28","EMMMMMM"));
-            add(new Comment(3,3,"Bmy","2017-12-28","EEEEEEE"));
-            add(new Comment(2,2,"Cmy","2017-12-28","EMMMMMM"));
-            add(new Comment(3,3,"Bmy","2017-12-28","EEEEEEE"));
-
+            add(new Comment(1,1,1,"2017-12-28","Nothing"));
+            add(new Comment(2,2,1,"2017-12-28","EMMMMMM"));
+            add(new Comment(3,3,3,"2017-12-28","EEEEEEE"));
+            add(new Comment(2,2,2,"2017-12-28","EMMMMMM"));
+            add(new Comment(3,3,3,"2017-12-28","EEEEEEE"));
+            add(new Comment(2,2,2,"2017-12-28","EMMMMMM"));
+            add(new Comment(3,3,3,"2017-12-28","EEEEEEE"));
+            add(new Comment(2,2,2,"2017-12-28","EMMMMMM"));
+            add(new Comment(3,3,3,"2017-12-28","EEEEEEE"));
+            add(new Comment(2,2,2,"2017-12-28","EMMMMMM"));
+            add(new Comment(3,3,3,"2017-12-28","EEEEEEE"));
         }
     };
 
@@ -95,7 +95,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         commentAreaRV.setLayoutManager(layoutManager);
         commentAreaRV.setAdapter(commentAdapter);
 
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(HotSpotDetailActivity.this);
+        MyLayoutManager layoutManager1 = new MyLayoutManager(HotSpotDetailActivity.this);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
         hsDetailPetAdapter = new HSDetailPetAdapter(R.layout.hotspot_detail_pet);
         hsDetailPetAdapter.addData(pets_choose);
@@ -121,4 +121,19 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         });
     }
 
+    class MyLayoutManager extends LinearLayoutManager {
+        public MyLayoutManager(Context context) {
+            super(context);
+        }
+        @Override
+        public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state, int widthSpec, int heightSpec) {
+            final int width = RecyclerView.LayoutManager.chooseSize(widthSpec,
+                    getPaddingLeft() + getPaddingRight(),
+                    ViewCompat.getMinimumWidth(commentAreaRV));
+            final int height = RecyclerView.LayoutManager.chooseSize(heightSpec,
+                    getPaddingTop() + getPaddingBottom(),
+                    ViewCompat.getMinimumHeight(commentAreaRV));
+            setMeasuredDimension(width, height * 3);
+        }
+    }
 }
