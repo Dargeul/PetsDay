@@ -1,8 +1,6 @@
 package com.example.gypc.petsday;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -19,12 +17,16 @@ import android.widget.Toast;
 import com.ajguan.library.EasyRefreshLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.HotSpotAdapter;
-import com.example.gypc.petsday.model.hotspot;
+import com.example.gypc.petsday.factory.ObjectServiceFactory;
+import com.example.gypc.petsday.model.Hotspot;
+import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import rx.Observable;
 
 /**
  * Created by gypc on 2017/12/7.
@@ -37,11 +39,13 @@ public class HotSpotFragment extends Fragment {
     private HotSpotAdapter hotSpotAdapter;
     private EasyRefreshLayout easyRefreshLayout;
 
-    private List<hotspot> datas;
+    private List<Hotspot> datas;
 
     private AppContext app;
 
     private static HotSpotFragment instance;
+
+    private ObjectService objectService;
 
     @Nullable
     @Override
@@ -61,6 +65,7 @@ public class HotSpotFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         app = AppContext.getInstance();
+        objectService = ObjectServiceFactory.getService();
 
         initWidget();
 
@@ -87,10 +92,10 @@ public class HotSpotFragment extends Fragment {
         //final Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_1);
         final String bmp = "keji";
         datas = app.getDatas();
-        datas.add(new hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888, 666, true));
-        datas.add(new hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888, 666, true));
-        datas.add(new hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888, 666, true));
-        datas.add(new hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888, 666, true));
+        datas.add(new Hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888));
+        datas.add(new Hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888));
+        datas.add(new Hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888));
+        datas.add(new Hotspot(new Date().toString(), 1, "I like it", 1, bmp, 888));
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -119,7 +124,7 @@ public class HotSpotFragment extends Fragment {
         easyRefreshLayout.addEasyEvent(new EasyRefreshLayout.EasyEvent() {
             @Override
             public void onLoadMore() {
-                final List<hotspot> list = new ArrayList<>();
+                final List<Hotspot> list = new ArrayList<>();
                 //final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_2);
                 final String bitmap = "keji";
                 new Handler().postDelayed(new Runnable() {
@@ -127,8 +132,8 @@ public class HotSpotFragment extends Fragment {
                     public void run() {
                         //添加2个列表项到动态的数据列表中
                         for (int j = 0; j < 2; j++) {
-                            list.add(new hotspot(new Date().toString(), 1, "Loaded", 1, bitmap, 888, 666, true));
-                            datas.add(new hotspot(new Date().toString(), 1, "Loaded", 1, bitmap, 888, 666, true));;
+                            list.add(new Hotspot(new Date().toString(), 1, "Loaded", 1, bitmap, 888));
+                            datas.add(new Hotspot(new Date().toString(), 1, "Loaded", 1, bitmap, 888));
                         }
                         easyRefreshLayout.loadMoreComplete(new EasyRefreshLayout.Event() {
                             @Override
@@ -155,9 +160,9 @@ public class HotSpotFragment extends Fragment {
                         //添加2个列表项到动态的数据列表中
                         //final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_3);
                         final String bitmap = "keji";
-                        List<hotspot> list = new ArrayList<>();
+                        List<Hotspot> list = new ArrayList<>();
                         for (int i = 0; i < 2; i++) {
-                            list.add(new hotspot(new Date().toString(), 1, "Refresh", 1, bitmap, 888, 666, true));
+                            list.add(new Hotspot(new Date().toString(), 1, "Refresh", 1, bitmap, 888));
                         }
                         list.addAll(datas);
                         datas.removeAll(datas);
