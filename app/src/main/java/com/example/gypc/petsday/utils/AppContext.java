@@ -5,9 +5,9 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.gypc.petsday.model.Good;
-import com.example.gypc.petsday.model.Notification;
 import com.example.gypc.petsday.model.Hotspot;
 import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.model.UserNotification;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class AppContext extends Application {
     private List<Pet> followpets;
     private List<Hotspot> datas;
 
-    private List<Notification> notifications;
+    private List<UserNotification> notifications;
     private List<Good> goods;
 
     private static OkHttpClient httpClient;
@@ -47,7 +47,7 @@ public class AppContext extends Application {
         mypets = new ArrayList<Pet>();
         followpets = new ArrayList<Pet>();
         datas = new ArrayList<Hotspot>();
-        notifications = new ArrayList<Notification>();
+        notifications = new ArrayList<UserNotification>();
         goods = new ArrayList<Good>();
 
         httpClient = new OkHttpClient.Builder()
@@ -126,7 +126,7 @@ public class AppContext extends Application {
         return datas;
     }
 
-    public List<Notification> getNotifications(){
+    public List<UserNotification> getNotifications(){
         return  notifications;
     }
 
