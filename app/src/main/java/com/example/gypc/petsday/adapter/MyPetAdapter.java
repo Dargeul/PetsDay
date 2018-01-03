@@ -49,7 +49,6 @@ public class MyPetAdapter extends RecyclerView.Adapter<MyPetAdapter.MyPetViewHol
     public void onBindViewHolder(final MyPetViewHolder holder, int position) {
         holder.pet_nickname.setText(pets.get(position).getPet_nickname());
         holder.pet_type.setText(pets.get(position).getPet_type());
-        holder.pet_follow.setText("" + pets.get(position).getPet_follow());
 
         Uri localImageUri;
         String remoteImagePath;
