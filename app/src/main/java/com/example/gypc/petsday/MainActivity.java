@@ -21,6 +21,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static int userId;
+
+    public static int getUserId() {
+        return userId;
+    }
+
     public static final int
             LOGIN_REQ_CODE = 1,
             ADD_PET_REQ_CODE = 2,
@@ -98,8 +104,10 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isLogin() {
         AppContext app = AppContext.getInstance();
-        String name = app.getLoginUsername();
-        return name != null;
+        userId = (int) app.getLoginUserInfo().get("user_id");
+        if (userId == AppContext.NOT_LOGIN)
+            return false;
+        return true;
     }
 
     // 控件初始化
@@ -146,7 +154,9 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (reqCode == NEW_HOTSPOT_REQ_CODE) {
             if (resCode == PublishActivity.PUBLISH_SUCCESS) {
-                HotSpotFragment.getInstance().addHotspot(dataIntent.getExtras());
+                // 考虑在添加新的动态之后更新动态列表
+
+//                HotSpotFragment.getInstance().addHotspot(dataIntent.getExtras());
             }
         }
     }
