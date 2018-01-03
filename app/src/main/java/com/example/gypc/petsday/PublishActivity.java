@@ -29,10 +29,14 @@ import com.baoyz.actionsheet.ActionSheet;
 import com.bumptech.glide.Glide;
 import com.example.gypc.petsday.base.BaseActivity;
 import com.example.gypc.petsday.factory.ImageServiceFactory;
+import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.helper.GifSizeFilter;
 import com.example.gypc.petsday.helper.GlideImageLoader;
 import com.example.gypc.petsday.service.ImageService;
+import com.example.gypc.petsday.service.ObjectService;
+import com.example.gypc.petsday.utils.ImageMultipartGenerator;
 import com.example.gypc.petsday.utils.ImageUriConverter;
+import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
 import com.kevin.crop.UCrop;
 
 import org.w3c.dom.Text;
@@ -43,8 +47,15 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.ResponseBody;
+import retrofit2.adapter.rxjava.Result;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by gypc on 2017/12/11.
@@ -72,13 +83,20 @@ public class PublishActivity extends BaseActivity {
 
     private boolean isFormUploadComplete = false;
     private boolean isImageUploadComplete = false;
+    private boolean isFormUploadOk = false;
+    private boolean isImageUploadOk = false;
 
     private ImageService imageService;
+    private ObjectService objectService;
 
     private int hotspotId = -1;
     private String imageFilename = "";
     private String publishTime;
     private String publishContent = "";
+
+    private String imageUploadResultString;
+
+    private int failUploadImageTimes = 0;
 
     public void initWidget(){
         choosePet = (ImageView)findViewById(R.id.choosePet);
@@ -133,6 +151,7 @@ public class PublishActivity extends BaseActivity {
 
         chosenPetIds = new ArrayList<>();
         imageService = ImageServiceFactory.getService();
+        objectService = ObjectServiceFactory.getService();
     }
 
     private void submitHotspot() {
@@ -148,21 +167,27 @@ public class PublishActivity extends BaseActivity {
         }
     }
 
+    private void navigateToPrePage() {
+        setResult(PUBLISH_SUCCESS);
+        finish();
+    }
+
     private void submitFinish() {
         if (isImageUploadComplete && isFormUploadComplete) {
-            Bundle bundle = new Bundle();
-            bundle.putInt("id", hotspotId);
-            bundle.putString("content", publishContent);
-            bundle.putString("photo", imageFilename);
-            bundle.putString("time", publishTime);
-            Intent intent = new Intent();
-            intent.putExtras(bundle);
-            setResult(PUBLISH_SUCCESS, intent);
-            finish();
+            if (!isFormUploadOk) {
+                msgNotify("信息上传失败，请重试！");
+                submitHotspotBtn.setEnabled(true);
+            } else if (!isImageUploadOk) {
+                msgNotify("头像上传失败，请重试！");
+                submitHotspotBtn.setEnabled(true);
+            } else {
+                navigateToPrePage();
+            }
         }
     }
 
     private void uploadData() {
+        submitHotspotBtn.setEnabled(false);
         isImageUploadComplete = false;
         isFormUploadComplete = false;
         uploadImage();
@@ -170,12 +195,54 @@ public class PublishActivity extends BaseActivity {
     }
 
     private void uploadImageFinish() {
-        isImageUploadComplete = true;
-        submitFinish();
+        if (isImageUploadOk) {
+            isImageUploadComplete = true;
+            submitFinish();
+        } else {
+            if (failUploadImageTimes == 3) {
+                isImageUploadComplete = true;
+                submitFinish();
+            } else {
+                failUploadImageTimes++;
+                uploadImage();
+            }
+        }
     }
 
     private void uploadImage() {
-        uploadImageFinish();
+        if (isImageUploadOk)
+            return;
+        imageService
+                .uploadAvatar(
+                        ImageMultipartGenerator.getParts(
+                                ImageUriConverter.getCacheFileUriFromName(this, imageFilename).getPath()
+                        )
+                )
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result<String>>() {
+                    @Override
+                    public void onCompleted() {
+                        uploadImageFinish();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("PublishActivity", "uploadImage", e);
+                    }
+
+                    @Override
+                    public void onNext(Result<String> stringResult) {
+                        if (stringResult.isError()) {
+                            Log.e("PublishActivity", "uploadImage: onNext: ", stringResult.error());
+                        }
+                        if (stringResult.response() == null)
+                            return;
+                        imageUploadResultString = stringResult.response().body();
+                        Log.i("PublishActivity", "uploadImage: " + imageUploadResultString);
+                        isImageUploadOk = imageUploadResultString.equals(ImageServiceFactory.SUCCESS);
+                    }
+                });
     }
 
     private void uploadFormFinish() {
@@ -186,7 +253,41 @@ public class PublishActivity extends BaseActivity {
     private void uploadForm() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         publishTime = dateFormat.format(new Date());
-        uploadFormFinish();
+
+        HashMap<String, Object> dataMap = new HashMap<>();
+        dataMap.put("hs_time", publishTime);
+        dataMap.put("hs_user", MainActivity.getUserId());
+        dataMap.put("hs_content", publishContent);
+        dataMap.put("hs_photo", imageFilename);
+
+        objectService
+                .insertHotspot(
+                        JSONRequestBodyGenerator.getBody(dataMap)
+                )
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result<Integer>>() {
+                    @Override
+                    public void onCompleted() {
+                        uploadFormFinish();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("PublishActivity", "uploadForm", e);
+                    }
+
+                    @Override
+                    public void onNext(Result<Integer> integerResult) {
+                        if (integerResult.isError()) {
+                            Log.e("PublishActivity", "uploadForm", integerResult.error());
+                        }
+                        if (integerResult.response() == null)
+                            return;
+                        hotspotId = integerResult.response().body();
+                        isFormUploadOk = true;
+                    }
+                });
     }
 
     private void msgNotify(String msg) {
