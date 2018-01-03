@@ -8,26 +8,21 @@ import java.util.Date;
  * Created by StellaSong on 2017/12/21.
  */
 
-public class hotspot {
+public class Hotspot {
     private String hs_time;
     private int hs_user;
     private String hs_content;
     private int hs_id;
     private String hs_photo;
-    private int hs_comment;
-    private int hs_like;
-    private boolean hs_islike;
+    private int count;  // 表示点赞数
 
-    public hotspot(String hs_time, int hs_user, String hs_content, int hs_id, String hs_photo,
-                   int hs_comment, int hs_like, boolean hs_islike){
+    public Hotspot(String hs_time, int hs_user, String hs_content, int hs_id, String hs_photo, int count){
         this.hs_time = hs_time;
         this.hs_user = hs_user;
         this.hs_content = hs_content;
         this.hs_id = hs_id;
         this.hs_photo = hs_photo;
-        this.hs_comment = hs_comment;
-        this.hs_like = hs_like;
-        this.hs_islike = hs_islike;
+        this.count = count;
     }
 
     public String getHs_time() {
@@ -50,15 +45,8 @@ public class hotspot {
         return hs_photo;
     }
 
-    public int getHs_comment() {
-        return hs_comment;
+    public int getCount() {
+        return count;
     }
 
-    public int getHs_like() {
-        return hs_like;
-    }
-
-    public boolean getHs_islike() {
-        return hs_islike;
-    }
 }
