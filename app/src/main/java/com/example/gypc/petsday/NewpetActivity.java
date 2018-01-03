@@ -32,6 +32,7 @@ import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.helper.GifSizeFilter;
 import com.example.gypc.petsday.helper.GlideImageLoader;
 import com.example.gypc.petsday.helper.XCRoundImageView;
+import com.example.gypc.petsday.model.RemoteDBOperationResponse;
 import com.example.gypc.petsday.service.ImageService;
 import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.ImageMultipartGenerator;
@@ -324,7 +325,7 @@ public class NewpetActivity extends BaseActivity {
                     .updatePet(JSONRequestBodyGenerator.getBody(petData))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<ResponseBody>() {
+                    .subscribe(new Subscriber<RemoteDBOperationResponse>() {
                         @Override
                         public void onCompleted() {
                             uploadFormFinish();
@@ -336,17 +337,8 @@ public class NewpetActivity extends BaseActivity {
                         }
 
                         @Override
-                        public void onNext(ResponseBody responseBody) {
-                            try {
-                                String res = responseBody.string();
-                                Log.i("NewpetActivity", "update response json:\n" + res);
-                                JSONObject jsonObject = new JSONObject(res);
-                                int affectedRows = jsonObject.getInt("affectedRows");
-                                if (affectedRows == 1)
-                                    isFormUploadOK = true;
-                            } catch (Exception e) {
-                                Log.e("NewpetActivity", "updatePet", e);
-                            }
+                        public void onNext(RemoteDBOperationResponse response) {
+                            isFormUploadOK = response.isSuccess();
                         }
                     });
         }
