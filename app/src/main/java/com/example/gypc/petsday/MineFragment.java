@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.gypc.petsday.adapter.FollowPetAdapter;
@@ -32,6 +33,8 @@ public class MineFragment extends Fragment {
     private LinearLayout addpetLL;
     private RecyclerView mypetRV;
     private RecyclerView followpetRV;
+
+    private TextView mineNameTextView;
 
     private List<Pet> mypets;
     private List<Pet> followpets;
@@ -55,6 +58,9 @@ public class MineFragment extends Fragment {
         addpetLL = (LinearLayout)view.findViewById(R.id.addpetLL);
         mypetRV = (RecyclerView)view.findViewById(R.id.mypetRV);
         followpetRV = (RecyclerView)view.findViewById(R.id.followpetRV);
+        mineNameTextView = (TextView)view.findViewById(R.id.mineNameTextView);
+
+        mineNameTextView.setText(AppContext.getInstance().getLoginUserInfo().get("user_nickname").toString());
 
         //列表初始化
 
@@ -149,7 +155,7 @@ public class MineFragment extends Fragment {
     }
 
     private int getOwnerId() {
-        return 1;
+        return MainActivity.getUserId();
     }
 
     private static MineFragment instance;
