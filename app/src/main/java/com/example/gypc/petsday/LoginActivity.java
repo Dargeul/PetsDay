@@ -2,12 +2,26 @@ package com.example.gypc.petsday;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.gypc.petsday.factory.ObjectServiceFactory;
+import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
+import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+import okhttp3.ResponseBody;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by XUJIJUN on 2017/12/18.
@@ -21,9 +35,17 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final int LOGIN_OK = 5;
 
-    private static final String SUBMIT_OK = "ok";
-    private static final String SUBMIT_FAIL_USERNAME = "name";
-    private static final String SUBMIT_FAIL_PWD = "pwd";
+    private ObjectService objectService;
+
+    private int userId;
+    private String username;
+    private String password;
+    private String nickname;
+
+    private static final int SUBMIT_ERROR = -1;
+    private static final int SUBMIT_INFO_WRONG = 0;
+    private static final int SUBMIT_OK = 1;
+    private int submitResponseStatusCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login);
 
         initControls();
+        objectService = ObjectServiceFactory.getService();
     }
 
     private void initControls() {
@@ -50,24 +73,30 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    private String submitUserInfo(String name, String pwd) {
-        // test
-        if (!name.equals("hhhh"))
-            return SUBMIT_FAIL_USERNAME;
-        if (!pwd.equals("hhhh"))
-            return SUBMIT_FAIL_PWD;
-        return SUBMIT_OK;
-    }
 
-    private void loginSuccess(String username) {
-        AppContext.getInstance().setLoginUsername(username);
-        setResult(LoginActivity.LOGIN_OK);
-        finish();
+
+    private void loginSuccess() {
+        if (submitResponseStatusCode == SUBMIT_OK) {
+            HashMap<String, String> infoMap = new HashMap<>();
+            infoMap.put("user_id", String.valueOf(userId));
+            infoMap.put("username", username);
+            infoMap.put("user_nickname", nickname);
+            infoMap.put("password", password);
+            AppContext.getInstance().setLoginUserInfo(infoMap);
+            setResult(LoginActivity.LOGIN_OK);
+            finish();
+        } else if (submitResponseStatusCode == SUBMIT_ERROR) {
+            confirmBtn.setEnabled(true);
+            msgNotify("提交错误，请重试！");
+        } else if (submitResponseStatusCode == SUBMIT_INFO_WRONG) {
+            confirmBtn.setEnabled(true);
+            msgNotify("用户名或密码错误！");
+        }
     }
 
     private void confirmLogin() {
-        String username = usernameEditText.getText().toString();
-        String password = pwdEditText.getText().toString();
+        username = usernameEditText.getText().toString();
+        password = pwdEditText.getText().toString();
 
         if (username.isEmpty()) {
             msgNotify("用户名不得为空！");
@@ -79,14 +108,50 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        String submitStatus = submitUserInfo(username, password);
+        submitInfo();
+    }
 
-        if (submitStatus.equals(SUBMIT_OK)) {
-            loginSuccess(username);
-        } else if (submitStatus.equals(SUBMIT_FAIL_USERNAME)) {
-            msgNotify("用户名不存在！");
-        } else if (submitStatus.equals(SUBMIT_FAIL_PWD)) {
-            msgNotify("密码不正确！");
-        }
+    private void submitInfo() {
+        confirmBtn.setEnabled(false);
+        HashMap<String, Object> dataMap = new HashMap<>();
+        dataMap.put("username", username);
+        dataMap.put("password", password);
+        dataMap.put("status", ObjectServiceFactory.LOGIN_STATUS_CODE);
+
+        objectService
+                .userLogin(JSONRequestBodyGenerator.getBody(dataMap))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ResponseBody>() {
+                    @Override
+                    public void onCompleted() {
+                        loginSuccess();
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        submitResponseStatusCode = SUBMIT_ERROR;
+                        Log.e("LoginActivity", "submitInfo", throwable);
+                    }
+
+                    @Override
+                    public void onNext(ResponseBody responseBody) {
+                        try {
+                            String resData = responseBody.string();
+                            JSONArray jsonArray = new JSONArray(resData);
+                            if (jsonArray.length() == 0) {
+                                submitResponseStatusCode = SUBMIT_INFO_WRONG;
+                                return;
+                            }
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+                            userId = jsonObject.getInt("user_id");
+                            nickname = jsonObject.getString("user_nickname");
+                            submitResponseStatusCode = SUBMIT_OK;
+                        } catch (Exception e) {
+                            submitResponseStatusCode = SUBMIT_ERROR;
+                            Log.e("LoginActivity", "submitInfo", e);
+                        }
+                    }
+                });
     }
 }
