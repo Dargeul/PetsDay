@@ -17,10 +17,10 @@ public class Pet {
     private String pet_sex;
     private String pet_birth;
     private String pet_photo;
-    private int pet_follow; // 需要SELECT数据库
+    private int count; // 表示粉丝数
 
     public Pet(int pet_id, String pet_nickname, int pet_owner, String pet_type, int pet_weight,
-               String pet_sex, String pet_birth, String pet_photo, int pet_follow) {
+               String pet_sex, String pet_birth, String pet_photo, int count) {
         this.pet_id = pet_id;
         this.pet_nickname = pet_nickname;
         this.pet_owner = pet_owner;
@@ -29,7 +29,7 @@ public class Pet {
         this.pet_sex = pet_sex;
         this.pet_birth = pet_birth;
         this.pet_photo = pet_photo;
-        this.pet_follow = pet_follow;
+        this.count = count;
     }
 
 
@@ -89,11 +89,11 @@ public class Pet {
         this.pet_type = pet_type;
     }
 
-    public int getPet_follow() {
-        return pet_follow;
+    public int getCount() {
+        return count;
     }
 
-    public void setPet_follow(int follow) {
-        this.pet_follow = follow;
+    public void setCount(int count) {
+        this.count = count;
     }
 }
