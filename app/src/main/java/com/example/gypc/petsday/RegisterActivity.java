@@ -3,10 +3,26 @@ package com.example.gypc.petsday;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.gypc.petsday.factory.ObjectServiceFactory;
+import com.example.gypc.petsday.service.ObjectService;
+import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+import okhttp3.ResponseBody;
+import retrofit2.adapter.rxjava.Result;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by XUJIJUN on 2017/12/18.
@@ -22,8 +38,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     public static final int REGISTER_OK = 6;
 
-    private static final String SUBMIT_OK = "ok";
-    private static final String SUBMIT_FAIL_USERNAME = "name";
+    private boolean userExists = true;
+    private boolean isRegisterOk = false;
+
+    private String username;
+    private String nickname;
+    private String password;
+
+    private ObjectService objectService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,28 +53,108 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.register);
 
         initControls();
+        objectService = ObjectServiceFactory.getService();
     }
 
     private void msgNotify(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    private String submitRegister(String name, String nickname, String pwd) {
-        // test
-        if (name.equals("hhhh"))
-            return SUBMIT_FAIL_USERNAME;
-        return SUBMIT_OK;
+    private void submitInfo() {
+        if (userExists) {
+            confirmBtn.setEnabled(true);
+            msgNotify("用户名已存在！");
+            return;
+        }
+        isRegisterOk = false;
+        HashMap<String, Object> dataMap = new HashMap<>();
+        dataMap.put("username", username);
+        dataMap.put("user_nickname", nickname);
+        dataMap.put("password", password);
+        dataMap.put("status", ObjectServiceFactory.REGISTER_STATUS_CODE);
+        objectService
+                .userRegister(JSONRequestBodyGenerator.getBody(dataMap))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result<Integer>>() {
+                    @Override
+                    public void onCompleted() {
+                        registerOk();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("RegisterActivity", "submitInfo", e);
+                    }
+
+                    @Override
+                    public void onNext(Result<Integer> integerResult) {
+                        if (integerResult.isError()) {
+                            Log.e("RegisterActivity", "submitInfo", integerResult.error());
+                        }
+                        if (integerResult.response() == null)
+                            return;
+                        if (integerResult.response().body() >= 0)
+                            isRegisterOk = true;
+                    }
+                });
+    }
+
+    private void validateUsernameExistence() {
+        userExists = true;
+        HashMap<String, Object> dataMap = new HashMap<>();
+        dataMap.put("username", username);
+        dataMap.put("status", ObjectServiceFactory.USERNAME_VALIDATE_STATUS_CODE);
+        objectService
+                .queryUsername(JSONRequestBodyGenerator.getBody(dataMap))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ResponseBody>() {
+                    @Override
+                    public void onCompleted() {
+                        submitInfo();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("RegisterActivity", "validateUsernameExistence", e);
+                    }
+
+                    @Override
+                    public void onNext(ResponseBody responseBody) {
+                        try {
+                            String resData = responseBody.string();
+                            JSONArray jsonArray = new JSONArray(resData);
+                            if (jsonArray.length() == 0) {
+                                userExists = false;
+                            }
+                        } catch (Exception e) {
+                            Log.e("RegisterActivity", "validateUsernameExistence", e);
+                        }
+                    }
+                });
+    }
+
+    private void submitRegister() {
+        confirmBtn.setEnabled(false);
+        validateUsernameExistence();
     }
 
     private void registerOk() {
+        if (!isRegisterOk) {
+            confirmBtn.setEnabled(true);
+            msgNotify("注册失败，请重试！");
+            return;
+        }
+        msgNotify("注册成功！");
         setResult(RegisterActivity.REGISTER_OK);
         finish();
     }
 
     private void confirmRegister() {
-        String username = usernameEditText.getText().toString();
-        String nickname = nicknameEditText.getText().toString();
-        String password = pwdEditText.getText().toString();
+        username = usernameEditText.getText().toString();
+        nickname = nicknameEditText.getText().toString();
+        password = pwdEditText.getText().toString();
         String confirmPassword = confirmPwdEditText.getText().toString();
 
         if (username.isEmpty()) {
@@ -80,12 +182,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        String submitStatus = submitRegister(username, nickname, password);
-        if (submitStatus.equals(SUBMIT_OK)) {
-            registerOk();
-        } else if (submitStatus.equals(SUBMIT_FAIL_USERNAME)) {
-            msgNotify("用户名已存在！");
-        }
+        submitRegister();
     }
 
     private void initControls() {
