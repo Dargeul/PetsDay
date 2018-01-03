@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,8 +30,13 @@ import java.util.List;
  */
 
 public class MineFragment extends Fragment {
-    private ImageView editIV;
+    private LinearLayout renameLL;
+    private LinearLayout newNameLL;
+    private EditText newNameET;
+    private ImageView newNameIV;
     private LinearLayout addpetLL;
+    private TextView mypetTV;
+    private TextView followpetTV;
     private RecyclerView mypetRV;
     private RecyclerView followpetRV;
 
@@ -54,8 +60,13 @@ public class MineFragment extends Fragment {
         // 绑定xml
         mypets = app.getMypets();
         followpets = app.getFollowpets();
-        editIV = (ImageView)view.findViewById(R.id.editIV);
+        renameLL = (LinearLayout)view.findViewById(R.id.renameLL);
+        newNameET = (EditText)view.findViewById(R.id.newNameET);
+        newNameLL = (LinearLayout)view.findViewById(R.id.newNameLL);
+        newNameIV = (ImageView)view.findViewById(R.id.newNameIV);
         addpetLL = (LinearLayout)view.findViewById(R.id.addpetLL);
+        mypetTV = (TextView)view.findViewById(R.id.mypetTV);
+        followpetTV = (TextView)view.findViewById(R.id.followpetTV);
         mypetRV = (RecyclerView)view.findViewById(R.id.mypetRV);
         followpetRV = (RecyclerView)view.findViewById(R.id.followpetRV);
         mineNameTextView = (TextView)view.findViewById(R.id.mineNameTextView);
@@ -63,12 +74,11 @@ public class MineFragment extends Fragment {
         mineNameTextView.setText(AppContext.getInstance().getLoginUserInfo().get("user_nickname").toString());
 
         //列表初始化
-
         final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
-//        mypets.add(new Pet(1, "Toto", 1, "Cat",
-//                12, "boy", "2017-12-12", bitmap, 666));
-//        mypets.add(new Pet(1, "Toto", 1, "Cat",
-//                12, "boy", "2017-12-12", bitmap, 666));
+        mypets.add(new Pet(1, "Toto", 1, "Cat",
+              12, "boy", "2017-12-12", bitmap, 666));
+        mypets.add(new Pet(1, "Toto", 1, "Cat",
+               12, "boy", "2017-12-12", bitmap, 666));
         followpets.add(new Pet(1, "Toto", 1, "Cat",
                 12, "boy", "2017-12-12", bitmap, 666));
         followpets.add(new Pet(1, "Toto", 1, "Cat",
@@ -146,6 +156,43 @@ public class MineFragment extends Fragment {
                 Toast.makeText(context, "followPet列表第" + position + "项删除按钮被点击了", Toast.LENGTH_LONG).show();
                 followpets.remove(position);
                 followPetAdapter.notifyDataSetChanged();
+            }
+        });
+
+        //点击修改昵称
+        renameLL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newNameET.setText(mineNameTextView.getText());
+                newNameLL.setVisibility(View.VISIBLE);
+                mineNameTextView.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        //点击确定完成修改
+        newNameIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Todo:与服务器交互修改用户昵称
+                mineNameTextView.setText(newNameET.getText().toString());
+                newNameLL.setVisibility(View.INVISIBLE);
+                mineNameTextView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        mypetTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mypetRV.setVisibility(View.VISIBLE);
+                followpetRV.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        followpetTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mypetRV.setVisibility(View.INVISIBLE);
+                followpetRV.setVisibility(View.VISIBLE);
             }
         });
 
