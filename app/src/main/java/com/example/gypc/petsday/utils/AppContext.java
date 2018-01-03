@@ -4,10 +4,11 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.gypc.petsday.model.Hotspot;
 import com.example.gypc.petsday.model.Pet;
-import com.example.gypc.petsday.model.hotspot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -19,15 +20,18 @@ import okhttp3.OkHttpClient;
 
 public class AppContext extends Application {
 
+    public static final int NOT_LOGIN = -1;
+
     private static AppContext instance;
     private static LoginController loginController;
-    private String username;
 
     private List<Pet> mypets;
     private List<Pet> followpets;
-    private List<hotspot> datas;
+    private List<Hotspot> datas;
 
     private static OkHttpClient httpClient;
+
+    private HashMap<String, Object> userInfoMap;
 
     @Override
     public void onCreate() {
@@ -37,7 +41,7 @@ public class AppContext extends Application {
 
         mypets = new ArrayList<Pet>();
         followpets = new ArrayList<Pet>();
-        datas = new ArrayList<hotspot>();
+        datas = new ArrayList<Hotspot>();
         httpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -53,37 +57,46 @@ public class AppContext extends Application {
         return httpClient;
     }
 
-    public String getLoginUsername() {
-        if (username == null)
-            username = loginController.getUsername();
-        return username;
+    public HashMap<String, Object> getLoginUserInfo() {
+        if (userInfoMap == null)
+            userInfoMap = loginController.getUserInfo();
+        return userInfoMap;
     }
 
-    public boolean setLoginUsername(String username) {
-        if (loginController.setUsername(username)) {
-            this.username = username;
-            return true;
-        }
-        return false;
+    public boolean setLoginUserInfo(HashMap<String, String> infoMap) {
+        userInfoMap.put("user_id", Integer.parseInt(infoMap.get("user_id")));
+        userInfoMap.put("username", infoMap.get("username"));
+        userInfoMap.put("user_nickname", infoMap.get("user_nickname"));
+        userInfoMap.put("password", infoMap.get("password"));
+        return loginController.setUserInfo(infoMap);
     }
 
     private class LoginController {
         private static final String LOGIN_STATUS_PREF = "loginStatusPreference";
 
-        public String getUsername() {
+        public HashMap<String, Object> getUserInfo() {
             try {
-                String name = getSharedPreferences(LOGIN_STATUS_PREF, MODE_PRIVATE).getString("username", null);
-                return name;
+                HashMap<String, Object> resData = new HashMap<>();
+                SharedPreferences localData = getSharedPreferences(LOGIN_STATUS_PREF, MODE_PRIVATE);
+                resData.put("user_id", localData.getInt("user_id", NOT_LOGIN));
+                resData.put("username", localData.getString("username", null));
+                resData.put("user_nickname", localData.getString("user_nickname", null));
+                resData.put("password", localData.getString("password", null));
+
+                return resData;
             } catch (Exception e) {
-                Log.e("LoginController", "getUsername", e);
+                Log.e("LoginController", "getUserId", e);
                 return null;
             }
         }
 
-        public boolean setUsername(String username) {
+        public boolean setUserInfo(HashMap<String, String> infoMap) {
             try {
                 SharedPreferences.Editor editor = getSharedPreferences(LOGIN_STATUS_PREF, MODE_PRIVATE).edit();
-                editor.putString("username", username);
+                editor.putInt("user_id", Integer.valueOf(infoMap.get("user_id")));
+                editor.putString("username", infoMap.get("username"));
+                editor.putString("user_nickname", infoMap.get("user_nickname"));
+                editor.putString("password", infoMap.get("password"));
                 editor.commit();
                 return true;
             } catch (Exception e) {
@@ -101,7 +114,7 @@ public class AppContext extends Application {
         return followpets;
     }
 
-    public List<hotspot> getDatas() {
+    public List<Hotspot> getDatas() {
         return datas;
     }
 }
