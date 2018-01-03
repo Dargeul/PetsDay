@@ -15,6 +15,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class ObjectServiceFactory {
+    public static final int REGISTER_STATUS_CODE = 0;
+    public static final int LOGIN_STATUS_CODE = 1;
+    public static final int USERNAME_VALIDATE_STATUS_CODE = 2;
+
     private static final String BASE_URL = "http://120.78.169.206:3000";
     private static ObjectService service;
 
