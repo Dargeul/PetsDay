@@ -1,6 +1,5 @@
 package com.example.gypc.petsday;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,10 +12,9 @@ import android.widget.Toast;
 import com.ajguan.library.EasyRefreshLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.HotSpotAdapter;
-import com.example.gypc.petsday.model.hotspot;
+import com.example.gypc.petsday.model.Hotspot;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import lecho.lib.hellocharts.gesture.ZoomType;
@@ -39,7 +37,7 @@ public class PetDetailActivity extends AppCompatActivity {
     private HotSpotAdapter hotSpotAdapter;
     private EasyRefreshLayout easyRefreshLayout;
 
-    private List<hotspot> datas;
+    private List<Hotspot> datas;
 
     String[] date = {"5-23","5-22","6-22","5-23","5-22","2-22","5-22","4-22","9-22","10-22","11-22","12-22","1-22","6-22","5-23","5-22","2-22","5-22","4-22","9-22","10-22","11-22","12-22","4-22","9-22","10-22","11-22","zxc"};//X轴的标注
     int[] score= {74,22,18,79,20,74,20,74,42,90,74,42,90,50,42,90,33,10,74,22,18,79,20,74,22,18,79,20};//图表的数据
@@ -66,12 +64,12 @@ public class PetDetailActivity extends AppCompatActivity {
         * */
         //final Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_1);
         final String bmp = "http://h.hiphotos.baidu.com/image/crop%3D0%2C0%2C1024%2C643/sign=fe44dd1c01fa513d45e5369e005d79cb/4afbfbedab64034f173b8ac6a6c379310b551d7f.jpg";
-        datas = new ArrayList<hotspot>(){
+        datas = new ArrayList<Hotspot>(){
             {
-//                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-//                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-//                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-//                add(new hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+//                add(new Hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+//                add(new Hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+//                add(new Hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
+//                add(new Hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
             }
         };
 
@@ -100,7 +98,7 @@ public class PetDetailActivity extends AppCompatActivity {
         easyRefreshLayout.addEasyEvent(new EasyRefreshLayout.EasyEvent() {
             @Override
             public void onLoadMore() {
-                final List<hotspot> list = new ArrayList<>();
+                final List<Hotspot> list = new ArrayList<>();
                 //final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_2);
                 final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
                 new Handler().postDelayed(new Runnable() {
@@ -108,8 +106,8 @@ public class PetDetailActivity extends AppCompatActivity {
                     public void run() {
                         //添加2个列表项到动态的数据列表中
                         for (int j = 0; j < 2; j++) {
-//                            list.add(new hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));
-//                            datas.add(new hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));
+//                            list.add(new Hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));
+//                            datas.add(new Hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));
                         }
 
                         easyRefreshLayout.loadMoreComplete(new EasyRefreshLayout.Event() {
@@ -137,9 +135,9 @@ public class PetDetailActivity extends AppCompatActivity {
                         //添加2个列表项到动态的数据列表中
                         //final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_3);
                         final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
-                        List<hotspot> list = new ArrayList<>();
+                        List<Hotspot> list = new ArrayList<>();
                         for (int i = 0; i < 2; i++) {
-//                            list.add(new hotspot(new Date(), 1, "Refresh", 1, bitmap, 888, 666, true));
+//                            list.add(new Hotspot(new Date(), 1, "Refresh", 1, bitmap, 888, 666, true));
                         }
                         list.addAll(datas);
                         datas.removeAll(datas);
