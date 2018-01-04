@@ -94,6 +94,8 @@ public class NewpetActivity extends BaseActivity {
             isAvatarUploadOK = false,
             isFormUploadOK = false;
 
+    private boolean isAvatarFromCache = false;
+
 
     private int positionInList = -1;
     private int petId = -1;
@@ -171,7 +173,7 @@ public class NewpetActivity extends BaseActivity {
         try {
              Uri avatarUri = ImageUriConverter.getCacheFileUriFromName(this, imageFilename);
              display(avatarUri);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             Log.e("NewpetActivity", "initInfoEdit", e);
             String path = ImageUriConverter.getImgRemoteUriFromName(imageFilename);
             displayAvatarFromRemote(path);
@@ -364,6 +366,11 @@ public class NewpetActivity extends BaseActivity {
     private void uploadAvatar() {
         if (isAvatarUploadOK)
             return;
+        if (!isAvatarFromCache) {
+            isAvatarUploadOK = true;
+            uploadAvatarFinish();
+            return;
+        }
         imageService
                 .uploadAvatar(
                         ImageMultipartGenerator.getParts(
@@ -575,6 +582,7 @@ public class NewpetActivity extends BaseActivity {
                 .load(uri)
                 .asBitmap()
                 .into(headRIV);
+        isAvatarFromCache = true;
     }
 
     private void displayAvatarFromRemote(String path) {

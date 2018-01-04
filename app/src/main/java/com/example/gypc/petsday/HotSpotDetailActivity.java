@@ -83,7 +83,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         try {
             Uri imageUri = ImageUriConverter.getCacheFileUriFromName(this, hotspotInfo.getString("hs_photo"));
             if (imageUri == null)
-                throw new Exception("no image frome cache");
+                throw new Exception("no image from cache");
             displayImageFromCache(imageUri);
         } catch (Exception e) {
             Log.e("HotSpotDetailActivity", "initWidget", e);
