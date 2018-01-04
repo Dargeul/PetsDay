@@ -6,78 +6,56 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <!--我关注的宠物列表项-->
-    <com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout
-        android:id="@+id/followpetESM"
+    <LinearLayout
+        android:id="@+id/contentLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contentView="@+id/contentLL"
-        app:rightMenuView="@+id/deleteLL">
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/headIV"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@mipmap/pet_default"
+            android:layout_marginRight="20dp"/>
 
         <LinearLayout
-            android:id="@+id/contentLL"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="20dp">
-
-            <ImageView
-                android:id="@+id/headIV"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@mipmap/pet_default"
-                android:layout_marginRight="20dp"/>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/petnameTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="pet's name"
-                    android:textSize="20dp"
-                    android:textColor="@color/colorBlack"/>
-
-                <TextView
-                    android:id="@+id/pettypeTV"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="10dp"
-                    android:text="pet's type"
-                    android:textSize="18dp"/>
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/loveIV"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@mipmap/love"
-                android:layout_margin="16dp"/>
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/followTV"
+                android:id="@+id/petnameTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="follownum"
-                android:textSize="18dp"
-                android:paddingTop="20dp"/>
+                android:text="pet's name"
+                android:textSize="20dp"
+                android:textColor="@color/colorBlack"/>
+
+            <TextView
+                android:id="@+id/pettypeTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:text="pet's type"
+                android:textSize="18dp"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/deleteLL"
-            android:layout_width="70dp"
-            android:layout_height="fill_parent"
-            android:orientation="vertical"
-            android:gravity="center_vertical">
-            <Button
-                android:id="@+id/deleteBT"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@mipmap/delete"
-                android:layout_marginRight="10dp"/>
-        </LinearLayout>
-    </com.guanaj.easyswipemenulibrary.EasySwipeMenuLayout>
+        <ImageView
+            android:id="@+id/loveIV"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@mipmap/love"
+            android:layout_margin="16dp"/>
+
+        <TextView
+            android:id="@+id/followTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="follownum"
+            android:textSize="18dp"
+            android:paddingTop="20dp"/>
+    </LinearLayout>
 </LinearLayout>

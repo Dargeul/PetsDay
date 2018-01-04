@@ -27,8 +27,7 @@ import java.util.List;
 public class MyPetAdapter extends RecyclerView.Adapter<MyPetAdapter.MyPetViewHolder> {
     public interface OnItemClickListener {
         void onClickList(int position);
-        void onClickEditButton(int position);
-        void onClickDeleteButton(int position);
+        void onLongClickList(int position);
     }
 
     private OnItemClickListener mOnItemClickListener = null;
@@ -68,22 +67,17 @@ public class MyPetAdapter extends RecyclerView.Adapter<MyPetAdapter.MyPetViewHol
                 .into(holder.pet_photo);
 
 
-        holder.editBT.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOnItemClickListener.onClickEditButton(holder.getAdapterPosition());
-            }
-        });
-        holder.deleteBT.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOnItemClickListener.onClickDeleteButton(holder.getAdapterPosition());
-            }
-        });
         holder.contentLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mOnItemClickListener.onClickList(holder.getAdapterPosition());
+            }
+        });
+        holder.contentLL.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mOnItemClickListener.onLongClickList(holder.getAdapterPosition());
+                return false;
             }
         });
     }
@@ -102,8 +96,6 @@ public class MyPetAdapter extends RecyclerView.Adapter<MyPetAdapter.MyPetViewHol
         TextView pet_type;
         TextView pet_follow;
         ImageView pet_photo;
-        Button editBT;
-        Button deleteBT;
         LinearLayout contentLL;
 
         public MyPetViewHolder(View view) {
@@ -112,8 +104,6 @@ public class MyPetAdapter extends RecyclerView.Adapter<MyPetAdapter.MyPetViewHol
             pet_type = (TextView)view.findViewById(R.id.pettypeTV);
             pet_follow = (TextView)view.findViewById(R.id.followTV);
             pet_photo = (ImageView)view.findViewById(R.id.headIV);
-            editBT = (Button)view.findViewById(R.id.editBT);
-            deleteBT = (Button)view.findViewById(R.id.deleteBT);
             contentLL = (LinearLayout)view.findViewById(R.id.contentLL);
         }
     }

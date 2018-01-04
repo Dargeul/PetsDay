@@ -11,6 +11,7 @@ import com.example.gypc.petsday.model.Good;
 import com.example.gypc.petsday.model.Notification;
 import com.example.gypc.petsday.model.Hotspot;
 import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.model.UserNotification;
 import com.example.gypc.petsday.service.ObjectService;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class AppContext extends Application {
     private List<Pet> followpets;
     private List<Hotspot> initHotspots;
 
-    private List<Notification> notifications;
+    private List<UserNotification> notifications;
     private List<Good> goods;
 
     private static OkHttpClient httpClient;
@@ -56,7 +57,7 @@ public class AppContext extends Application {
         mypets = new ArrayList<Pet>();
         followpets = new ArrayList<Pet>();
         initHotspots = new ArrayList<Hotspot>();
-        notifications = new ArrayList<Notification>();
+        notifications = new ArrayList<UserNotification>();
         goods = new ArrayList<Good>();
 
         httpClient = new OkHttpClient.Builder()
@@ -183,7 +184,7 @@ public class AppContext extends Application {
         return initHotspots;
     }
 
-    public List<Notification> getNotifications(){
+    public List<UserNotification> getNotifications(){
         return  notifications;
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -178,7 +179,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         initCommentList();
         initPetList();
 
-        LinearLayoutManager layoutManager1 = new LinearLayoutManager(HotSpotDetailActivity.this);
+        MyLayoutManager layoutManager1 = new MyLayoutManager(HotSpotDetailActivity.this);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
         hsDetailPetAdapter = new HSDetailPetAdapter(R.layout.hotspot_detail_pet);
         hsDetailPetAdapter.addData(pets_choose);
@@ -211,4 +212,19 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         });
     }
 
+    class MyLayoutManager extends LinearLayoutManager {
+        public MyLayoutManager(Context context) {
+            super(context);
+        }
+        @Override
+        public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state, int widthSpec, int heightSpec) {
+            final int width = RecyclerView.LayoutManager.chooseSize(widthSpec,
+                    getPaddingLeft() + getPaddingRight(),
+                    ViewCompat.getMinimumWidth(commentAreaRV));
+            final int height = RecyclerView.LayoutManager.chooseSize(heightSpec,
+                    getPaddingTop() + getPaddingBottom(),
+                    ViewCompat.getMinimumHeight(commentAreaRV));
+            setMeasuredDimension(width, height * 3);
+        }
+    }
 }

@@ -7,9 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,20 +21,33 @@ import com.example.gypc.petsday.adapter.FollowPetAdapter;
 import com.example.gypc.petsday.adapter.MyPetAdapter;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.model.RemoteDBOperationResponse;
 import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
+import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
+import retrofit2.adapter.rxjava.Result;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by gypc on 2017/12/7.
  */
 
 public class MineFragment extends Fragment {
-    private ImageView editIV;
+    private LinearLayout renameLL;
+    private LinearLayout newNameLL;
+    private EditText newNameET;
+    private ImageView newNameIV;
     private LinearLayout addpetLL;
+    private TextView mypetTV;
+    private TextView followpetTV;
     private RecyclerView mypetRV;
     private RecyclerView followpetRV;
 
@@ -45,37 +60,35 @@ public class MineFragment extends Fragment {
 
     private AppContext app;
     private Context context;
+    private ObjectService objectService;
 
-    ObjectService objectService = ObjectServiceFactory.getService();
+    private boolean isFormUploadOK = false;
+    private boolean isLoadMyPet = false;
+    private boolean isLoadFollowPet = false;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_mine,container,false);
         context = this.getContext();
         app = AppContext.getInstance();
+        objectService = ObjectServiceFactory.getService();
 
         // 绑定xml
         mypets = app.getMypets();
         followpets = app.getFollowpets();
-        editIV = (ImageView)view.findViewById(R.id.editIV);
+        renameLL = (LinearLayout)view.findViewById(R.id.renameLL);
+        newNameET = (EditText)view.findViewById(R.id.newNameET);
+        newNameLL = (LinearLayout)view.findViewById(R.id.newNameLL);
+        newNameIV = (ImageView)view.findViewById(R.id.newNameIV);
         addpetLL = (LinearLayout)view.findViewById(R.id.addpetLL);
+        mypetTV = (TextView)view.findViewById(R.id.mypetTV);
+        followpetTV = (TextView)view.findViewById(R.id.followpetTV);
         mypetRV = (RecyclerView)view.findViewById(R.id.mypetRV);
         followpetRV = (RecyclerView)view.findViewById(R.id.followpetRV);
         mineNameTextView = (TextView)view.findViewById(R.id.mineNameTextView);
 
         mineNameTextView.setText(AppContext.getInstance().getLoginUserInfo().get("user_nickname").toString());
-
-        //列表初始化
-
-        final String bitmap = "cat";
-
-        followpets.add(new Pet(1, "Toto", 1, "Cat",
-                12, "boy", "2017-12-12", bitmap, 666));
-        followpets.add(new Pet(1, "Toto", 1, "Cat",
-                12, "boy","2017-12-12", bitmap, 666));
-        followpets.add(new Pet(1, "Toto", 1, "Cat",
-                12, "boy", "2017-12-12", bitmap, 666));
 
         // 设置adapter
         mypetRV.setLayoutManager(new LinearLayoutManager(context));
@@ -84,6 +97,8 @@ public class MineFragment extends Fragment {
         followpetRV.setLayoutManager(new LinearLayoutManager(context));
         followPetAdapter = new FollowPetAdapter(followpets, context);
         followpetRV.setAdapter(followPetAdapter);
+        getMyPetList();
+        getFollowPetList();
 
         addpetLL.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +121,7 @@ public class MineFragment extends Fragment {
             }
 
             @Override
-            public void onClickEditButton(int position) {
+            public void onLongClickList(int position) {
                 Bundle bundle = new Bundle();
                 Pet pet = mypets.get(position);
                 bundle.putInt("position", position);
@@ -124,12 +139,6 @@ public class MineFragment extends Fragment {
 
                 getActivity().startActivityForResult(intent, MainActivity.EDIT_PET_CODE);
             }
-
-            @Override
-            public void onClickDeleteButton(int position) {
-                Toast.makeText(context, "myPet列表第" + position + "项删除按钮被点击了", Toast.LENGTH_LONG).show();
-                deleteMyPet(position);
-            }
         });
 
         // 设置followPet列表点击监听事件
@@ -140,26 +149,48 @@ public class MineFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), PetDetailActivity.class);
                 startActivity(intent);
             }
+        });
 
+        //点击修改昵称
+        renameLL.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClickDeleteButton(int position) {
-                Toast.makeText(context, "followPet列表第" + position + "项删除按钮被点击了", Toast.LENGTH_LONG).show();
-                followpets.remove(position);
-                followPetAdapter.notifyDataSetChanged();
+            public void onClick(View v) {
+                newNameET.setText(mineNameTextView.getText());
+                newNameLL.setVisibility(View.VISIBLE);
+                mineNameTextView.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        //点击确定完成修改
+        newNameIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uploadForm();
+                mineNameTextView.setText(newNameET.getText().toString());
+                newNameLL.setVisibility(View.INVISIBLE);
+                mineNameTextView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        mypetTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mypetRV.setVisibility(View.VISIBLE);
+                followpetRV.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        followpetTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mypetRV.setVisibility(View.INVISIBLE);
+                followpetRV.setVisibility(View.VISIBLE);
             }
         });
 
         instance = this;
 
         return view;
-    }
-
-    private void deleteMyPet(int position) {
-//        mypets.remove(position);
-//        myPetAdapter.notifyDataSetChanged();
-//        Pet pet = mypets.get(position);
-//        objectService
-//                .
     }
 
     private int getOwnerId() {
@@ -201,5 +232,112 @@ public class MineFragment extends Fragment {
         oldPet.setPet_photo(bundle.getString("photo"));
         mypets.set(pos, oldPet);
         myPetAdapter.notifyDataSetChanged();
+    }
+
+    private void uploadForm() {
+        if (isFormUploadOK) return;
+
+        HashMap<String, Object> userData = new HashMap<>();
+        userData.put("user_id", AppContext.getInstance().getLoginUserInfo().get("user_id").toString());
+        userData.put("username", AppContext.getInstance().getLoginUserInfo().get("username").toString());
+        userData.put("password", AppContext.getInstance().getLoginUserInfo().get("password").toString());
+        userData.put("user_nickname", newNameET.getText().toString());
+
+        objectService
+                .updateUser(JSONRequestBodyGenerator.getBody(userData))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<RemoteDBOperationResponse>() {
+                    @Override
+                    public void onCompleted() {
+                        if (!isFormUploadOK) {
+                            Toast.makeText(context, "修改昵称失败，请重试！", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "修改成功！", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("MineFragment", "updateNickname", e);
+                    }
+
+                    @Override
+                    public void onNext(RemoteDBOperationResponse dboResult) {
+                        if (!dboResult.isSuccess()) {
+                            Log.i("MineFragment", "updateNickname");
+                        }
+
+                        HashMap<String, String> userObj = new HashMap<>();
+                        userObj.put("user_id", AppContext.getInstance().getLoginUserInfo().get("user_id").toString());
+                        userObj.put("username", AppContext.getInstance().getLoginUserInfo().get("username").toString());
+                        userObj.put("password", AppContext.getInstance().getLoginUserInfo().get("password").toString());
+                        userObj.put("user_nickname", newNameET.getText().toString());
+                        AppContext.getInstance().setLoginUserInfo(userObj);
+
+                        isFormUploadOK = true;
+                    }
+                });
+    }
+
+    private void getMyPetList() {
+        if (isLoadMyPet) return;
+
+        String userID = AppContext.getInstance().getLoginUserInfo().get("user_id").toString();
+        objectService
+                .getPetListForUser(userID)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Pet>>() {
+                    @Override
+                    public void onCompleted() {
+                        if (!isLoadMyPet) {
+                            Toast.makeText(context, "加载我的宠物失败！", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("MineFragment", "loadMyPet", e);
+                    }
+
+                    @Override
+                    public void onNext(List<Pet> mypetList) {
+                        mypets.addAll(mypetList);
+                        myPetAdapter.notifyDataSetChanged();
+                        isLoadMyPet = true;
+                    }
+                });
+    }
+
+    private void getFollowPetList() {
+        if (isLoadFollowPet) return;
+
+        //Todo:现在是查用户自己宠物的接口，
+        String userID = AppContext.getInstance().getLoginUserInfo().get("user_id").toString();
+        objectService
+                .getPetListForUser(userID)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Pet>>() {
+                    @Override
+                    public void onCompleted() {
+                        if (!isLoadFollowPet) {
+                            Toast.makeText(context, "加载关注的宠物失败！", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("MineFragment", "loadMyPet", e);
+                    }
+
+                    @Override
+                    public void onNext(List<Pet> followpetList) {
+                        followpets.addAll(followpetList);
+                        followPetAdapter.notifyDataSetChanged();
+                        isLoadFollowPet = true;
+                    }
+                });
     }
 }
