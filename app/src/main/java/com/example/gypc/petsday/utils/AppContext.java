@@ -4,10 +4,14 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.example.gypc.petsday.HotSpotFragment;
+import com.example.gypc.petsday.MainActivity;
+import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Good;
 import com.example.gypc.petsday.model.Notification;
 import com.example.gypc.petsday.model.Hotspot;
 import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.service.ObjectService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +19,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by XUJIJUN on 2017/12/19.
@@ -29,7 +36,7 @@ public class AppContext extends Application {
 
     private List<Pet> mypets;
     private List<Pet> followpets;
-    private List<Hotspot> datas;
+    private List<Hotspot> initHotspots;
 
     private List<Notification> notifications;
     private List<Good> goods;
@@ -37,6 +44,8 @@ public class AppContext extends Application {
     private static OkHttpClient httpClient;
 
     private HashMap<String, Object> userInfoMap;
+
+    private ObjectService objectService;
 
     @Override
     public void onCreate() {
@@ -46,7 +55,7 @@ public class AppContext extends Application {
 
         mypets = new ArrayList<Pet>();
         followpets = new ArrayList<Pet>();
-        datas = new ArrayList<Hotspot>();
+        initHotspots = new ArrayList<Hotspot>();
         notifications = new ArrayList<Notification>();
         goods = new ArrayList<Good>();
 
@@ -55,6 +64,8 @@ public class AppContext extends Application {
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
+
+        objectService = ObjectServiceFactory.getService();
     }
 
     public static AppContext getInstance() {
@@ -66,8 +77,10 @@ public class AppContext extends Application {
     }
 
     public HashMap<String, Object> getLoginUserInfo() {
-        if (userInfoMap == null)
+        if (userInfoMap == null) {
             userInfoMap = loginController.getUserInfo();
+            initAppDataFromRemote();
+        }
         return userInfoMap;
     }
 
@@ -77,6 +90,50 @@ public class AppContext extends Application {
         userInfoMap.put("user_nickname", infoMap.get("user_nickname"));
         userInfoMap.put("password", infoMap.get("password"));
         return loginController.setUserInfo(infoMap);
+    }
+
+    private void initAppDataFromRemote() {
+        objectService
+                .getPetListForUser(String.valueOf(userInfoMap.get("user_id")))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Pet>>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i("AppContext", "initAppDataFromRemote: complete, mypet.size() = " + String.valueOf(mypets.size()));
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("AppContext", "initAppDataFromRemote", throwable);
+                    }
+
+                    @Override
+                    public void onNext(List<Pet> pets) {
+                        mypets = pets;
+                    }
+                });
+        objectService
+                .getHotspotListByPageNumber(String.valueOf(0))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Hotspot>>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i("AppContext", "initAppDataFromRemote: complete, initHotspots.size() = " + String.valueOf(initHotspots.size()));
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("AppContext", "initAppDataFromRemote", throwable);
+                    }
+
+                    @Override
+                    public void onNext(List<Hotspot> hotspots) {
+                        initHotspots = hotspots;
+                        HotSpotFragment.getInstance().initDatas(initHotspots);
+                    }
+                });
     }
 
     private class LoginController {
@@ -122,8 +179,8 @@ public class AppContext extends Application {
         return followpets;
     }
 
-    public List<Hotspot> getDatas() {
-        return datas;
+    public List<Hotspot> getInitHotspots() {
+        return initHotspots;
     }
 
     public List<Notification> getNotifications(){
