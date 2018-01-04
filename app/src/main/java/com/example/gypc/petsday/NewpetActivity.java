@@ -172,6 +172,8 @@ public class NewpetActivity extends BaseActivity {
 
         try {
              Uri avatarUri = ImageUriConverter.getCacheFileUriFromName(this, imageFilename);
+             if (avatarUri == null)
+                 throw new Exception("no image from cache");
              display(avatarUri);
         } catch (Exception e) {
             Log.e("NewpetActivity", "initInfoEdit", e);
