@@ -40,8 +40,8 @@ public class NotificationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
         app = AppContext.getInstance();
-//        notificationsRV = (RecyclerView)findViewById(R.id.notificationRV);
-//        notificationsReadedRV = (RecyclerView)findViewById(R.id.notificationReadedRV);
+        notificationsRV = (RecyclerView)findViewById(R.id.notificationRV);
+        notificationsReadedRV = (RecyclerView)findViewById(R.id.notificationReadedRV);
 
         //获取通知列表，按照notice_status分为已读和未读两个通知列表。
         notifications = app.getNotifications();
@@ -86,7 +86,7 @@ public class NotificationActivity extends AppCompatActivity {
         MyLayoutManagerForReaded myLayoutManager = new MyLayoutManagerForReaded(NotificationActivity.this);
         myLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         notificationsReadedRV.setLayoutManager(myLayoutManager);
-//        notificationReadedAdapter = new NotificationAdapter(R.layout.notification_item_readed, notificationsReaded);
+        notificationReadedAdapter = new NotificationAdapter(R.layout.notification_item_readed, notificationsReaded);
         notificationReadedAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
