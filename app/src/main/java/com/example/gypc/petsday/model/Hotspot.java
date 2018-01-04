@@ -1,6 +1,7 @@
 package com.example.gypc.petsday.model;
 
 import android.graphics.Bitmap;
+import android.os.Bundle;
 
 import java.util.Date;
 
@@ -49,4 +50,16 @@ public class Hotspot {
         return count;
     }
 
+    public Bundle getBundle() {
+        Bundle bundle = new Bundle();
+
+        bundle.putString("hs_time", hs_time);
+        bundle.putInt("hs_user", hs_user);
+        bundle.putString("hs_content", hs_content);
+        bundle.putInt("hs_id", hs_id);
+        bundle.putString("hs_photo", hs_photo);
+        bundle.putInt("count", count);
+
+        return bundle;
+    }
 }
