@@ -46,7 +46,7 @@ public class FollowPetAdapter extends RecyclerView.Adapter<FollowPetAdapter.Foll
     public void onBindViewHolder(final FollowPetAdapter.FollowPetViewHolder holder, int position) {
         holder.pet_nickname.setText(pets.get(position).getPet_nickname());
         holder.pet_type.setText(pets.get(position).getPet_type());
-        holder.pet_follow.setText("" + pets.get(position).getPet_follow());
+        holder.pet_follow.setText("" + pets.get(position).getCount());
         Glide.with(context).load(pets.get(position).getPet_photo()).priority(Priority.HIGH).into(holder.pet_photo);
         holder.deleteBT.setOnClickListener(new View.OnClickListener() {
             @Override

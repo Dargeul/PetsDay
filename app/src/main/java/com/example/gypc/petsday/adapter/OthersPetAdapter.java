@@ -32,7 +32,7 @@ public class OthersPetAdapter extends BaseQuickAdapter<Pet,BaseViewHolder> {
     protected void convert(final BaseViewHolder helper, Pet item){
         helper.setText(R.id.petnameTV,item.getPet_nickname());
         helper.setText(R.id.pettypeTV,item.getPet_type());
-        helper.setText(R.id.followTV,item.getPet_follow()+"");
+        helper.setText(R.id.followTV,item.getCount()+"");
 
         Uri localImageUri;
         String remoteImagePath;
