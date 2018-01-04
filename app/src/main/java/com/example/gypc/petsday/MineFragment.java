@@ -97,7 +97,6 @@ public class MineFragment extends Fragment {
         followpetRV.setLayoutManager(new LinearLayoutManager(context));
         followPetAdapter = new FollowPetAdapter(followpets, context);
         followpetRV.setAdapter(followPetAdapter);
-        getMyPetList();
         getFollowPetList();
 
         addpetLL.setOnClickListener(new View.OnClickListener() {
@@ -237,11 +236,13 @@ public class MineFragment extends Fragment {
     private void uploadForm() {
         if (isFormUploadOK) return;
 
+        final String nickname = newNameET.getText().toString();
+
         HashMap<String, Object> userData = new HashMap<>();
         userData.put("user_id", AppContext.getInstance().getLoginUserInfo().get("user_id").toString());
         userData.put("username", AppContext.getInstance().getLoginUserInfo().get("username").toString());
         userData.put("password", AppContext.getInstance().getLoginUserInfo().get("password").toString());
-        userData.put("user_nickname", newNameET.getText().toString());
+        userData.put("user_nickname", nickname);
 
         objectService
                 .updateUser(JSONRequestBodyGenerator.getBody(userData))
@@ -253,6 +254,10 @@ public class MineFragment extends Fragment {
                         if (!isFormUploadOK) {
                             Toast.makeText(context, "修改昵称失败，请重试！", Toast.LENGTH_SHORT).show();
                         } else {
+                            HashMap<String, Object> info = app.getLoginUserInfo();
+                            info.put("user_nickname", nickname);
+                            app.updateUserInfo(info);  // 更新全局用户信息
+
                             Toast.makeText(context, "修改成功！", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -276,36 +281,6 @@ public class MineFragment extends Fragment {
                         AppContext.getInstance().setLoginUserInfo(userObj);
 
                         isFormUploadOK = true;
-                    }
-                });
-    }
-
-    private void getMyPetList() {
-        if (isLoadMyPet) return;
-
-        String userID = AppContext.getInstance().getLoginUserInfo().get("user_id").toString();
-        objectService
-                .getPetListForUser(userID)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Pet>>() {
-                    @Override
-                    public void onCompleted() {
-                        if (!isLoadMyPet) {
-                            Toast.makeText(context, "加载我的宠物失败！", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("MineFragment", "loadMyPet", e);
-                    }
-
-                    @Override
-                    public void onNext(List<Pet> mypetList) {
-                        mypets.addAll(mypetList);
-                        myPetAdapter.notifyDataSetChanged();
-                        isLoadMyPet = true;
                     }
                 });
     }
