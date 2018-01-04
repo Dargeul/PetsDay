@@ -17,7 +17,9 @@ import android.widget.Toast;
 
 import com.example.gypc.petsday.adapter.FollowPetAdapter;
 import com.example.gypc.petsday.adapter.MyPetAdapter;
+import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
 
 import java.util.ArrayList;
@@ -44,6 +46,8 @@ public class MineFragment extends Fragment {
     private AppContext app;
     private Context context;
 
+    ObjectService objectService = ObjectServiceFactory.getService();
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,11 +68,8 @@ public class MineFragment extends Fragment {
 
         //列表初始化
 
-        final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
-//        mypets.add(new Pet(1, "Toto", 1, "Cat",
-//                12, "boy", "2017-12-12", bitmap, 666));
-//        mypets.add(new Pet(1, "Toto", 1, "Cat",
-//                12, "boy", "2017-12-12", bitmap, 666));
+        final String bitmap = "cat";
+
         followpets.add(new Pet(1, "Toto", 1, "Cat",
                 12, "boy", "2017-12-12", bitmap, 666));
         followpets.add(new Pet(1, "Toto", 1, "Cat",
@@ -127,8 +128,7 @@ public class MineFragment extends Fragment {
             @Override
             public void onClickDeleteButton(int position) {
                 Toast.makeText(context, "myPet列表第" + position + "项删除按钮被点击了", Toast.LENGTH_LONG).show();
-                mypets.remove(position);
-                myPetAdapter.notifyDataSetChanged();
+                deleteMyPet(position);
             }
         });
 
@@ -152,6 +152,14 @@ public class MineFragment extends Fragment {
         instance = this;
 
         return view;
+    }
+
+    private void deleteMyPet(int position) {
+//        mypets.remove(position);
+//        myPetAdapter.notifyDataSetChanged();
+//        Pet pet = mypets.get(position);
+//        objectService
+//                .
     }
 
     private int getOwnerId() {
