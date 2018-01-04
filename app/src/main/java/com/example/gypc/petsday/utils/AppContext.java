@@ -8,7 +8,6 @@ import com.example.gypc.petsday.HotSpotFragment;
 import com.example.gypc.petsday.MainActivity;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Good;
-import com.example.gypc.petsday.model.Notification;
 import com.example.gypc.petsday.model.Hotspot;
 import com.example.gypc.petsday.model.Pet;
 import com.example.gypc.petsday.model.UserNotification;
@@ -190,5 +189,10 @@ public class AppContext extends Application {
 
     public List<Good> getGoods(){
         return goods;
+    }
+
+    // 全局用户信息更新接口
+    public void updateUserInfo(HashMap<String, Object> newInfo) {
+        this.userInfoMap = newInfo;
     }
 }
