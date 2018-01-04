@@ -38,6 +38,7 @@
             android:textColor="@color/colorBlack"
             android:textSize="40dp"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
             android:visibility="visible"/>
 
         <LinearLayout
@@ -46,6 +47,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
             android:visibility="invisible">
 
             <EditText

@@ -1,6 +1,7 @@
 package com.example.gypc.petsday.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.example.gypc.petsday.R;
 import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.utils.ImageUriConverter;
 
 import java.util.List;
 
@@ -24,7 +26,6 @@ import java.util.List;
 public class FollowPetAdapter extends RecyclerView.Adapter<FollowPetAdapter.FollowPetViewHolder> {
     public interface OnItemClickListener {
         void onClickList(int position);
-        void onClickDeleteButton(int position);
     }
 
     private OnItemClickListener mOnItemClickListener = null;
@@ -46,13 +47,19 @@ public class FollowPetAdapter extends RecyclerView.Adapter<FollowPetAdapter.Foll
     public void onBindViewHolder(final FollowPetAdapter.FollowPetViewHolder holder, int position) {
         holder.pet_nickname.setText(pets.get(position).getPet_nickname());
         holder.pet_type.setText(pets.get(position).getPet_type());
-        Glide.with(context).load(pets.get(position).getPet_photo()).priority(Priority.HIGH).into(holder.pet_photo);
-        holder.deleteBT.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOnItemClickListener.onClickDeleteButton(holder.getAdapterPosition());
-            }
-        });
+
+        Uri localImageUri;
+        String remoteImagePath;
+
+        localImageUri = ImageUriConverter.getCacheFileUriFromName(context, pets.get(position).getPet_photo());
+        remoteImagePath = ImageUriConverter.getImgRemoteUriFromName(pets.get(position).getPet_photo());
+        Glide
+                .with((context))
+                .load(localImageUri != null ? localImageUri : remoteImagePath)
+                .placeholder(R.mipmap.pet_default)
+                .error(R.drawable.error_img)
+                .priority(Priority.HIGH)
+                .into(holder.pet_photo);
         holder.contentLL.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,7 +82,6 @@ public class FollowPetAdapter extends RecyclerView.Adapter<FollowPetAdapter.Foll
         TextView pet_type;
         TextView pet_follow;
         ImageView pet_photo;
-        Button deleteBT;
         LinearLayout contentLL;
 
         public FollowPetViewHolder(View view) {
@@ -84,7 +90,6 @@ public class FollowPetAdapter extends RecyclerView.Adapter<FollowPetAdapter.Foll
             pet_type = (TextView)view.findViewById(R.id.pettypeTV);
             pet_follow = (TextView)view.findViewById(R.id.followTV);
             pet_photo = (ImageView)view.findViewById(R.id.headIV);
-            deleteBT = (Button)view.findViewById(R.id.deleteBT);
             contentLL = (LinearLayout)view.findViewById(R.id.contentLL);
         }
     }
