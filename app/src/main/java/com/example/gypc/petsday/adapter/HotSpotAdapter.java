@@ -52,7 +52,7 @@ public class HotSpotAdapter extends BaseQuickAdapter<Hotspot,BaseViewHolder> {
                 .priority(Priority.HIGH)
                 .into((ImageView) helper.itemView.findViewById(R.id.hotspotImage));
 
-        helper.setText(R.id.userNickname, "" + item.getHs_user());
+        helper.setText(R.id.userNickname, "" + item.getUser_nickname());
         helper.setText(R.id.publishTime, item.getHs_time());
 //        helper.setText(R.id.likeNum, "" + item.getHs_like());
 //        helper.setText(R.id.commentNum, "" + item.getHs_comment());
