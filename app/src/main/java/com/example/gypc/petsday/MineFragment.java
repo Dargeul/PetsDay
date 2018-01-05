@@ -113,7 +113,19 @@ public class MineFragment extends Fragment {
             public void onClickList(int position) {
                 Toast.makeText(context, "myPet列表第" + position + "项被点击了", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getActivity(), PetDetailActivity.class);
-                startActivity(intent);
+
+                Bundle bundle = new Bundle();
+                Pet item = mypets.get(position);
+                bundle.putInt("pet_id", item.getPet_id());
+                bundle.putString("pet_type", item.getPet_type());
+                bundle.putString("pet_photo", item.getPet_photo());
+                bundle.putString("pet_weight", String.valueOf(item.getPet_weight()));
+                bundle.putString("pet_birth", item.getPet_birth());
+                bundle.putString("pet_sex", item.getPet_sex());
+
+                intent.putExtras(bundle);
+
+                getActivity().startActivity(intent);
             }
 
             @Override
