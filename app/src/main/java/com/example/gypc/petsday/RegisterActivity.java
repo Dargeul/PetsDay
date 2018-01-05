@@ -1,6 +1,5 @@
 package com.example.gypc.petsday;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,7 +13,6 @@ import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -73,7 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
         dataMap.put("password", password);
         dataMap.put("status", ObjectServiceFactory.REGISTER_STATUS_CODE);
         objectService
-                .userRegister(JSONRequestBodyGenerator.getBody(dataMap))
+                .userRegister(JSONRequestBodyGenerator.getJsonObjBody(dataMap))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Result<Integer>>() {
@@ -106,7 +104,7 @@ public class RegisterActivity extends AppCompatActivity {
         dataMap.put("username", username);
         dataMap.put("status", ObjectServiceFactory.USERNAME_VALIDATE_STATUS_CODE);
         objectService
-                .queryUsername(JSONRequestBodyGenerator.getBody(dataMap))
+                .queryUsername(JSONRequestBodyGenerator.getJsonObjBody(dataMap))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ResponseBody>() {
