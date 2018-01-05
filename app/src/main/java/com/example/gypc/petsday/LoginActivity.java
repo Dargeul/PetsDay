@@ -119,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
         dataMap.put("status", ObjectServiceFactory.LOGIN_STATUS_CODE);
 
         objectService
-                .userLogin(JSONRequestBodyGenerator.getBody(dataMap))
+                .userLogin(JSONRequestBodyGenerator.getJsonObjBody(dataMap))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ResponseBody>() {

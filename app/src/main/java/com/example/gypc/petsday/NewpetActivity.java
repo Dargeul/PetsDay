@@ -40,9 +40,6 @@ import com.example.gypc.petsday.utils.ImageUriConverter;
 import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
 import com.kevin.crop.UCrop;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -52,7 +49,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
-import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -299,7 +295,7 @@ public class NewpetActivity extends BaseActivity {
 
         if (petId == -1) {
             objectService
-                    .insertPet(JSONRequestBodyGenerator.getBody(petData))
+                    .insertPet(JSONRequestBodyGenerator.getJsonObjBody(petData))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<Result<Integer>>() {
@@ -326,7 +322,7 @@ public class NewpetActivity extends BaseActivity {
                     });
         } else {
             objectService
-                    .updatePet(JSONRequestBodyGenerator.getBody(petData))
+                    .updatePet(JSONRequestBodyGenerator.getJsonObjBody(petData))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<RemoteDBOperationResponse>() {
