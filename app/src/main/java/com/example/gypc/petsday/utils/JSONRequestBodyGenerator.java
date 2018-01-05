@@ -1,10 +1,13 @@
 package com.example.gypc.petsday.utils;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.RequestBody;
@@ -16,23 +19,47 @@ import okhttp3.ResponseBody;
 
 public class JSONRequestBodyGenerator {
 
-    public static RequestBody getBody(HashMap<String, Object> data) {
-        RequestBody requestBody = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), convert(data));
+    public static RequestBody getJsonObjBody(HashMap<String, Object> data) {
+        RequestBody requestBody = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), convertSingleData(data));
         return requestBody;
     }
 
-    private static String convert(HashMap<String, Object> data) {
-        String res = "";
+    public static RequestBody getJsonArrayBody(List<HashMap<String, Object>> datas) {
+        String dataStr = "multiPost=" +convertDataArray(datas);
+        Log.i("ObjectArrayToJsonStr", "getJsonArrayBody: dataStr: " + dataStr);
+        RequestBody requestBody = RequestBody.create(okhttp3.MediaType.parse("text/plain; charset=utf-8"), dataStr);
+        return requestBody;
+    }
+
+    private static String convertDataArray(List<HashMap<String, Object>> datas) {
         JSONObject entireObj = new JSONObject();
         try {
-            for (Map.Entry<String, Object> entry : data.entrySet()) {
-                entireObj.put(entry.getKey(), entry.getValue());
+            JSONArray jsonArray = new JSONArray();
+            for (HashMap<String, Object> data : datas) {
+                jsonArray.put(getJsonObjFromMap(data));
             }
-            res = entireObj.toString();
-            Log.i("ObjectToJsonStr", "result = \n" + entireObj.toString(2));
+            return jsonArray.toString();
         } catch (Exception e) {
-            Log.e("ObjectToJsonStr", "convert", e);
+            Log.e("ObjectArrayToJsonStr", "convertDataArray", e);
+            return "";
         }
-        return res;
+    }
+
+    private static String convertSingleData(HashMap<String, Object> data) {
+        return getJsonObjFromMap(data).toString();
+    }
+
+    @Nullable
+    private static JSONObject getJsonObjFromMap(HashMap<String, Object> data) {
+        try {
+            JSONObject object = new JSONObject();
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                object.put(entry.getKey(), entry.getValue());
+            }
+            return object;
+        } catch (Exception e) {
+            Log.e("ObjectToJsonStr", "getJsonObjFromMap", e);
+            return null;
+        }
     }
 }
