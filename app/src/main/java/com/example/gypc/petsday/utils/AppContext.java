@@ -9,6 +9,7 @@ import com.example.gypc.petsday.MainActivity;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Good;
 import com.example.gypc.petsday.model.Hotspot;
+import com.example.gypc.petsday.model.HotspotLike;
 import com.example.gypc.petsday.model.Pet;
 import com.example.gypc.petsday.model.UserNotification;
 import com.example.gypc.petsday.service.ObjectService;
@@ -37,7 +38,7 @@ public class AppContext extends Application {
     private List<Pet> mypets;
     private List<Pet> followpets;
     private List<Hotspot> initHotspots;
-
+    private List<HotspotLike> initLikeList;
     private List<UserNotification> notifications;
     private List<Good> goods;
 
@@ -58,6 +59,7 @@ public class AppContext extends Application {
         initHotspots = new ArrayList<Hotspot>();
         notifications = new ArrayList<UserNotification>();
         goods = new ArrayList<Good>();
+        initLikeList = new ArrayList<>();
 
         httpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
@@ -94,7 +96,9 @@ public class AppContext extends Application {
 
     private void initAppDataFromRemote() {
         objectService
-                .getPetListForUser(String.valueOf(userInfoMap.get("user_id")))
+                .getPetListForUser(
+                        String.valueOf(userInfoMap.get("user_id")),
+                        String.valueOf(ObjectServiceFactory.GET_OWN_PET_STATUS_CODE))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Pet>>() {
@@ -134,6 +138,30 @@ public class AppContext extends Application {
                         HotSpotFragment.getInstance().initDatas(initHotspots);
                     }
                 });
+        objectService
+                .getLikeListByUserId(String.valueOf(userInfoMap.get("user_id")))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<HotspotLike>>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i("AppContext", "initAppDataFromRemote: complete, initLikeList.size() = " + String.valueOf(initLikeList.size()));
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("AppContext", "initAppDataFromRemote", throwable);
+                    }
+
+                    @Override
+                    public void onNext(List<HotspotLike> hotspotLikes) {
+                        initLikeList = hotspotLikes;
+                    }
+                });
+    }
+
+    public List<HotspotLike> getInitLikeList() {
+        return initLikeList;
     }
 
     private class LoginController {
