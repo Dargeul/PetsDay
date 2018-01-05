@@ -2,6 +2,7 @@ package com.example.gypc.petsday.adapter;
 
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -23,6 +24,7 @@ public class HSDetailPetAdapter extends BaseQuickAdapter<Pet,BaseViewHolder> {
     }
     @Override
     protected void convert(final BaseViewHolder helper, Pet item){
+        Log.i("HSDetailPetAdapter", "convert: nickname: " + item.getPet_nickname() + ", type: " + item.getPet_type());
         helper.setText(R.id.petNickName,item.getPet_nickname());
         helper.setText(R.id.petType,item.getPet_type());
         int position = helper.getLayoutPosition();
