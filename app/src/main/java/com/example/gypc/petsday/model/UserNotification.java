@@ -7,6 +7,7 @@ package com.example.gypc.petsday.model;
 public class UserNotification {
     private int notice_status;
     private int notice_user;
+    private String user_nickname;
     private int notice_comment;
     private int notice_id;
     private String com_time;
@@ -17,6 +18,7 @@ public class UserNotification {
     public UserNotification(
             int notice_status,
             int notice_user,
+            String user_nickname,
             int notice_comment,
             int notice_id,
             String com_time,
@@ -25,6 +27,7 @@ public class UserNotification {
             String com_content) {
         this.notice_status = notice_status;
         this.notice_user = notice_user;
+        this.user_nickname = user_nickname;
         this.notice_comment = notice_comment;
         this.notice_id = notice_id;
         this.com_time = com_time;
@@ -97,4 +100,8 @@ public class UserNotification {
     public void setCom_content(String com_content) {
         this.com_content = com_content;
     }
+
+    public String getUser_nickname(){return user_nickname;}
+
+    public void setUser_nickname(String user_nickname){this.user_nickname = user_nickname;}
 }
