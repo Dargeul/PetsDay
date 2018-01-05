@@ -2,6 +2,7 @@ package com.example.gypc.petsday.service;
 
 import com.example.gypc.petsday.model.Comment;
 import com.example.gypc.petsday.model.Hotspot;
+import com.example.gypc.petsday.model.HotspotLike;
 import com.example.gypc.petsday.model.Pet;
 import com.example.gypc.petsday.model.RemoteDBOperationResponse;
 import com.example.gypc.petsday.model.UserNotification;
@@ -45,7 +46,9 @@ public interface ObjectService {
     Observable<RemoteDBOperationResponse> updatePet(@Body RequestBody jsonBody);  // 更新pet
 
     @GET("/pet")
-    Observable<List<Pet>> getPetListForUser(@Query("user_id") String userId); // 查询用户的宠物
+    Observable<List<Pet>> getPetListForUser(@Query("user_id") String userId, @Query("status") String status);
+    // status = 0 查询用户的拥有的宠物,
+    // status = 1 查询关注的宠物
 
     @GET("/pet")
     Observable<List<Pet>> getPetListForHotspot(@Query("hs_id") String hotspotId);  // 查询动态关联的宠物list
@@ -88,6 +91,9 @@ public interface ObjectService {
 
     @PUT("/notification")
     Observable<RemoteDBOperationResponse> haveReadNotification(@Body RequestBody jsonBody);  // 通知已读
+
+    @GET("/like")
+    Observable<List<HotspotLike>> getLikeListByUserId(@Query("user_id") String userId);  // 使用userId获取点赞列表
 
     @POST("/like")
     Observable<Result<Integer>> likeHotspot(@Body RequestBody jsonBody);  // 给评论点赞，成功返回点赞id
