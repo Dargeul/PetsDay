@@ -12,24 +12,30 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.HSDetailPetAdapter;
 import com.example.gypc.petsday.adapter.CommentAdapter;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Comment;
 import com.example.gypc.petsday.model.Pet;
 import com.example.gypc.petsday.service.ObjectService;
+import com.example.gypc.petsday.utils.AppContext;
 import com.example.gypc.petsday.utils.ImageUriConverter;
+import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
+import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -57,12 +63,16 @@ public class HotSpotDetailActivity extends AppCompatActivity {
     private RecyclerView petNickNameRV;
     private ImageView hotspotImageIV;
     private ImageView backIV;
-    private ImageView shareIV;
-    private ImageView likeIV;
-    private ImageView commentIV;
+    private ImageButton shareImageBtn;
+    private ImageButton likeImageBtn;
+    private ImageButton commentImageBtn;
     private EditText yourCommentET;
+    private ImageButton submitCommentBtn;
 
     private Bundle hotspotInfo;
+    private int hotspotId;
+    private int userId;
+    private boolean isCommentOK = false;
 
     private void initWidget(){
         userNicknameTV = (TextView)findViewById(R.id.userNickname);
@@ -72,12 +82,13 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         petNickNameRV = (RecyclerView)findViewById(R.id.petNickName);
         hotspotImageIV = (ImageView)findViewById(R.id.hotspotDetailImageView);
         backIV = (ImageView)findViewById(R.id.back);
-        shareIV = (ImageView)findViewById(R.id.share);
-        likeIV = (ImageView)findViewById(R.id.like);
-        commentIV = (ImageView)findViewById(R.id.comment);
+        shareImageBtn = (ImageButton) findViewById(R.id.shareImageBtn);
+        likeImageBtn = (ImageButton) findViewById(R.id.likeImageBtn);
+        commentImageBtn = (ImageButton)findViewById(R.id.commentImageBtn);
         yourCommentET = (EditText)findViewById(R.id.yourComment);
+        submitCommentBtn = (ImageButton)findViewById(R.id.submitCommentBtn);
 
-//        userNicknameTV.setText(hotspotInfo.getString("user_nickname"));
+        userNicknameTV.setText(hotspotInfo.getString("user_nickname"));
         hotSpotContentTV.setText(hotspotInfo.getString("hs_content"));
         publishTimeTV.setText(hotspotInfo.getString("hs_time"));
 
@@ -91,6 +102,91 @@ public class HotSpotDetailActivity extends AppCompatActivity {
             String path = ImageUriConverter.getImgRemoteUriFromName(hotspotInfo.getString("hs_photo"));
             displayImageFromRemote(path);
         }
+
+        likeImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleLike();
+            }
+        });
+
+        submitCommentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitComment();
+            }
+        });
+    }
+
+    private void toggleLike() {
+
+    }
+
+    private void msgNotify(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void submitComment() {
+        isCommentOK = false;
+        final String commentText = yourCommentET.getText().toString();
+        if (commentText.isEmpty()) {
+            msgNotify("请输入评论内容！");
+        } else {
+            Log.i("HotSpotDetailActivity", "submitComment: 评论提交中");
+
+            submitCommentBtn.setEnabled(false);
+
+            final String commentTime = getTimeString();
+            HashMap<String, Object> dataMap = new HashMap<>();
+            dataMap.put("com_time", commentTime);
+            dataMap.put("com_user", userId);
+            dataMap.put("com_hs", hotspotId);
+            dataMap.put("com_content", commentText);
+
+            objectService
+                    .insertComment(
+                            JSONRequestBodyGenerator.getJsonObjBody(dataMap)
+                    )
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Result<Integer>>() {
+                        @Override
+                        public void onCompleted() {
+                            submitCommentBtn.setEnabled(true);
+                            if (isCommentOK)
+                                msgNotify("评论成功！");
+                            else
+                                msgNotify("评论提交失败，请重试！");
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            Log.e("HotSpotDetailActivity", "submitComment", throwable);
+                        }
+
+                        @Override
+                        public void onNext(Result<Integer> integerResult) {
+                            if (integerResult.isError()) {
+                                Log.e("HotSpotDetailActivity", "submitComment", integerResult.error());
+                            }
+                            if (integerResult.response() == null)
+                                return;
+                            isCommentOK = true;
+                            int comId = integerResult.response().body();
+                            List<Comment> newComList = new ArrayList<Comment>();
+                            newComList.add(new Comment(comId, hotspotId, userId, commentTime, commentText));
+                            newComList.addAll(commentsList);
+                            commentsList = newComList;
+                            commentAdapter.setNewData(newComList);
+                        }
+                    });
+        }
+    }
+
+    private String getTimeString() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        String time = dateFormat.format(new Date());
+        return time;
     }
 
     private void displayImageFromCache(Uri uri) {
@@ -127,8 +223,8 @@ public class HotSpotDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Comment> comments) {
-                        Log.i("HotSpotDetailActivity", "initCommentList: comments.size() = " + comments.size());
-                        commentsList = comments;
+                        commentsList.addAll(comments);
+                        Log.i("HotSpotDetailActivity", "initCommentList: commentsList.size() = " + commentsList.size());
                         commentAdapter.setNewData(commentsList);
                     }
                 });
@@ -136,7 +232,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
 
     private void initPetList() {
         objectService
-                .getPetListForHotspot(String.valueOf(hotspotInfo.getInt("hs_id")))
+                .getPetListForHotspot(String.valueOf(hotspotId))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Pet>>() {
@@ -152,8 +248,8 @@ public class HotSpotDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Pet> pets) {
-                        Log.i("HotSpotDetailActivity", "initPetList: pets.size() = " + pets.size());
-                        pets_choose = pets;
+                        pets_choose.addAll(pets);
+                        Log.i("HotSpotDetailActivity", "initPetList: pets_choose.size() = " + pets_choose.size());
                         hsDetailPetAdapter.setNewData(pets_choose);
                     }
                 });
@@ -165,6 +261,8 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         setContentView(R.layout.hotspot_detail);
 
         hotspotInfo = getIntent().getExtras();
+        hotspotId = hotspotInfo.getInt("hs_id");
+        userId = (int) AppContext.getInstance().getLoginUserInfo().get("user_id");
 
         initWidget();
 
@@ -176,9 +274,6 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         commentAreaRV.setLayoutManager(layoutManager);
         commentAreaRV.setAdapter(commentAdapter);
 
-        initCommentList();
-        initPetList();
-
         MyLayoutManager layoutManager1 = new MyLayoutManager(HotSpotDetailActivity.this);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
         hsDetailPetAdapter = new HSDetailPetAdapter(R.layout.hotspot_detail_pet);
@@ -186,7 +281,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         petNickNameRV.setLayoutManager(layoutManager1);
         petNickNameRV.setAdapter(hsDetailPetAdapter);
 
-        commentIV.setOnClickListener(new View.OnClickListener() {
+        commentImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 yourCommentET.requestFocus();
@@ -210,6 +305,9 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        initCommentList();
+        initPetList();
     }
 
     class MyLayoutManager extends LinearLayoutManager {
