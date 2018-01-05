@@ -13,11 +13,11 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
         <!--返回键-->
-        <ImageView
+        <ImageButton
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/ic_back_50"
-            android:id="@+id/back"/>
+            android:id="@+id/backBtn"/>
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout
@@ -26,7 +26,7 @@
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:id="@+id/peiImage"
+            android:id="@+id/petAvatar"
             android:background="@mipmap/pet_default"/>
         <TextView
             android:layout_width="wrap_content"
@@ -100,12 +100,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:text="年龄"/>
+                android:text="生日"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:id="@+id/petOld"
+                android:id="@+id/petBirth"
                 android:layout_marginLeft="8dp"
                 android:text="2周岁"/>
         </LinearLayout>
