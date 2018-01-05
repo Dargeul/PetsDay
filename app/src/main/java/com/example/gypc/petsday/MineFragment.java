@@ -26,12 +26,9 @@ import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
 import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -245,7 +242,7 @@ public class MineFragment extends Fragment {
         userData.put("user_nickname", nickname);
 
         objectService
-                .updateUser(JSONRequestBodyGenerator.getBody(userData))
+                .updateUser(JSONRequestBodyGenerator.getJsonObjBody(userData))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<RemoteDBOperationResponse>() {
@@ -288,10 +285,11 @@ public class MineFragment extends Fragment {
     private void getFollowPetList() {
         if (isLoadFollowPet) return;
 
-        //Todo:现在是查用户自己宠物的接口，
-        String userID = AppContext.getInstance().getLoginUserInfo().get("user_id").toString();
         objectService
-                .getPetListForUser(userID)
+                .getPetListForUser(
+                        String.valueOf(MainActivity.getUserId()),
+                        String.valueOf(ObjectServiceFactory.GET_LIKE_PET_STATUS_CODE)
+                )
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Pet>>() {
