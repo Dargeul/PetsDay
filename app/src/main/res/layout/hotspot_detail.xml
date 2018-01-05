@@ -95,24 +95,24 @@
                 android:gravity="center_vertical|end"
                 android:background="@color/colorLightGray">
                 <!--分享按钮，点击进行分享-->
-                <ImageView
+                <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="@drawable/ic_share_50"
                     android:layout_marginRight="16dp"
-                    android:id="@+id/share"/>
+                    android:id="@+id/shareImageBtn"/>
                 <!--点赞按钮，点击进行点赞和取消点赞-->
-                <ImageView
+                <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="@drawable/ic_like_50"
-                    android:id="@+id/like"
+                    android:id="@+id/likeImageBtn"
                     android:layout_marginRight="16dp"/>
-                <ImageView
+                <ImageButton
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="@drawable/ic_reply_50"
-                    android:id="@+id/comment"
+                    android:id="@+id/commentImageBtn"
                     android:layout_marginRight="16dp"/>
             </LinearLayout>
             <!--评论列表，列表项在hotspot_detail_comment.xml-->
@@ -127,14 +127,23 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true">
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal"
+                >
                 <EditText
-                    android:layout_width="match_parent"
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
                     android:scrollbars="vertical"
                     android:id="@+id/yourComment"
                     android:hint="你的评论"/>
+
+                <ImageButton
+                    android:id="@+id/submitCommentBtn"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_tick_box_50"
+                    />
             </LinearLayout>
         </LinearLayout>
 
