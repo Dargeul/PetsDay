@@ -16,14 +16,16 @@ public class Hotspot {
     private int hs_id;
     private String hs_photo;
     private int count;  // 表示点赞数
+    private String user_nickname;
 
-    public Hotspot(String hs_time, int hs_user, String hs_content, int hs_id, String hs_photo, int count){
+    public Hotspot(String hs_time, int hs_user, String hs_content, int hs_id, String hs_photo, int count, String user_nickname){
         this.hs_time = hs_time;
         this.hs_user = hs_user;
         this.hs_content = hs_content;
         this.hs_id = hs_id;
         this.hs_photo = hs_photo;
         this.count = count;
+        this.user_nickname = user_nickname;
     }
 
     public String getHs_time() {
@@ -59,7 +61,12 @@ public class Hotspot {
         bundle.putInt("hs_id", hs_id);
         bundle.putString("hs_photo", hs_photo);
         bundle.putInt("count", count);
+        bundle.putString("user_nickname", user_nickname);
 
         return bundle;
+    }
+
+    public String getUser_nickname() {
+        return user_nickname;
     }
 }
