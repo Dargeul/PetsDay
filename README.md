@@ -8,6 +8,12 @@
 >
 > database:cat
 
+
+> 内容更新
+> - 查询动态,评论,通知,宠物都返回了用户昵称的字段
+> - 增加了查看用户关注的宠物列表的接口
+> - 增加了批量增加关注功能的接口
+
 ### 获取列表当中的相关数据
 
 ```bash
@@ -19,7 +25,6 @@ curl -X GET  120.78.169.206:3000/pet_and_hotspot
 curl -X GET  120.78.169.206:3000/good
 curl -X GET  120.78.169.206:3000/pet_and_user
 curl -X GET  120.78.169.206:3000/notification
-curl -X GET  120.78.169.206:3000/like
 ```
 ### 插入列表中的项
 
@@ -29,7 +34,7 @@ curl -X GET  120.78.169.206:3000/like
 
 ```bash
 //0表示插入
-curl -X POST --data "password=123&&username=name&&user_nickname=丁同学&&status=0" 120.78.169.206:3000/user
+curl -X POST --data "username=123&&password=丁同学&&user_nickname=0&&status=0" 120.78.169.206:3000/user
 
 curl -X POST --data "pet_nickname=小美&&pet_owner=1&&pet_type=美短&&pet_weight=20&&pet_sex=female&&pet_birth=2010-01-02&&pet_photo=test.jpg" 120.78.169.206:3000/pet
 
@@ -37,7 +42,7 @@ curl -X POST --data "hs_time=2010-01-02 00:00:11&&hs_user=4&&hs_content=text4" 1
 
 curl -X POST --data "com_time=2010-01-02&&com_user=3&&com_hs=4&&com_content=test4" 120.78.169.206:3000/comment
 
-curl -X POST --data "pet_id=4&&hs_id=4" 120.78.169.206:3000/pet_and_hotspot
+curl -X POST --data "multiPost=[{\"pet_id\":\"1\",\"hs_id\":\"1\"},{\"pet_id\":\"1\",\"hs_id\":\"1\"},{\"pet_id\":\"1\",\"hs_id\":\"1\"}]" 120.78.169.206:3000/pet_and_hotspot
 
 curl -X POST --data "pet_id=2&&user_id=2" 120.78.169.206:3000/pet_and_user
 
@@ -105,8 +110,12 @@ curl -X GET 120.78.169.206:3000/comment\?hs_id=2
 
 > 根据用户id查看拥有的宠物(**增加了count字段表示粉丝数**)
 
+- 查看用户拥有的宠物(status=1)
+- 查看用户关注的宠物(status=0)
+
 ```
-curl -X GET 120.78.169.206:3000/pet\?user_id=1
+curl -X GET 120.78.169.206:3000/pet\?user_id=1&&status=1
+curl -X GET 120.78.169.206:3000/pet\?user_id=1&&status=0
 ```
 
 > 查看相关动态关联的宠物(**增加了count字段表示粉丝数**)
@@ -122,6 +131,13 @@ curl -X GET 120.78.169.206:3000/notification\?user_id=1
 ```
 
 > 查看宠物的粉丝
+
 ```
 curl -X GET 120.78.169.206:3000/pet\?pet_id=1
+```
+
+> 查看相关用户点赞的条目
+
+```
+curl -X GET 120.78.169.206:3000/like\?user_id=1
 ```
