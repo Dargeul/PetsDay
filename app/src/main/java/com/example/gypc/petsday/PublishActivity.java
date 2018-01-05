@@ -7,11 +7,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -21,7 +18,6 @@ import android.widget.Toast;
 import com.alley.van.VanGogh;
 import com.alley.van.activity.VanCropActivity;
 import com.alley.van.helper.VanCropType;
-import com.alley.van.helper.VanImageLoader;
 import com.alley.van.helper.VanMediaFilter;
 import com.alley.van.helper.VanMediaType;
 import com.alley.van.model.VanConfig;
@@ -39,9 +35,6 @@ import com.example.gypc.petsday.utils.ImageUriConverter;
 import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
 import com.kevin.crop.UCrop;
 
-import org.w3c.dom.Text;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -51,7 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import okhttp3.ResponseBody;
+import okhttp3.RequestBody;
 import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -97,6 +90,8 @@ public class PublishActivity extends BaseActivity {
     private String imageUploadResultString;
 
     private int failUploadImageTimes = 0;
+    private boolean isCombineOk = false;
+    private boolean isCombineComplete = false;
 
     public void initWidget(){
         choosePet = (ImageView)findViewById(R.id.choosePet);
@@ -173,12 +168,15 @@ public class PublishActivity extends BaseActivity {
     }
 
     private void submitFinish() {
-        if (isImageUploadComplete && isFormUploadComplete) {
+        if (isImageUploadComplete && isFormUploadComplete && isCombineComplete) {
             if (!isFormUploadOk) {
                 msgNotify("信息上传失败，请重试！");
                 submitHotspotBtn.setEnabled(true);
             } else if (!isImageUploadOk) {
                 msgNotify("头像上传失败，请重试！");
+                submitHotspotBtn.setEnabled(true);
+            } else if (!isCombineOk) {
+                msgNotify("宠物关联信息上传失败，请重试！");
                 submitHotspotBtn.setEnabled(true);
             } else {
                 navigateToPrePage();
@@ -190,6 +188,7 @@ public class PublishActivity extends BaseActivity {
         submitHotspotBtn.setEnabled(false);
         isImageUploadComplete = false;
         isFormUploadComplete = false;
+        isCombineComplete = false;
         uploadImage();
         uploadForm();
     }
@@ -247,10 +246,17 @@ public class PublishActivity extends BaseActivity {
 
     private void uploadFormFinish() {
         isFormUploadComplete = true;
+        combineHotspotAndPets();
+    }
+
+    private void combineHotspotAndPetFinish() {
+        isCombineComplete = true;
         submitFinish();
     }
 
     private void uploadForm() {
+        if (isFormUploadOk)
+            uploadFormFinish();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         publishTime = dateFormat.format(new Date());
 
@@ -262,7 +268,7 @@ public class PublishActivity extends BaseActivity {
 
         objectService
                 .insertHotspot(
-                        JSONRequestBodyGenerator.getBody(dataMap)
+                        JSONRequestBodyGenerator.getJsonObjBody(dataMap)
                 )
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -286,6 +292,49 @@ public class PublishActivity extends BaseActivity {
                             return;
                         hotspotId = integerResult.response().body();
                         isFormUploadOk = true;
+                    }
+                });
+    }
+
+    private void combineHotspotAndPets() {
+        if (isCombineOk)
+            return;
+        isCombineOk = false;
+        String hs_id = String.valueOf(hotspotId);
+        List<HashMap<String, Object>> datas = new ArrayList<>();
+        for (Integer petId : chosenPetIds) {
+            HashMap<String, Object> data = new HashMap<>();
+            data.put("pet_id", String.valueOf(petId));
+            data.put("hs_id", hs_id);
+            datas.add(data);
+        }
+
+        RequestBody reqBody = JSONRequestBodyGenerator.getJsonArrayBody(datas);
+        objectService
+                .combinePetAndHotspot(reqBody)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result<Integer>>() {
+                    @Override
+                    public void onCompleted() {
+                        combineHotspotAndPetFinish();
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("PublishActivity", "combineHotspotAndPets", throwable);
+                    }
+
+                    @Override
+                    public void onNext(Result<Integer> integerResult) {
+                        if (integerResult.isError()) {
+                            Log.e("PublishActivity", "combineHotspotAndPets", integerResult.error());
+                        }
+                        if (integerResult.response() == null)
+                            return;
+                        int resVal = integerResult.response().body();
+                        if (resVal >= 0)
+                            isCombineOk = true;
                     }
                 });
     }
