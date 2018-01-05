@@ -220,16 +220,32 @@ public class HotSpotFragment extends Fragment {
                     @Override
                     public void onNext(List<Hotspot> hotspots) {
                         Log.i("HotSpotFragment", "getRemoteNewHotspot: onNext: list size = " + String.valueOf(hotspots.size()));
-                        datas.removeAll(hotspots);
-                        hotspots.addAll(datas);
-                        datas.removeAll(datas);
-                        datas.addAll(hotspots);
+                        refreshData(hotspots);
                         //刷新每次都用setNewData重新加载数据
-                        hotSpotAdapter.setNewData(hotspots);
+                        hotSpotAdapter.setNewData(datas);
                         easyRefreshLayout.refreshComplete();
                         Toast.makeText(getContext(), "refresh success", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public boolean isDuplicateHotspotInDatas(int hotspotId) {
+        for (Hotspot item : datas) {
+            if (item.getHs_id() == hotspotId)
+                return true;
+        }
+        return false;
+    }
+
+    public void refreshData(List<Hotspot> hotspots) {
+        List<Hotspot> list = new ArrayList<>();
+        list.addAll(hotspots);
+        for (Hotspot item : datas) {
+            if (!isDuplicateHotspotInDatas(item.getHs_id()))
+                list.add(item);
+        }
+        datas.clear();
+        datas.addAll(list);
     }
 
     public static HotSpotFragment getInstance() {
