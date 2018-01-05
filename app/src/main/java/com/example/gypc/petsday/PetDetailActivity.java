@@ -2,19 +2,28 @@ package com.example.gypc.petsday;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ajguan.library.EasyRefreshLayout;
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.HotSpotAdapter;
+import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Hotspot;
+import com.example.gypc.petsday.utils.ImageUriConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +37,9 @@ import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.ValueShape;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by StellaSong on 2017/12/19.
@@ -46,6 +58,15 @@ public class PetDetailActivity extends AppCompatActivity {
     private List<PointValue> mPointValues = new ArrayList<PointValue>();
     private List<AxisValue> mAxisXValues = new ArrayList<AxisValue>();
 
+    private ImageView petAvatarImageView;
+    private TextView petTypeTextView;
+    private TextView petWeightTextView;
+    private TextView petBirthTextView;
+    private TextView petSexTextView;
+
+    private ImageButton backBtn;
+
+    private int petId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +77,44 @@ public class PetDetailActivity extends AppCompatActivity {
         hotSpotRecyclerView = (RecyclerView)findViewById(R.id.petHotSpot);
         easyRefreshLayout = (EasyRefreshLayout)findViewById(R.id.easylayout);
 
+        petAvatarImageView = (ImageView)findViewById(R.id.petAvatar);
+        petTypeTextView = (TextView)findViewById(R.id.petType);
+        petWeightTextView = (TextView)findViewById(R.id.petWeight);
+        petBirthTextView = (TextView)findViewById(R.id.petBirth);
+        petSexTextView = (TextView)findViewById(R.id.petSex);
+        backBtn = (ImageButton)findViewById(R.id.backBtn);
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        Bundle dataBundle = getIntent().getExtras();
+        petId = dataBundle.getInt("pet_id");
+        String imageFilename = dataBundle.getString("pet_photo");
+        try {
+            Uri avatarUri = ImageUriConverter.getCacheFileUriFromName(this, imageFilename);
+            if (avatarUri == null)
+                throw new Exception("no image from cache");
+            Glide.with(this)
+                    .load(avatarUri)
+                    .asBitmap()
+                    .into(petAvatarImageView);
+        } catch (Exception e) {
+            Log.e("PetDetailActivity", "onCreate", e);
+            String path = ImageUriConverter.getImgRemoteUriFromName(imageFilename);
+            Glide.with(this)
+                    .load(path)
+                    .asBitmap()
+                    .into(petAvatarImageView);
+        }
+        petTypeTextView.setText(dataBundle.getString("pet_type"));
+        petWeightTextView.setText(dataBundle.getString("pet_weight"));
+        petBirthTextView.setText(dataBundle.getString("pet_birth"));
+        petSexTextView.setText(dataBundle.getString("pet_sex"));
+
         getAxisXLables();//获取x轴的标注
         getAxisPoints();//获取坐标点
         initLineChart();//初始化
@@ -64,16 +123,7 @@ public class PetDetailActivity extends AppCompatActivity {
         * 以下是动态数据列表和Adapter的设置。
         * 动态列表的数据类型是hotspot这个model
         * */
-        //final Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_1);
-        final String bmp = "http://h.hiphotos.baidu.com/image/crop%3D0%2C0%2C1024%2C643/sign=fe44dd1c01fa513d45e5369e005d79cb/4afbfbedab64034f173b8ac6a6c379310b551d7f.jpg";
-        datas = new ArrayList<Hotspot>(){
-            {
-//                add(new Hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-//                add(new Hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-//                add(new Hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-//                add(new Hotspot(new Date(), 1, "I like it", 1, bmp, 888, 666, true));
-            }
-        };
+        datas = new ArrayList<>();
 
         MyLayoutManager layoutManager = new MyLayoutManager(PetDetailActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -93,68 +143,32 @@ public class PetDetailActivity extends AppCompatActivity {
             }
         });
 
-        /*
-        *设置上拉加载，每次加载会添加2个列表项，并且更新到动态列表中
-        *之后写到网络请求也在这里面写
-         */
-        easyRefreshLayout.addEasyEvent(new EasyRefreshLayout.EasyEvent() {
-            @Override
-            public void onLoadMore() {
-                final List<Hotspot> list = new ArrayList<>();
-                //final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_2);
-                final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //添加2个列表项到动态的数据列表中
-                        for (int j = 0; j < 2; j++) {
-//                            list.add(new Hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));
-//                            datas.add(new Hotspot(new Date(), 1, "Loaded", 1, bitmap, 888, 666, true));
-                        }
-
-                        easyRefreshLayout.loadMoreComplete(new EasyRefreshLayout.Event() {
-                            @Override
-                            public void complete() {
-                                hotSpotAdapter.getData().addAll(list);
-                                hotSpotAdapter.notifyDataSetChanged();
-                                Toast.makeText(PetDetailActivity.this, "load success", Toast.LENGTH_SHORT).show();
-                            }
-                        }, 500);
-
-                    }
-                }, 2000);
-
-
-            }
-
-
-            // 下拉刷新，每次刷新都会新出现2个列表项，并且更新到动态列表中
-            @Override
-            public void onRefreshing() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //添加2个列表项到动态的数据列表中
-                        //final Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_3);
-                        final String bitmap = "https://f11.baidu.com/it/u=3240141704,604792825&fm=72";
-                        List<Hotspot> list = new ArrayList<>();
-                        for (int i = 0; i < 2; i++) {
-//                            list.add(new Hotspot(new Date(), 1, "Refresh", 1, bitmap, 888, 666, true));
-                        }
-                        list.addAll(datas);
-                        datas.removeAll(datas);
-                        datas.addAll(list);
-                        //刷新每次都用setNewData重新加载数据
-                        hotSpotAdapter.setNewData(list);
-                        easyRefreshLayout.refreshComplete();
-                        Toast.makeText(PetDetailActivity.this, "refresh success", Toast.LENGTH_SHORT).show();
-                    }
-                }, 1000);
-            }
-        });
-
         hotSpotRecyclerView.setAdapter(hotSpotAdapter);
+        initHotspotList();
+    }
 
+    private void initHotspotList() {
+        ObjectServiceFactory.getService()
+                .getHotspotByPetId(String.valueOf(petId))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Hotspot>>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i("PetDetailActivity", "initHotspotList: complete");
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("PetDetailActivity", "initHotspotList", throwable);
+                    }
+
+                    @Override
+                    public void onNext(List<Hotspot> hotspots) {
+                        datas.addAll(hotspots);
+                        hotSpotAdapter.setNewData(datas);
+                    }
+                });
     }
 
     /**
