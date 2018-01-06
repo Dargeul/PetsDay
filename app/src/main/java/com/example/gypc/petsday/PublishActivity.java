@@ -30,6 +30,7 @@ import com.example.gypc.petsday.helper.GifSizeFilter;
 import com.example.gypc.petsday.helper.GlideImageLoader;
 import com.example.gypc.petsday.service.ImageService;
 import com.example.gypc.petsday.service.ObjectService;
+import com.example.gypc.petsday.utils.AppContext;
 import com.example.gypc.petsday.utils.ImageMultipartGenerator;
 import com.example.gypc.petsday.utils.ImageUriConverter;
 import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
@@ -263,7 +264,7 @@ public class PublishActivity extends BaseActivity {
 
         HashMap<String, Object> dataMap = new HashMap<>();
         dataMap.put("hs_time", publishTime);
-        dataMap.put("hs_user", MainActivity.getUserId());
+        dataMap.put("hs_user", AppContext.getInstance().getLoginUserInfo().get("user_id"));
         dataMap.put("hs_content", publishContent);
         dataMap.put("hs_photo", imageFilename);
 
