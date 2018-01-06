@@ -24,6 +24,7 @@ import com.alley.van.model.VanConfig;
 import com.baoyz.actionsheet.ActionSheet;
 import com.bumptech.glide.Glide;
 import com.example.gypc.petsday.base.BaseActivity;
+import com.example.gypc.petsday.factory.CombineServiceFactory;
 import com.example.gypc.petsday.factory.ImageServiceFactory;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.helper.GifSizeFilter;
@@ -45,6 +46,7 @@ import java.util.List;
 import java.util.Locale;
 
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -280,15 +282,15 @@ public class PublishActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e("PublishActivity", "uploadForm", e);
+                        Log.e("PublishActivity", "uploadForm: onError", e);
                     }
 
                     @Override
                     public void onNext(Result<Integer> integerResult) {
                         if (integerResult.isError()) {
-                            Log.e("PublishActivity", "uploadForm", integerResult.error());
+                            Log.e("PublishActivity", "uploadForm: onNext", integerResult.error());
                         }
-                        if (integerResult.response() == null)
+                        if (integerResult.response() == null || integerResult.response().body() == null)
                             return;
                         hotspotId = integerResult.response().body();
                         isFormUploadOk = true;
@@ -310,7 +312,7 @@ public class PublishActivity extends BaseActivity {
         }
 
         RequestBody reqBody = JSONRequestBodyGenerator.getJsonArrayBody(datas);
-        objectService
+        CombineServiceFactory.getService()
                 .combinePetAndHotspot(reqBody)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -322,7 +324,7 @@ public class PublishActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        Log.e("PublishActivity", "combineHotspotAndPets", throwable);
+                        Log.e("PublishActivity", "combineHotspotAndPets: onError", throwable);
                     }
 
                     @Override
@@ -330,7 +332,7 @@ public class PublishActivity extends BaseActivity {
                         if (integerResult.isError()) {
                             Log.e("PublishActivity", "combineHotspotAndPets", integerResult.error());
                         }
-                        if (integerResult.response() == null)
+                        if (integerResult.response() == null || integerResult.response().body() == null)
                             return;
                         int resVal = integerResult.response().body();
                         if (resVal >= 0)

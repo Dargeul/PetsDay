@@ -90,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
                         if (integerResult.isError()) {
                             Log.e("RegisterActivity", "submitInfo", integerResult.error());
                         }
-                        if (integerResult.response() == null)
+                        if (integerResult.response() == null || integerResult.response().body() == null)
                             return;
                         if (integerResult.response().body() >= 0)
                             isRegisterOk = true;

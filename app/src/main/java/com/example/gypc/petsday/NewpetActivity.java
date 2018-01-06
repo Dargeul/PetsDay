@@ -314,7 +314,7 @@ public class NewpetActivity extends BaseActivity {
                             if (integerResult.isError()) {
                                 Log.e("NewpetActivity", "insertPet", integerResult.error());
                             }
-                            if (integerResult.response() == null)
+                            if (integerResult.response() == null || integerResult.response().body() == null)
                                 return;
                             petId = integerResult.response().body();
                             isFormUploadOK = true;

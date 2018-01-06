@@ -169,7 +169,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                             if (integerResult.isError()) {
                                 Log.e("HotSpotDetailActivity", "submitComment", integerResult.error());
                             }
-                            if (integerResult.response() == null)
+                            if (integerResult.response() == null || integerResult.response().body() == null)
                                 return;
                             isCommentOK = true;
                             int comId = integerResult.response().body();
