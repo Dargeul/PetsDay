@@ -26,7 +26,7 @@ public class CommentAdapter extends BaseQuickAdapter<Comment,BaseViewHolder> {
     @Override
     protected void convert(BaseViewHolder helper,Comment item){
 
-        helper.setText(R.id.userNickname, item.getCom_user()+"");
+        helper.setText(R.id.userNickname, item.getUser_nickname());
         helper.setText(R.id.commentTime,item.getCom_time());
         helper.setText(R.id.comment,item.getCom_content());
         int position = helper.getLayoutPosition();
