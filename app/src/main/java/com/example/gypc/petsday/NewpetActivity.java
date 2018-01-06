@@ -306,13 +306,13 @@ public class NewpetActivity extends BaseActivity {
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.e("NewpetActivity", "insertPet", e);
+                            Log.e("NewpetActivity", "insertPet: onError", e);
                         }
 
                         @Override
                         public void onNext(Result<Integer> integerResult) {
                             if (integerResult.isError()) {
-                                Log.e("NewpetActivity", "insertPet", integerResult.error());
+                                Log.e("NewpetActivity", "insertPet: onNext", integerResult.error());
                             }
                             if (integerResult.response() == null || integerResult.response().body() == null)
                                 return;
