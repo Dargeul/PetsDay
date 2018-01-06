@@ -268,11 +268,8 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                                 return;
                             isCommentOK = true;
                             newComId = integerResult.response().body();
-                            List<Comment> newComList = new ArrayList<Comment>();
-                            newComList.add(new Comment(newComId, hotspotId, userId, commentTime, commentText, userNickname));
-                            newComList.addAll(commentsList);
-                            commentsList = newComList;
-                            commentAdapter.setNewData(newComList);
+                            commentsList.add(new Comment(newComId, hotspotId, userId, commentTime, commentText, userNickname));
+                            commentAdapter.notifyDataSetChanged();
                         }
                     });
         }
@@ -294,7 +291,9 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                     @Override
                     public void onCompleted() {
                         Log.i("HotSpotDetailActivity", "sendCommendNotification: complete");
+                        submitCommentBtn.setEnabled(true);
                         if (isNotificationSentOk) {
+                            isCommentOK = false;
                             msgNotify("评论成功！");
                             yourCommentET.clearFocus();
                             yourCommentET.setText("");
