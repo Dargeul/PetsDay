@@ -473,7 +473,12 @@ public class HotSpotDetailActivity extends AppCompatActivity {
 
     private void goBackMainPage() {
         Bundle data = new Bundle();
-        data.putInt("position", hotspotInfo.getInt("position"));
+        if (hotspotInfo.getBoolean("fromHotspotFragment")) {
+            data.putInt("position", hotspotInfo.getInt("position"));
+            data.putBoolean("fromHotspotFragment", true);
+        }
+        else
+            data.putInt("hs_id", hotspotId);
         data.putInt("countComment", commentsList.size());
         int countLikeChange = 0;
         if (initIsHotspotLike && !isHotspotLike)

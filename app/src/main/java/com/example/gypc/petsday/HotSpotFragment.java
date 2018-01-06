@@ -117,6 +117,7 @@ public class HotSpotFragment extends Fragment {
                 Hotspot item = (Hotspot) adapter.getItem(position);
                 Bundle bundle = item.getBundle();
                 bundle.putInt("position", position);
+                bundle.putBoolean("fromHotspotFragment", true);
                 intent.putExtras(bundle);
 
                 getActivity().startActivityForResult(intent, MainActivity.HOTSPOT_DETAIL_REQ_CODE);
@@ -258,10 +259,26 @@ public class HotSpotFragment extends Fragment {
     }
 
     public void updateDataFromDetailPage(Bundle data) {
-        int position = data.getInt("position");
         int countComment = data.getInt("countComment");
         int countLikeChange = data.getInt("countLikeChange");
-        Hotspot item = this.datas.get(position);
+        Hotspot item;
+        int position = 0;
+        if (data.getBoolean("fromHotspotFragment")) {
+            position = data.getInt("position");
+            item = this.datas.get(position);
+
+        } else {
+            boolean exist = false;
+            int hotspotId = data.getInt("hs_id");
+            for (position = 0; position < datas.size(); position++)
+                if (datas.get(position).getHs_id() == hotspotId) {
+                    exist = true;
+                    break;
+                }
+            if (!exist)
+                return;
+            item = datas.get(position);
+        }
         item.setCountComment(countComment);
         item.setCountLike(item.getCountLike() + countLikeChange);
         this.datas.set(position, item);
