@@ -49,6 +49,8 @@ import rx.schedulers.Schedulers;
 
 public class HotSpotDetailActivity extends AppCompatActivity {
 
+    public static final int UPDATE_HOTSPOT_ITEM_SUCCESS = 1;
+
     private ObjectService objectService = ObjectServiceFactory.getService();
 
     private List<Comment> commentsList = new ArrayList<>();
@@ -82,6 +84,8 @@ public class HotSpotDetailActivity extends AppCompatActivity {
     private int likeId;
     private boolean isLikeOK = false;
     private boolean isCancelLikeOK = false;
+    private String userNickname;
+    private boolean initIsHotspotLike;
 
     private void initWidget(){
         userNicknameTV = (TextView)findViewById(R.id.userNickname);
@@ -146,7 +150,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                     public void onCompleted() {
                         Log.i("HotSpotDetailActivity", "cancelLikeHotspot: complete");
                         if (isCancelLikeOK) {
-                            likeImageBtn.setImageResource(R.drawable.praise);
+                            likeImageBtn.setBackgroundResource(R.drawable.praise);
                             AppContext.getInstance().cancelLikeHotspot(hotspotId);
                         } else {
                             msgNotify("操作失败，请重试！");
@@ -179,7 +183,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                     @Override
                     public void onCompleted() {
                         if (isLikeOK) {
-                            likeImageBtn.setImageResource(R.drawable.praise_fill);
+                            likeImageBtn.setBackgroundResource(R.drawable.praise_fill);
                             AppContext.getInstance().likeHotspot(new HotspotLike(likeId, hotspotId, userId));
                         } else {
                             msgNotify("操作失败，请重试！");
@@ -265,7 +269,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                             isCommentOK = true;
                             newComId = integerResult.response().body();
                             List<Comment> newComList = new ArrayList<Comment>();
-                            newComList.add(new Comment(newComId, hotspotId, userId, commentTime, commentText));
+                            newComList.add(new Comment(newComId, hotspotId, userId, commentTime, commentText, userNickname));
                             newComList.addAll(commentsList);
                             commentsList = newComList;
                             commentAdapter.setNewData(newComList);
@@ -391,7 +395,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
     }
 
     private void initLikeStatus() {
-        isHotspotLike = false;
+        initIsHotspotLike = isHotspotLike = false;
         List<HotspotLike> likeList = AppContext.getInstance().getInitLikeList();
         for (HotspotLike like : likeList) {
             if (like.getLike_hotspot() == hotspotId) {
@@ -400,7 +404,8 @@ public class HotSpotDetailActivity extends AppCompatActivity {
             }
         }
         if (isHotspotLike) {
-            likeImageBtn.setImageResource(R.drawable.praise_fill);
+            initIsHotspotLike = true;
+            likeImageBtn.setBackgroundResource(R.drawable.praise_fill);
         }
     }
 
@@ -412,6 +417,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         hotspotInfo = getIntent().getExtras();
         hotspotId = hotspotInfo.getInt("hs_id");
         userId = (int) AppContext.getInstance().getLoginUserInfo().get("user_id");
+        userNickname = hotspotInfo.getString("user_nickname");
 
         initWidget();
         initLikeStatus();
@@ -452,12 +458,34 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         backIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                goBackMainPage();
             }
         });
 
         initCommentList();
         initPetList();
+    }
+
+    @Override
+    public void onBackPressed() {
+        goBackMainPage();
+    }
+
+    private void goBackMainPage() {
+        Bundle data = new Bundle();
+        data.putInt("position", hotspotInfo.getInt("position"));
+        data.putInt("countComment", commentsList.size());
+        int countLikeChange = 0;
+        if (initIsHotspotLike && !isHotspotLike)
+            countLikeChange = -1;
+        else if (!initIsHotspotLike && isHotspotLike)
+            countLikeChange = 1;
+        data.putInt("countLikeChange", countLikeChange);
+
+        Intent intent = new Intent();
+        intent.putExtras(data);
+        setResult(UPDATE_HOTSPOT_ITEM_SUCCESS, intent);
+        finish();
     }
 
     class MyLayoutManager extends LinearLayoutManager {
