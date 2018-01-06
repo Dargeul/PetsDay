@@ -27,7 +27,7 @@ public class JSONRequestBodyGenerator {
     public static RequestBody getJsonArrayBody(List<HashMap<String, Object>> datas) {
         String dataStr = "multiPost=" +convertDataArray(datas);
         Log.i("ObjectArrayToJsonStr", "getJsonArrayBody: dataStr: " + dataStr);
-        RequestBody requestBody = RequestBody.create(okhttp3.MediaType.parse("text/plain; charset=utf-8"), dataStr);
+        RequestBody requestBody = RequestBody.create(okhttp3.MediaType.parse("application/x-www-form-urlencoded"), dataStr);
         return requestBody;
     }
 
