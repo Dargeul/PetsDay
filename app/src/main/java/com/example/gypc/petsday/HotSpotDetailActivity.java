@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import com.example.gypc.petsday.adapter.HSDetailPetAdapter;
 import com.example.gypc.petsday.adapter.CommentAdapter;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Comment;
+import com.example.gypc.petsday.model.Hotspot;
 import com.example.gypc.petsday.model.HotspotLike;
 import com.example.gypc.petsday.model.Pet;
 import com.example.gypc.petsday.model.RemoteDBOperationResponse;
@@ -50,13 +52,13 @@ import rx.schedulers.Schedulers;
 public class HotSpotDetailActivity extends AppCompatActivity {
 
     public static final int UPDATE_HOTSPOT_ITEM_SUCCESS = 1;
+    public static boolean CAN_NOT_FIND_HOTSPOT_BT_ID = false;
 
     private ObjectService objectService = ObjectServiceFactory.getService();
 
     private List<Comment> commentsList = new ArrayList<>();
 
     private List<Pet> pets_choose = new ArrayList<>();
-
 
     private HSDetailPetAdapter hsDetailPetAdapter; //因为绑定的数据相同，所以就使用这个adapter，后面如果有修改的话，再一起改动。
     private CommentAdapter commentAdapter;
@@ -217,7 +219,9 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(yourCommentET.getWindowToken(), 0);
         if (isCommentOK) {
             submitCommentBtn.setEnabled(false);
-            sendCommendNotification(newComId);
+            String myID = AppContext.getInstance().getLoginUserInfo().get("user_id").toString();
+            String toID = String.valueOf(hotspotInfo.getInt("hs_user"));
+            if (!myID.equals(toID)) sendCommendNotification(newComId);
             return;
         }
         isCommentOK = false;
@@ -247,7 +251,10 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                         public void onCompleted() {
                             submitCommentBtn.setEnabled(true);
                             if (isCommentOK) {
-                                sendCommendNotification(newComId);
+                                String myID = AppContext.getInstance().getLoginUserInfo().get("user_id").toString();
+                                String toID = String.valueOf(hotspotInfo.getInt("hs_user"));
+                                if (!myID.equals(toID))
+                                    sendCommendNotification(newComId);
                             } else {
                                 msgNotify("评论提交失败，请重试！");
                                 submitCommentBtn.setEnabled(true);
@@ -268,7 +275,8 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                                 return;
                             isCommentOK = true;
                             newComId = integerResult.response().body();
-                            commentsList.add(new Comment(newComId, hotspotId, userId, commentTime, commentText, userNickname));
+                            String nickname = (String) AppContext.getInstance().getLoginUserInfo().get("user_nickname");
+                            commentsList.add(new Comment(newComId, hotspotId, userId, commentTime, commentText, nickname));
                             commentAdapter.notifyDataSetChanged();
                         }
                     });
@@ -421,7 +429,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         initWidget();
         initLikeStatus();
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(HotSpotDetailActivity.this);
+        MyLayoutManager layoutManager = new MyLayoutManager(HotSpotDetailActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         commentAdapter = new CommentAdapter(R.layout.hotspot_detail_comment);
@@ -429,7 +437,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         commentAreaRV.setLayoutManager(layoutManager);
         commentAreaRV.setAdapter(commentAdapter);
 
-        MyLayoutManager layoutManager1 = new MyLayoutManager(HotSpotDetailActivity.this);
+        LinearLayoutManager layoutManager1 = new MyLayoutManager(HotSpotDetailActivity.this);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
         hsDetailPetAdapter = new HSDetailPetAdapter(R.layout.hotspot_detail_pet);
         hsDetailPetAdapter.addData(pets_choose);
@@ -450,6 +458,10 @@ public class HotSpotDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HotSpotDetailActivity.this,OthersHomePageActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("hs_user", hotspotInfo.getInt("hs_user"));
+                bundle.putString("user_nickname", userNickname);
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -504,7 +516,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
             final int height = RecyclerView.LayoutManager.chooseSize(heightSpec,
                     getPaddingTop() + getPaddingBottom(),
                     ViewCompat.getMinimumHeight(commentAreaRV));
-            setMeasuredDimension(width, height * 3);
+            setMeasuredDimension(width, height * 5);
         }
     }
 }

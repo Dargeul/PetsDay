@@ -18,16 +18,28 @@
             android:layout_height="32dp"
             android:background="@drawable/ic_back_50"
             android:id="@+id/backBtn"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"
+            android:text="@string/app_name"
+            android:layout_gravity = "center"
+            android:textSize="20sp"
+            android:textAlignment="center"/>
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="10dp"
             android:id="@+id/petAvatar"
             android:background="@mipmap/pet_default"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,13 +48,22 @@
             android:id="@+id/petType"
             android:textSize="26sp"
             android:text="哈士奇"/>
+
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:id="@+id/follow"
-            android:layout_margin="10dp"
-            android:background="@drawable/ic_heart_outline_50"
+            android:id="@+id/followIV"
+            android:src="@drawable/like_fill"
             android:layout_gravity="center_vertical"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/detail_followTV"
+            android:layout_margin="10dp"
+            android:text="follow_num"
+            android:textSize="20dp"
+            android:layout_gravity="center_vertical" />
     </LinearLayout>
 
     <LinearLayout

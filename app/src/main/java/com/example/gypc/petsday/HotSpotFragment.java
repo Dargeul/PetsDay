@@ -11,14 +11,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ajguan.library.EasyRefreshLayout;
+import com.allenliu.badgeview.BadgeFactory;
+import com.allenliu.badgeview.BadgeView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.HotSpotAdapter;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Hotspot;
+import com.example.gypc.petsday.model.UserNotification;
 import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
 
@@ -43,7 +47,10 @@ public class HotSpotFragment extends Fragment {
     private EasyRefreshLayout easyRefreshLayout;
 
     private List<Hotspot> datas = new ArrayList<>();
-
+    private List<UserNotification> notifications;//通知列表
+    private List<UserNotification> notificationsNotReaded;//未读列表
+    private List<UserNotification> notificationsReaded;//已读列表
+    private BadgeView badgeView;
     private AppContext app;
 
     private static HotSpotFragment instance;
@@ -52,6 +59,7 @@ public class HotSpotFragment extends Fragment {
 
     private int pageNumber = 0;
 
+    private int userId;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,12 +72,16 @@ public class HotSpotFragment extends Fragment {
         notificationIV = (ImageView)getView().findViewById(R.id.notification);
         hotSpotRecyclerView = (RecyclerView)getView().findViewById(R.id.hotSpotRecyclerView);
         easyRefreshLayout = (EasyRefreshLayout)getView().findViewById(R.id.easylayout);
+        badgeView = new BadgeView(getContext());
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         app = AppContext.getInstance();
+
+        notifications = app.getNotifications();
+        notificationsNotReaded = new ArrayList<UserNotification>();
 
         initWidget();
 
@@ -84,6 +96,7 @@ public class HotSpotFragment extends Fragment {
         notificationIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                badgeView.unbind();
                 Intent intent = new Intent(getActivity(),NotificationActivity.class);
                 startActivity(intent);
             }
@@ -103,7 +116,7 @@ public class HotSpotFragment extends Fragment {
         hotSpotRecyclerView.setLayoutManager(layoutManager);
         hotSpotAdapter = new HotSpotAdapter(R.layout.hotspot_item_others, datas);
         //设置动画
-        hotSpotAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        hotSpotAdapter.openLoadAnimation(BaseQuickAdapter.SCALEIN);
         //设置动画循环
         hotSpotAdapter.isFirstOnly(false);
         //设置第一帧没有动画出现
@@ -142,14 +155,13 @@ public class HotSpotFragment extends Fragment {
 
             }
 
-
-            // 下拉刷新，每次刷新都会新出现2个列表项，并且更新到动态列表中
             @Override
             public void onRefreshing() {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         getRemoteNewHotspot();
+                        getNotification();
                     }
                 }, 1000);
             }
@@ -219,6 +231,49 @@ public class HotSpotFragment extends Fragment {
                         hotSpotAdapter.notifyDataSetChanged();
                         easyRefreshLayout.refreshComplete();
                         Toast.makeText(getContext(), "refresh success", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void getNotification(){
+        userId = (int) app.getLoginUserInfo().get("user_id");
+        objectService
+                .getNotificationByUserId(userId+"")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<UserNotification>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("NotificationActivity","getNotification",e);
+                    }
+
+                    @Override
+                    public void onNext(List<UserNotification> userNotifications) {
+                        notifications.removeAll(notifications);
+                        notifications.addAll(userNotifications);
+                        notificationsNotReaded.removeAll(notificationsNotReaded);
+                        //区分已读和未读通知
+                        for(int index = 0; index < notifications.size(); index++){
+                            if(notifications.get(index).getNotice_status() == 0){
+                                notificationsNotReaded.add(notifications.get(index));
+                            }
+                        }
+                        if(notificationsNotReaded.size() != 0)
+//                        BadgeFactory.createCircle(getContext())
+//                                .setTextColor(R.color.colorWhite)
+//                                .setBadgeCount(notificationsNotReaded.size())
+//                                .bind(notificationIV);
+                        badgeView.setTextColor(R.color.colorWhite)
+                        .setBadgeCount(notificationsNotReaded.size())
+                        .setHeight(18)
+                        .setWidth(18)
+                        .setTextSize(12)
+                        .bind(notificationIV);
                     }
                 });
     }
