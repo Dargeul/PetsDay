@@ -94,7 +94,9 @@ public class MineFragment extends Fragment {
         followpetRV.setLayoutManager(new LinearLayoutManager(context));
         followPetAdapter = new FollowPetAdapter(followpets, context);
         followpetRV.setAdapter(followPetAdapter);
-        getFollowPetList();
+//        if (mypets.isEmpty())
+//            getOwnPetList();
+//        getFollowPetList();
 
         addpetLL.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,8 +203,12 @@ public class MineFragment extends Fragment {
         return view;
     }
 
+    private void getOwnPetList() {
+        AppContext.getInstance().initPetList();
+    }
+
     private int getOwnerId() {
-        return MainActivity.getUserId();
+        return (int)AppContext.getInstance().getLoginUserInfo().get("user_id");
     }
 
     private static MineFragment instance;
@@ -294,12 +300,17 @@ public class MineFragment extends Fragment {
                 });
     }
 
+    public void initPetList() {
+        mypets = AppContext.getInstance().getMypets();
+        myPetAdapter.notifyDataSetChanged();
+    }
+
     private void getFollowPetList() {
         if (isLoadFollowPet) return;
 
         objectService
                 .getPetListForUser(
-                        String.valueOf(MainActivity.getUserId()),
+                        String.valueOf(AppContext.getInstance().getLoginUserInfo().get("user_id")),
                         String.valueOf(ObjectServiceFactory.GET_LIKE_PET_STATUS_CODE)
                 )
                 .subscribeOn(Schedulers.newThread())
