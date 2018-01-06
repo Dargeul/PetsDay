@@ -31,7 +31,8 @@ public class MainActivity extends AppCompatActivity {
             LOGIN_REQ_CODE = 1,
             ADD_PET_REQ_CODE = 2,
             EDIT_PET_CODE = 3,
-            NEW_HOTSPOT_REQ_CODE = 4;
+            NEW_HOTSPOT_REQ_CODE = 4,
+            HOTSPOT_DETAIL_REQ_CODE = 5;
 
     private ViewPager viewPager;
     private MenuItem menuItem;
@@ -154,9 +155,11 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (reqCode == NEW_HOTSPOT_REQ_CODE) {
             if (resCode == PublishActivity.PUBLISH_SUCCESS) {
-                // 考虑在添加新的动态之后更新动态列表
-
-//                HotSpotFragment.getInstance().addHotspot(dataIntent.getExtras());
+                HotSpotFragment.getInstance().addHotspot();
+            }
+        } else if (reqCode == HOTSPOT_DETAIL_REQ_CODE) {
+            if (resCode == HotSpotDetailActivity.UPDATE_HOTSPOT_ITEM_SUCCESS) {
+                HotSpotFragment.getInstance().updateDataFromDetailPage(dataIntent.getExtras());
             }
         }
     }
