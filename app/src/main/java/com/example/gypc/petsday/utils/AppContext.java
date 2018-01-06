@@ -164,6 +164,17 @@ public class AppContext extends Application {
         return initLikeList;
     }
 
+    public void cancelLikeHotspot(int hotspotId) {
+        for (HotspotLike like : initLikeList) {
+            if (like.getLike_hotspot() == hotspotId)
+                initLikeList.remove(like);
+        }
+    }
+
+    public void likeHotspot(HotspotLike like) {
+        initLikeList.add(like);
+    }
+
     private class LoginController {
         private static final String LOGIN_STATUS_PREF = "loginStatusPreference";
 
