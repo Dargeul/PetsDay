@@ -280,7 +280,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
 
         HashMap<String, Object> dataMap = new HashMap<>();
         dataMap.put("notice_status", ObjectServiceFactory.SEND_COMMENT_NOTIFICATION_STATUS_CODE);
-        dataMap.put("notice_user", userId);
+        dataMap.put("notice_user", hotspotInfo.getInt("hs_user"));
         dataMap.put("notice_comment", commendId);
 
         objectService
