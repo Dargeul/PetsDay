@@ -36,9 +36,6 @@ import rx.schedulers.Schedulers;
  */
 
 public class HotSpotFragment extends Fragment {
-
-    private static final int HOTSPOT_DETAIL_REQ_CODE = 1;
-
     private ImageView addIV;
     private ImageView notificationIV;
     private RecyclerView hotSpotRecyclerView;
@@ -119,10 +116,10 @@ public class HotSpotFragment extends Fragment {
 
                 Hotspot item = (Hotspot) adapter.getItem(position);
                 Bundle bundle = item.getBundle();
-
+                bundle.putInt("position", position);
                 intent.putExtras(bundle);
 
-                getActivity().startActivityForResult(intent, HOTSPOT_DETAIL_REQ_CODE);
+                getActivity().startActivityForResult(intent, MainActivity.HOTSPOT_DETAIL_REQ_CODE);
                 Toast.makeText(getActivity(), "HotSpot:" + position, Toast.LENGTH_SHORT).show();
             }
         });
@@ -162,9 +159,8 @@ public class HotSpotFragment extends Fragment {
     }
 
     private void getRemoteOldHotspot() {
-        ++pageNumber;
         objectService
-                .getHotspotListByPageNumber(String.valueOf(pageNumber))
+                .getHotspotListByPageNumber(String.valueOf(pageNumber++))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Hotspot>>() {
@@ -181,18 +177,11 @@ public class HotSpotFragment extends Fragment {
                     @Override
                     public void onNext(List<Hotspot> hotspots) {
                         Log.i("HotSpotFragment", "getRemoteOldHotspot: onNext: list size = " + String.valueOf(hotspots.size()));
-                        //添加2个列表项到动态的数据列表中
-//                        for (int j = 0; j < 2; j++) {
-//                            list.add(new Hotspot(new Date().toString(), 1, "Loaded", 1, bitmap, 888));
-//                            datas.add(new Hotspot(new Date().toString(), 1, "Loaded", 1, bitmap, 888));
-//                        }
                         final List<Hotspot> list = new ArrayList<Hotspot>();
-                        list.addAll(hotspots);
-                        datas.addAll(hotspots);
+                        refreshDataIntoTail(hotspots);
                         easyRefreshLayout.loadMoreComplete(new EasyRefreshLayout.Event() {
                             @Override
                             public void complete() {
-                                hotSpotAdapter.getData().addAll(list);
                                 hotSpotAdapter.notifyDataSetChanged();
                                 Toast.makeText(getContext(), "load success", Toast.LENGTH_SHORT).show();
                             }
@@ -220,9 +209,9 @@ public class HotSpotFragment extends Fragment {
                     @Override
                     public void onNext(List<Hotspot> hotspots) {
                         Log.i("HotSpotFragment", "getRemoteNewHotspot: onNext: list size = " + String.valueOf(hotspots.size()));
-                        refreshData(hotspots);
+                        refreshDataIntoHead(hotspots);
                         //刷新每次都用setNewData重新加载数据
-                        hotSpotAdapter.setNewData(datas);
+                        hotSpotAdapter.notifyDataSetChanged();
                         easyRefreshLayout.refreshComplete();
                         Toast.makeText(getContext(), "refresh success", Toast.LENGTH_SHORT).show();
                     }
@@ -237,7 +226,7 @@ public class HotSpotFragment extends Fragment {
         return false;
     }
 
-    public void refreshData(List<Hotspot> hotspots) {
+    public void refreshDataIntoHead(List<Hotspot> hotspots) {
         List<Hotspot> list = new ArrayList<>();
         list.addAll(hotspots);
         for (Hotspot item : datas) {
@@ -248,27 +237,34 @@ public class HotSpotFragment extends Fragment {
         datas.addAll(list);
     }
 
+    public void refreshDataIntoTail(List<Hotspot> hotspots) {
+        for (Hotspot item : hotspots) {
+            if (!isDuplicateHotspotInDatas(item.getHs_id()))
+                datas.add(item);
+        }
+    }
+
     public static HotSpotFragment getInstance() {
         return instance;
     }
 
-    public void addHotspot(Bundle bundle) {
-        /*
-        * bundle.putInt("id", hotspotId);
-            bundle.putString("content", publishContent);
-            bundle.putString("photo", imageFilename);
-            bundle.putString("time", publishTime);
-        * */
-        String data =
-                "id = " + String.valueOf(bundle.getInt("id")) + "\n" +
-                "content = " + bundle.getString("content") + "\n" +
-                "photo = " + bundle.getString("photo") + "\n" +
-                "time = " + bundle.getString("time");
-        Log.i("HotSpotFragment", "addHotspot: data:\n" + data);
+    public void addHotspot() {
+        getRemoteNewHotspot();
     }
 
     public void initDatas(List<Hotspot> datas) {
         this.datas = datas;
-        hotSpotAdapter.setNewData(datas);
+        hotSpotAdapter.setNewData(this.datas);
+    }
+
+    public void updateDataFromDetailPage(Bundle data) {
+        int position = data.getInt("position");
+        int countComment = data.getInt("countComment");
+        int countLikeChange = data.getInt("countLikeChange");
+        Hotspot item = this.datas.get(position);
+        item.setCountComment(countComment);
+        item.setCountLike(item.getCountLike() + countLikeChange);
+        this.datas.set(position, item);
+        hotSpotAdapter.notifyDataSetChanged();
     }
 }
