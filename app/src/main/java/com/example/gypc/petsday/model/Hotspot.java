@@ -15,16 +15,18 @@ public class Hotspot {
     private String hs_content;
     private int hs_id;
     private String hs_photo;
-    private int count;  // 表示点赞数
+    private int countLike;
+    private int countComment;
     private String user_nickname;
 
-    public Hotspot(String hs_time, int hs_user, String hs_content, int hs_id, String hs_photo, int count, String user_nickname){
+    public Hotspot(String hs_time, int hs_user, String hs_content, int hs_id, String hs_photo, int countLike, int countComment, String user_nickname){
         this.hs_time = hs_time;
         this.hs_user = hs_user;
         this.hs_content = hs_content;
         this.hs_id = hs_id;
         this.hs_photo = hs_photo;
-        this.count = count;
+        this.countLike = countLike;
+        this.countComment = countComment;
         this.user_nickname = user_nickname;
     }
 
@@ -48,8 +50,12 @@ public class Hotspot {
         return hs_photo;
     }
 
-    public int getCount() {
-        return count;
+    public int getCountLike() {
+        return countLike;
+    }
+
+    public void setCountLike(int countLike) {
+        this.countLike = countLike;
     }
 
     public Bundle getBundle() {
@@ -60,7 +66,8 @@ public class Hotspot {
         bundle.putString("hs_content", hs_content);
         bundle.putInt("hs_id", hs_id);
         bundle.putString("hs_photo", hs_photo);
-        bundle.putInt("count", count);
+        bundle.putInt("countLike", countLike);
+        bundle.putInt("countComment", countComment);
         bundle.putString("user_nickname", user_nickname);
 
         return bundle;
@@ -68,5 +75,13 @@ public class Hotspot {
 
     public String getUser_nickname() {
         return user_nickname;
+    }
+
+    public int getCountComment() {
+        return countComment;
+    }
+
+    public void setCountComment(int countComment) {
+        this.countComment = countComment;
     }
 }
