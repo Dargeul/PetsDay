@@ -118,7 +118,7 @@ public class AppContext extends Application {
                     }
                 });
         objectService
-                .getHotspotListByPageNumber(String.valueOf(0))
+                .getNewestHotspotList()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Hotspot>>() {
