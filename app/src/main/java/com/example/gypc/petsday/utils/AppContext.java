@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.gypc.petsday.HotSpotFragment;
 import com.example.gypc.petsday.MainActivity;
+import com.example.gypc.petsday.MineFragment;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Good;
 import com.example.gypc.petsday.model.Hotspot;
@@ -94,7 +95,7 @@ public class AppContext extends Application {
         return loginController.setUserInfo(infoMap);
     }
 
-    private void initAppDataFromRemote() {
+    public void initPetList() {
         objectService
                 .getPetListForUser(
                         String.valueOf(userInfoMap.get("user_id")),
@@ -104,12 +105,12 @@ public class AppContext extends Application {
                 .subscribe(new Subscriber<List<Pet>>() {
                     @Override
                     public void onCompleted() {
-                        Log.i("AppContext", "initAppDataFromRemote: complete, mypet.size() = " + String.valueOf(mypets.size()));
+                        Log.i("AppContext", "initPetList: complete, mypet.size() = " + String.valueOf(mypets.size()));
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        Log.e("AppContext", "initAppDataFromRemote", throwable);
+                        Log.e("AppContext", "initPetList", throwable);
                     }
 
                     @Override
@@ -118,26 +119,31 @@ public class AppContext extends Application {
                     }
                 });
         objectService
-                .getNewestHotspotList()
+                .getPetListForUser(
+                        String.valueOf(userInfoMap.get("user_id")),
+                        String.valueOf(ObjectServiceFactory.GET_LIKE_PET_STATUS_CODE))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Hotspot>>() {
+                .subscribe(new Subscriber<List<Pet>>() {
                     @Override
                     public void onCompleted() {
-                        Log.i("AppContext", "initAppDataFromRemote: complete, initHotspots.size() = " + String.valueOf(initHotspots.size()));
+                        Log.i("AppContext", "initPetList: complete, followpets.size() = " + String.valueOf(followpets.size()));
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        Log.e("AppContext", "initAppDataFromRemote", throwable);
+                        Log.e("AppContext", "initPetList", throwable);
                     }
 
                     @Override
-                    public void onNext(List<Hotspot> hotspots) {
-                        initHotspots = hotspots;
-                        HotSpotFragment.getInstance().initDatas(initHotspots);
+                    public void onNext(List<Pet> pets) {
+                        followpets = pets;
                     }
                 });
+    }
+
+    private void initAppDataFromRemote() {
+        initPetList();
         objectService
                 .getLikeListByUserId(String.valueOf(userInfoMap.get("user_id")))
                 .subscribeOn(Schedulers.newThread())
@@ -216,10 +222,6 @@ public class AppContext extends Application {
 
     public List<Pet> getFollowpets() {
         return followpets;
-    }
-
-    public List<Hotspot> getInitHotspots() {
-        return initHotspots;
     }
 
     public List<UserNotification> getNotifications(){
