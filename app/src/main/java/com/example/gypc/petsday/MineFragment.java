@@ -94,9 +94,6 @@ public class MineFragment extends Fragment {
         followpetRV.setLayoutManager(new LinearLayoutManager(context));
         followPetAdapter = new FollowPetAdapter(followpets, context);
         followpetRV.setAdapter(followPetAdapter);
-//        if (mypets.isEmpty())
-//            getOwnPetList();
-//        getFollowPetList();
 
         addpetLL.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,10 +200,6 @@ public class MineFragment extends Fragment {
         return view;
     }
 
-    private void getOwnPetList() {
-        AppContext.getInstance().initPetList();
-    }
-
     private int getOwnerId() {
         return (int)AppContext.getInstance().getLoginUserInfo().get("user_id");
     }
@@ -296,43 +289,6 @@ public class MineFragment extends Fragment {
                         AppContext.getInstance().setLoginUserInfo(userObj);
 
                         isFormUploadOK = true;
-                    }
-                });
-    }
-
-    public void initPetList() {
-        mypets = AppContext.getInstance().getMypets();
-        myPetAdapter.notifyDataSetChanged();
-    }
-
-    private void getFollowPetList() {
-        if (isLoadFollowPet) return;
-
-        objectService
-                .getPetListForUser(
-                        String.valueOf(AppContext.getInstance().getLoginUserInfo().get("user_id")),
-                        String.valueOf(ObjectServiceFactory.GET_LIKE_PET_STATUS_CODE)
-                )
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Pet>>() {
-                    @Override
-                    public void onCompleted() {
-                        if (!isLoadFollowPet) {
-                            Toast.makeText(context, "加载关注的宠物失败！", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e("MineFragment", "loadMyPet", e);
-                    }
-
-                    @Override
-                    public void onNext(List<Pet> followpetList) {
-                        followpets.addAll(followpetList);
-                        followPetAdapter.notifyDataSetChanged();
-                        isLoadFollowPet = true;
                     }
                 });
     }
