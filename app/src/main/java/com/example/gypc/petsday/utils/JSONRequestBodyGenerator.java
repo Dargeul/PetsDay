@@ -20,6 +20,8 @@ import okhttp3.ResponseBody;
 public class JSONRequestBodyGenerator {
 
     public static RequestBody getJsonObjBody(HashMap<String, Object> data) {
+        String dataStr = convertSingleData(data);
+        Log.i("ObjectToJsonStr", "getJsonObjBody: dataStr: " + dataStr);
         RequestBody requestBody = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), convertSingleData(data));
         return requestBody;
     }
