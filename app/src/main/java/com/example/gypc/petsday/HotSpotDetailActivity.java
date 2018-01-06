@@ -22,7 +22,9 @@ import com.example.gypc.petsday.adapter.HSDetailPetAdapter;
 import com.example.gypc.petsday.adapter.CommentAdapter;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Comment;
+import com.example.gypc.petsday.model.HotspotLike;
 import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.model.RemoteDBOperationResponse;
 import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
 import com.example.gypc.petsday.utils.ImageUriConverter;
@@ -73,6 +75,12 @@ public class HotSpotDetailActivity extends AppCompatActivity {
     private int hotspotId;
     private int userId;
     private boolean isCommentOK = false;
+    private int newComId;
+    private boolean isNotificationSentOk = false;
+    private boolean isHotspotLike;
+    private int likeId;
+    private boolean isLikeOK = false;
+    private boolean isCancelLikeOK = false;
 
     private void initWidget(){
         userNicknameTV = (TextView)findViewById(R.id.userNickname);
@@ -119,7 +127,80 @@ public class HotSpotDetailActivity extends AppCompatActivity {
     }
 
     private void toggleLike() {
+        isHotspotLike = !isHotspotLike;
+        if (isHotspotLike) {
+            likeHotspot();
+        } else {
+            cancelLikeHotspot();
+        }
+    }
 
+    private void cancelLikeHotspot() {
+        objectService
+                .cancelLike(String.valueOf(likeId))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<RemoteDBOperationResponse>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i("HotSpotDetailActivity", "cancelLikeHotspot: complete");
+                        if (isCancelLikeOK) {
+                            likeImageBtn.setImageResource(R.drawable.praise);
+                            AppContext.getInstance().cancelLikeHotspot(hotspotId);
+                        } else {
+                            msgNotify("操作失败，请重试！");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("HotSpotDetailActivity", "cancelLikeHotspot: onError", throwable);
+                    }
+
+                    @Override
+                    public void onNext(RemoteDBOperationResponse response) {
+                        isCancelLikeOK = response.isSuccess();
+                    }
+                });
+    }
+
+    private void likeHotspot() {
+        isLikeOK = false;
+        HashMap<String, Object> dataMap = new HashMap<>();
+        dataMap.put("like_user", userId);
+        dataMap.put("like_hotspot", hotspotId);
+
+        objectService
+                .likeHotspot(JSONRequestBodyGenerator.getJsonObjBody(dataMap))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result<Integer>>() {
+                    @Override
+                    public void onCompleted() {
+                        if (isLikeOK) {
+                            likeImageBtn.setImageResource(R.drawable.praise_fill);
+                            AppContext.getInstance().likeHotspot(new HotspotLike(likeId, hotspotId, userId));
+                        } else {
+                            msgNotify("操作失败，请重试！");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("HotSpotDetailActivity", "likeHotspot: onError", throwable);
+                    }
+
+                    @Override
+                    public void onNext(Result<Integer> integerResult) {
+                        if (integerResult.isError()) {
+                            Log.e("HotSpotDetailActivity", "likeHotspot: onNext", integerResult.error());
+                        }
+                        if (integerResult.response() == null || integerResult.response().body() == null)
+                            return;
+                        likeId = integerResult.response().body();
+                        isLikeOK = true;
+                    }
+                });
     }
 
     private void msgNotify(String msg) {
@@ -127,6 +208,13 @@ public class HotSpotDetailActivity extends AppCompatActivity {
     }
 
     private void submitComment() {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(yourCommentET.getWindowToken(), 0);
+        if (isCommentOK) {
+            submitCommentBtn.setEnabled(false);
+            sendCommendNotification(newComId);
+            return;
+        }
         isCommentOK = false;
         final String commentText = yourCommentET.getText().toString();
         if (commentText.isEmpty()) {
@@ -153,10 +241,12 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                         @Override
                         public void onCompleted() {
                             submitCommentBtn.setEnabled(true);
-                            if (isCommentOK)
-                                msgNotify("评论成功！");
-                            else
+                            if (isCommentOK) {
+                                sendCommendNotification(newComId);
+                            } else {
                                 msgNotify("评论提交失败，请重试！");
+                                submitCommentBtn.setEnabled(true);
+                            }
                         }
 
                         @Override
@@ -172,15 +262,59 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                             if (integerResult.response() == null || integerResult.response().body() == null)
                                 return;
                             isCommentOK = true;
-                            int comId = integerResult.response().body();
+                            newComId = integerResult.response().body();
                             List<Comment> newComList = new ArrayList<Comment>();
-                            newComList.add(new Comment(comId, hotspotId, userId, commentTime, commentText));
+                            newComList.add(new Comment(newComId, hotspotId, userId, commentTime, commentText));
                             newComList.addAll(commentsList);
                             commentsList = newComList;
                             commentAdapter.setNewData(newComList);
                         }
                     });
         }
+    }
+
+    private void sendCommendNotification(int commendId) {
+        isNotificationSentOk = false;
+
+        HashMap<String, Object> dataMap = new HashMap<>();
+        dataMap.put("notice_status", ObjectServiceFactory.SEND_COMMENT_NOTIFICATION_STATUS_CODE);
+        dataMap.put("notice_user", userId);
+        dataMap.put("notice_comment", commendId);
+
+        objectService
+                .postNotification(JSONRequestBodyGenerator.getJsonObjBody(dataMap))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result<Integer>>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i("HotSpotDetailActivity", "sendCommendNotification: complete");
+                        if (isNotificationSentOk) {
+                            msgNotify("评论成功！");
+                            yourCommentET.clearFocus();
+                            yourCommentET.setText("");
+                        } else {
+                            msgNotify("评论提交失败，请重试！");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("HotSpotDetailActivity", "sendCommendNotification: onError", throwable);
+                    }
+
+                    @Override
+                    public void onNext(Result<Integer> integerResult) {
+                        if (integerResult.isError()) {
+                            Log.e("HotSpotDetailActivity", "sendCommendNotification: onNext", integerResult.error());
+                        }
+                        if (integerResult.response() == null || integerResult.response().body() == null)
+                            return;
+                        int notificationId = integerResult.response().body();
+                        if (notificationId >= 0)
+                            isNotificationSentOk = true;
+                    }
+                });
     }
 
     private String getTimeString() {
@@ -255,6 +389,20 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                 });
     }
 
+    private void initLikeStatus() {
+        isHotspotLike = false;
+        List<HotspotLike> likeList = AppContext.getInstance().getInitLikeList();
+        for (HotspotLike like : likeList) {
+            if (like.getLike_hotspot() == hotspotId) {
+                isHotspotLike = true;
+                likeId = like.getLike_id();
+            }
+        }
+        if (isHotspotLike) {
+            likeImageBtn.setImageResource(R.drawable.praise_fill);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -265,6 +413,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         userId = (int) AppContext.getInstance().getLoginUserInfo().get("user_id");
 
         initWidget();
+        initLikeStatus();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(HotSpotDetailActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
