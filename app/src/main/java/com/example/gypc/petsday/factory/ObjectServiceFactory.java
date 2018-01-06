@@ -22,6 +22,8 @@ public class ObjectServiceFactory {
     public static final int GET_OWN_PET_STATUS_CODE = 1;
     public static final int GET_LIKE_PET_STATUS_CODE = 0;
 
+    public static final int SEND_COMMENT_NOTIFICATION_STATUS_CODE = 0;
+
     private static final String BASE_URL = "http://120.78.169.206:3000";
     private static ObjectService service;
 
