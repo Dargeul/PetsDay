@@ -24,7 +24,6 @@ import com.alley.van.model.VanConfig;
 import com.baoyz.actionsheet.ActionSheet;
 import com.bumptech.glide.Glide;
 import com.example.gypc.petsday.base.BaseActivity;
-import com.example.gypc.petsday.factory.CombineServiceFactory;
 import com.example.gypc.petsday.factory.ImageServiceFactory;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.helper.GifSizeFilter;
@@ -312,7 +311,7 @@ public class PublishActivity extends BaseActivity {
         }
 
         RequestBody reqBody = JSONRequestBodyGenerator.getJsonArrayBody(datas);
-        CombineServiceFactory.getService()
+        objectService
                 .combinePetAndHotspot(reqBody)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
