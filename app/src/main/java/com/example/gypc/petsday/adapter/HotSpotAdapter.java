@@ -54,8 +54,8 @@ public class HotSpotAdapter extends BaseQuickAdapter<Hotspot,BaseViewHolder> {
 
         helper.setText(R.id.userNickname, "" + item.getUser_nickname());
         helper.setText(R.id.publishTime, item.getHs_time());
-        helper.setText(R.id.likeNum, "" + item.getCount());
-//        helper.setText(R.id.commentNum, "" + item.getHs_comment());
+        helper.setText(R.id.likeNum, "" + item.getCountLike());
+        helper.setText(R.id.commentNum, "" + item.getCountComment());
         int position = helper.getLayoutPosition();
     }
 }
