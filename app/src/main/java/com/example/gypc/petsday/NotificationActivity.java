@@ -7,15 +7,24 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.NotificationAdapter;
+import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.UserNotification;
+import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by gypc on 2017/12/13.
@@ -24,6 +33,8 @@ import java.util.List;
 public class NotificationActivity extends AppCompatActivity {
     private RecyclerView notificationsRV;
     private RecyclerView notificationsReadedRV;
+    private TextView tips;
+
     private NotificationAdapter notificationAdapter;
     private NotificationAdapter notificationReadedAdapter;
     private List<UserNotification> notifications;//通知列表
@@ -31,37 +42,89 @@ public class NotificationActivity extends AppCompatActivity {
     private List<UserNotification> notificationsReaded;//已读列表
 
     private AppContext app;
+    private ObjectService objectService;
+    private int userId;
+
 
     private static NotificationActivity instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        instance = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-        app = AppContext.getInstance();
-        notificationsRV = (RecyclerView)findViewById(R.id.notificationRV);
-        notificationsReadedRV = (RecyclerView)findViewById(R.id.notificationReadedRV);
 
-        //获取通知列表，按照notice_status分为已读和未读两个通知列表。
+        init();
+
+        //网络请求
+        getNotification();
+
+    }
+
+    private void init(){
+        instance = NotificationActivity.this;
+
+        objectService = ObjectServiceFactory.getService();
+        app = AppContext.getInstance();
         notifications = app.getNotifications();
 
         notificationsNotReaded = new ArrayList<UserNotification>();
-        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
-        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
-        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
-        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
-        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
-        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
-        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
-        notificationsNotReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
         notificationsReaded = new ArrayList<UserNotification>();
-        notificationsReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
-        notificationsReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
-        notificationsReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
-        notificationsReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
-        notificationsReaded.add(new UserNotification(0,1,1,1,"2017-12-28",1,1,"Nothing"));
 
+        notificationsRV = (RecyclerView)findViewById(R.id.notificationRV);
+        notificationsReadedRV = (RecyclerView)findViewById(R.id.notificationReadedRV);
+
+        tips = (TextView)findViewById(R.id.tips);
+    }
+
+    private void getNotification(){
+        userId = (int) app.getLoginUserInfo().get("user_id");
+        objectService
+                .getNotificationByUserId(userId+"")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<UserNotification>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("NotificationActivity","getNotification",e);
+                    }
+
+                    @Override
+                    public void onNext(List<UserNotification> userNotifications) {
+                        try{
+                            notifications.removeAll(notifications);
+                            notifications.addAll(userNotifications);
+                            //区分已读和未读通知
+                            identifyNotification();
+                            //设置两种通知列表的adapter
+                            setNoticeAdapter();
+                        }catch (Exception e){
+                            Log.e("NotificationActivity","getNotification",e);
+                        }
+                    }
+                });
+    }
+
+    private void identifyNotification(){
+        if(notifications.size() == 0){
+            tips.setText("---当前没有任何通知---");
+        }else{
+            tips.setText("---以下是已读通知---");
+        }
+        for(int index = 0; index < notifications.size(); index++){
+            if(notifications.get(index).getNotice_status() == 0){
+                notificationsNotReaded.add(notifications.get(index));
+            } else {
+                notificationsReaded.add(notifications.get(index));
+            }
+        }
+    }
+
+    private void setNoticeAdapter(){
         MyLayoutManager layoutManager = new MyLayoutManager(NotificationActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         notificationsRV.setLayoutManager(layoutManager);

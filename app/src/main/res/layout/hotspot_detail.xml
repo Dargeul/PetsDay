@@ -29,126 +29,131 @@
             android:textAlignment="center"/>
     </android.support.v7.widget.Toolbar>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_margin="4dp">
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
-                            <!--动态发布者昵称-->
-                            <TextView
+                            android:orientation="horizontal">
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:id="@+id/userNickname"
-                                android:text="NICKNAME"/>
-                            <!--动态发布时间-->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/PublishTime"
-                                android:text="PUBLISHTIME"/>
+                                android:orientation="vertical">
+                                <!--动态发布者昵称-->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/userNickname"
+                                    android:text="NICKNAME"/>
+                                <!--动态发布时间-->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:id="@+id/PublishTime"
+                                    android:text="PUBLISHTIME"/>
+                            </LinearLayout>
+                            <!--哪只狗狗-->
+                            <android.support.v7.widget.RecyclerView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginLeft="18dp"
+                                android:orientation="horizontal"
+                                android:layout_gravity="center"
+                                android:id="@+id/petNickName"/>
                         </LinearLayout>
-                        <!--哪只狗狗-->
-                        <android.support.v7.widget.RecyclerView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginLeft="8dp"
-                            android:orientation="horizontal"
-                            android:layout_gravity="center"
-                            android:id="@+id/petNickName"/>
+
+                        <!--动态内容-->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="CONTENT"
+                            android:id="@+id/hotSpotContent"/>
                     </LinearLayout>
-
-                    <!--动态内容-->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="CONTENT"
-                        android:id="@+id/hotSpotContent"/>
                 </LinearLayout>
-            </LinearLayout>
-            <!--动态图片-->
-            <ImageView
-                android:layout_height="180dp"
-                android:layout_width="180dp"
-                android:id="@+id/hotspotDetailImageView"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="36dp"
-                android:gravity="center_vertical|end"
-                android:background="@color/colorLightGray">
-                <!--分享按钮，点击进行分享-->
-                <ImageButton
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@drawable/ic_share_50"
-                    android:layout_marginRight="16dp"
-                    android:id="@+id/shareImageBtn"/>
-                <!--点赞按钮，点击进行点赞和取消点赞-->
-                <ImageButton
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@drawable/praise"
-                    android:id="@+id/likeImageBtn"
-                    android:layout_marginRight="16dp"/>
-                <ImageButton
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@drawable/ic_reply_50"
-                    android:id="@+id/commentImageBtn"
-                    android:layout_marginRight="16dp"/>
-            </LinearLayout>
-            <!--评论列表，列表项在hotspot_detail_comment.xml-->
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/commentArea"
-                android:scrollbars="vertical"
-                android:layout_margin="4dp"/>
-
-            <!--你的评论-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:orientation="horizontal"
-                >
-                <EditText
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
+                <!--动态图片-->
+                <ImageView
+                    android:layout_height="180dp"
+                    android:layout_width="180dp"
+                    android:id="@+id/hotspotDetailImageView"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:gravity="center_vertical|end"
+                    android:background="@color/colorLightGray">
+                    <!--分享按钮，点击进行分享-->
+                    <ImageButton
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/ic_share_50"
+                        android:layout_marginRight="16dp"
+                        android:id="@+id/shareImageBtn"/>
+                    <!--点赞按钮，点击进行点赞和取消点赞-->
+                    <ImageButton
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/praise"
+                        android:id="@+id/likeImageBtn"
+                        android:layout_marginRight="16dp"/>
+                    <ImageButton
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/ic_reply_50"
+                        android:id="@+id/commentImageBtn"
+                        android:layout_marginRight="16dp"/>
+                </LinearLayout>
+                <!--评论列表，列表项在hotspot_detail_comment.xml-->
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/commentArea"
                     android:scrollbars="vertical"
-                    android:id="@+id/yourComment"
-                    android:hint="你的评论"/>
-
-                <ImageButton
-                    android:id="@+id/submitCommentBtn"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_tick_box_50"
-                    />
+                    android:layout_margin="4dp"/>
             </LinearLayout>
-        </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
-    </ScrollView>
 
+    <!--你的评论-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/popLayout"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:scrollbars="vertical"
+            android:id="@+id/yourComment"
+            android:hint="你的评论"/>
 
+        <Button
+            android:id="@+id/submitCommentBtn"
+            android:layout_width="80dp"
+            android:layout_height="44dp"
+            android:layout_gravity="top"
+            android:text="发送"
+            android:src="@drawable/ic_tick_box_50" />
+    </LinearLayout>
 
 </LinearLayout>

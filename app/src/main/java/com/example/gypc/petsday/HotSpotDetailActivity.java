@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -69,7 +70,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
     private ImageButton likeImageBtn;
     private ImageButton commentImageBtn;
     private EditText yourCommentET;
-    private ImageButton submitCommentBtn;
+    private Button submitCommentBtn;
 
     private Bundle hotspotInfo;
     private int hotspotId;
@@ -94,7 +95,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         likeImageBtn = (ImageButton) findViewById(R.id.likeImageBtn);
         commentImageBtn = (ImageButton)findViewById(R.id.commentImageBtn);
         yourCommentET = (EditText)findViewById(R.id.yourComment);
-        submitCommentBtn = (ImageButton)findViewById(R.id.submitCommentBtn);
+        submitCommentBtn = (Button)findViewById(R.id.submitCommentBtn);
 
         userNicknameTV.setText(hotspotInfo.getString("user_nickname"));
         hotSpotContentTV.setText(hotspotInfo.getString("hs_content"));
