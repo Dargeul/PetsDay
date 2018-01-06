@@ -42,7 +42,7 @@ public class HotSpotFragment extends Fragment {
     private HotSpotAdapter hotSpotAdapter;
     private EasyRefreshLayout easyRefreshLayout;
 
-    private List<Hotspot> datas;
+    private List<Hotspot> datas = new ArrayList<>();
 
     private AppContext app;
 
@@ -95,7 +95,7 @@ public class HotSpotFragment extends Fragment {
         * */
         //final Bitmap bmp = BitmapFactory.decodeResource(getResources(),R.drawable.pet_photo_1);
 //        final String bmp = "keji";
-        datas = app.getInitHotspots();
+        getInitHotspots();
         Log.i("HotSpotFragment", "onActivityCreated: datas.size() = " + datas.size());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -156,7 +156,11 @@ public class HotSpotFragment extends Fragment {
         });
 
         hotSpotRecyclerView.setAdapter(hotSpotAdapter);
+        addHotspot();
+    }
 
+    private void getInitHotspots() {
+        getRemoteNewHotspot();
     }
 
     private void getRemoteOldHotspot() {
@@ -251,11 +255,6 @@ public class HotSpotFragment extends Fragment {
 
     public void addHotspot() {
         getRemoteNewHotspot();
-    }
-
-    public void initDatas(List<Hotspot> datas) {
-        this.datas = datas;
-        hotSpotAdapter.setNewData(this.datas);
     }
 
     public void updateDataFromDetailPage(Bundle data) {
