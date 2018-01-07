@@ -74,6 +74,9 @@ public interface ObjectService {
     @POST("/pet_and_user")
     Observable<Result<Integer>> userFansPet(@Body RequestBody jsonBody);  // 用户关注宠物
 
+    @DELETE("/pet_and_user")
+    Observable<RemoteDBOperationResponse> cancelUserFansPet(@Query("pet_id") String petId, @Query("user_id") String userId);  // 用户取消关注宠物
+
     @GET("/comment")
     Observable<List<Comment>> getCommentListByHotspot(@Query("hs_id") String hotspotId);  // 根据动态id查询评论
 
