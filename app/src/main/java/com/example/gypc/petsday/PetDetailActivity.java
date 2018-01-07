@@ -1,6 +1,7 @@
 package com.example.gypc.petsday;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
@@ -165,7 +166,7 @@ public class PetDetailActivity extends AppCompatActivity {
         MyLayoutManager layoutManager = new MyLayoutManager(PetDetailActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         hotSpotRecyclerView.setLayoutManager(layoutManager);
-        hotSpotAdapter = new HotSpotAdapter(R.layout.hotspot_item_others,datas);
+        hotSpotAdapter = new HotSpotAdapter(R.layout.hotspot_item_others, datas);
         //设置动画
         hotSpotAdapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
         //设置动画循环
@@ -176,6 +177,15 @@ public class PetDetailActivity extends AppCompatActivity {
         hotSpotAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Intent intent = new Intent(PetDetailActivity.this,HotSpotDetailActivity.class);
+
+                Hotspot item = (Hotspot) adapter.getItem(position);
+                Bundle bundle = item.getBundle();
+                bundle.putInt("position", position);
+                bundle.putBoolean("fromHotspotFragment", false);
+                intent.putExtras(bundle);
+
+                PetDetailActivity.this.startActivityForResult(intent, MainActivity.HOTSPOT_DETAIL_REQ_CODE);
                 Toast.makeText(PetDetailActivity.this, "HotSpot:" + position, Toast.LENGTH_SHORT).show();
             }
         });
@@ -202,6 +212,8 @@ public class PetDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Hotspot> hotspots) {
+                        datas.addAll(hotspots);
+                        hotSpotAdapter.notifyDataSetChanged();
                     }
                 });
     }
