@@ -95,7 +95,12 @@ public class AppContext extends Application {
         return loginController.setUserInfo(infoMap);
     }
 
-    public void initPetList() {
+    public void initPetLists() {
+        updateOwnPetList();
+        updateFollowPetList(null, false);
+    }
+
+    public void updateOwnPetList() {
         objectService
                 .getPetListForUser(
                         String.valueOf(userInfoMap.get("user_id")),
@@ -118,6 +123,36 @@ public class AppContext extends Application {
                         mypets = pets;
                     }
                 });
+    }
+
+    public void updateFollowPetList(Pet pet, boolean toAdd) {
+        if (pet != null) {
+            if (toAdd) {
+                pet.setCount(pet.getCount() + 1);
+                followpets.add(pet);
+                Log.i("AppContext", "updateFollowPetList: fans success");
+                MineFragment.getInstance().updateFollowPetList();
+            } else {
+                int position;
+                boolean exist = false;
+
+                for (position = 0; position < followpets.size(); position++) {
+                    if (followpets.get(position).getPet_id() == pet.getPet_id()) {
+                        exist = true;
+                        break;
+                    }
+                }
+
+                if (exist) {
+                    followpets.remove(position);
+                    Log.i("AppContext", "updateFollowPetList: cancel fans success");
+                    MineFragment.getInstance().updateFollowPetList();
+                } else {
+                    Log.e("AppContext", "updateFollowPetList: cancel fans fail!");
+                }
+            }
+            return;
+        }
         objectService
                 .getPetListForUser(
                         String.valueOf(userInfoMap.get("user_id")),
@@ -143,7 +178,7 @@ public class AppContext extends Application {
     }
 
     private void initAppDataFromRemote() {
-        initPetList();
+        initPetLists();
         objectService
                 .getLikeListByUserId(String.valueOf(userInfoMap.get("user_id")))
                 .subscribeOn(Schedulers.newThread())

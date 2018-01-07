@@ -157,16 +157,8 @@ public class MineFragment extends Fragment {
 
                 Intent intent = new Intent(getActivity(), PetDetailActivity.class);
 
-                Bundle bundle = new Bundle();
                 Pet item = followpets.get(position);
-                bundle.putInt("pet_id", item.getPet_id());
-                bundle.putInt("pet_owner", item.getPet_owner());
-                bundle.putString("pet_type", item.getPet_type());
-                bundle.putString("pet_photo", item.getPet_photo());
-                bundle.putString("pet_weight", String.valueOf(item.getPet_weight()));
-                bundle.putString("pet_birth", item.getPet_birth());
-                bundle.putString("pet_sex", item.getPet_sex());
-                bundle.putString("count", String.valueOf(item.getCount()));
+                Bundle bundle = item.getBundle();
 
                 intent.putExtras(bundle);
 
@@ -307,5 +299,15 @@ public class MineFragment extends Fragment {
                         isFormUploadOK = true;
                     }
                 });
+    }
+
+    public void updateFollowPetList() {
+        followpets = AppContext.getInstance().getFollowpets();
+        followPetAdapter.notifyDataSetChanged();
+    }
+
+    public void updateOwnPetList() {
+        mypets = AppContext.getInstance().getMypets();
+        myPetAdapter.notifyDataSetChanged();
     }
 }

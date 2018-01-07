@@ -1,6 +1,7 @@
 package com.example.gypc.petsday.model;
 
 import android.graphics.Bitmap;
+import android.os.Bundle;
 
 import java.util.Date;
 
@@ -95,5 +96,19 @@ public class Pet {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public Bundle getBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putInt("pet_id", getPet_id());
+        bundle.putInt("pet_owner", getPet_owner());
+        bundle.putString("pet_nickname", getPet_nickname());
+        bundle.putString("pet_type", getPet_type());
+        bundle.putString("pet_photo", getPet_photo());
+        bundle.putString("pet_weight", String.valueOf(getPet_weight()));
+        bundle.putString("pet_birth", getPet_birth());
+        bundle.putString("pet_sex", getPet_sex());
+        bundle.putString("count", String.valueOf(getCount()));
+        return bundle;
     }
 }
