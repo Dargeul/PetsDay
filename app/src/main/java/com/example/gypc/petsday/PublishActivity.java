@@ -509,7 +509,7 @@ public class PublishActivity extends BaseActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);
         imageFilename = "IMG_" + dateFormat.format(new Date());
 
-        Uri uri = ImageUriConverter.getCacheFileUriFromName(this, imageFilename);
+        Uri uri = ImageUriConverter.getCameraCacheFileUriFromName(this, imageFilename);
         UCrop.of(source, uri)
                 .withAspectRatio(1, 1)
                 .withMaxResultSize(1024, 1024)

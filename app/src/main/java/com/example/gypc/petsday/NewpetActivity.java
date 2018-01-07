@@ -509,6 +509,7 @@ public class NewpetActivity extends BaseActivity {
 
                 display(contentUri);
             } else {//拍照之后跳转到裁剪页面
+                Log.i("NewpetActivity", "onActivityResult: contentUri: " + contentUri.getPath());
                 startCropActivity(contentUri);
             }
         }
@@ -564,7 +565,7 @@ public class NewpetActivity extends BaseActivity {
 
         Log.i("NewpetActivity", "startCropActivity: filename = " + imageFilename);
 
-        Uri uri = ImageUriConverter.getCacheFileUriFromName(this, imageFilename);
+        Uri uri = ImageUriConverter.getCameraCacheFileUriFromName(this, imageFilename);
         UCrop.of(source, uri)
                 .withAspectRatio(1, 1)
                 .withMaxResultSize(1024, 1024)

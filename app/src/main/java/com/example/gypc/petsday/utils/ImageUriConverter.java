@@ -17,6 +17,17 @@ public class ImageUriConverter {
         return BASE_DOWNLOAD_URL + filename.concat(".jpeg");
     }
 
+    public static Uri getCameraCacheFileUriFromName(Context context, String filename) {
+        Uri resUri = null;
+        try {
+            File img = new File(context.getCacheDir(), filename.concat(".jpeg"));
+            resUri = Uri.fromFile(img);
+        } catch (Exception e) {
+            Log.e("ImageUriConverter", "getCacheFileUriFromName", e);
+        }
+        return resUri;
+    }
+
     public static Uri getCacheFileUriFromName(Context context, String filename) {
         Uri resUri = null;
         try {
