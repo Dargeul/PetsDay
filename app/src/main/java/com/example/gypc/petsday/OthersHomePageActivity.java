@@ -74,16 +74,8 @@ public class OthersHomePageActivity extends AppCompatActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(OthersHomePageActivity.this, PetDetailActivity.class);
 
-                Bundle bundle1 = new Bundle();
                 Pet item = othersPet.get(position);
-                bundle1.putInt("pet_id", item.getPet_id());
-                bundle1.putInt("pet_owner", item.getPet_owner());
-                bundle1.putString("pet_type", item.getPet_type());
-                bundle1.putString("pet_photo", item.getPet_photo());
-                bundle1.putString("pet_weight", String.valueOf(item.getPet_weight()));
-                bundle1.putString("pet_birth", item.getPet_birth());
-                bundle1.putString("pet_sex", item.getPet_sex());
-                bundle1.putString("count", String.valueOf(item.getCount()));
+                Bundle bundle1 = item.getBundle();
 
                 Log.i("OthersHomePageActivity","count: " + String.valueOf(item.getCount()));
                 Log.i("OthersHomePageActivity","pet_photo: " + item.getPet_photo());

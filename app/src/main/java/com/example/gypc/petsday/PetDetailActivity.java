@@ -81,6 +81,7 @@ public class PetDetailActivity extends AppCompatActivity {
     private String ownerID;
 
     private ObjectService objectService;
+    private Pet chosenPet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +110,17 @@ public class PetDetailActivity extends AppCompatActivity {
         });
 
         Bundle dataBundle = getIntent().getExtras();
+        chosenPet = new Pet(
+                dataBundle.getInt("pet_id"),
+                dataBundle.getString("pet_nickname"),
+                dataBundle.getInt("pet_owner"),
+                dataBundle.getString("pet_type"),
+                Integer.parseInt(dataBundle.getString("pet_weight")),
+                dataBundle.getString("pet_sex"),
+                dataBundle.getString("pet_birth"),
+                dataBundle.getString("pet_photo"),
+                Integer.parseInt(dataBundle.getString("count"))
+        );
         petId = dataBundle.getInt("pet_id");
         String imageFilename = dataBundle.getString("pet_photo");
         try {
@@ -282,6 +294,7 @@ public class PetDetailActivity extends AppCompatActivity {
                             followIV.setImageResource(R.drawable.like_fill);
                             islike = true;
                             detail_followTV.setText(String.valueOf(++countLike));
+                            AppContext.getInstance().updateFollowPetList(chosenPet, true);
                         } catch (Exception e) {
                             Log.e("PetDetailActivity", e.getMessage(), e);
                         }
@@ -314,6 +327,7 @@ public class PetDetailActivity extends AppCompatActivity {
                             followIV.setImageResource(R.drawable.like);
                             islike = false;
                             detail_followTV.setText(String.valueOf(--countLike));
+                            AppContext.getInstance().updateFollowPetList(chosenPet, false);
                         } catch (Exception e) {
                             Log.e("PetDetailActivity", e.getMessage(), e);
                         }
