@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorWhite"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -43,89 +44,139 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="4dp">
-                    <LinearLayout
+                    android:orientation="horizontal">
+                    <!--动态发布者昵称-->
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-                                <!--动态发布者昵称-->
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:id="@+id/userNickname"
-                                    android:text="NICKNAME"/>
-                                <!--动态发布时间-->
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:id="@+id/PublishTime"
-                                    android:text="PUBLISHTIME"/>
-                            </LinearLayout>
-                            <!--哪只狗狗-->
-                            <android.support.v7.widget.RecyclerView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_marginLeft="18dp"
-                                android:orientation="horizontal"
-                                android:layout_gravity="center"
-                                android:id="@+id/petNickName"/>
-                        </LinearLayout>
-
-                        <!--动态内容-->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="CONTENT"
-                            android:id="@+id/hotSpotContent"/>
-                    </LinearLayout>
+                        android:layout_marginLeft="8dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorPrimary"
+                        android:id="@+id/userNickname"
+                        android:text="NICKNAME"/>
+                    <!--动态发布时间-->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="12sp"
+                        android:id="@+id/PublishTime"
+                        android:text="PUBLISHTIME"/>
                 </LinearLayout>
                 <!--动态图片-->
                 <ImageView
-                    android:layout_height="180dp"
-                    android:layout_width="180dp"
+                    android:layout_height="220dp"
+                    android:layout_width="220dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
                     android:id="@+id/hotspotDetailImageView"/>
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="36dp"
-                    android:gravity="center_vertical|end"
-                    android:background="@color/colorLightGray">
-                    <!--分享按钮，点击进行分享-->
-                    <ImageButton
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="@drawable/ic_share_50"
-                        android:layout_marginRight="16dp"
-                        android:id="@+id/shareImageBtn"/>
-                    <!--点赞按钮，点击进行点赞和取消点赞-->
-                    <ImageButton
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="@drawable/praise"
-                        android:id="@+id/likeImageBtn"
-                        android:layout_marginRight="16dp"/>
-                    <ImageButton
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="@drawable/ic_reply_50"
-                        android:id="@+id/commentImageBtn"
-                        android:layout_marginRight="16dp"/>
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <!--动态内容-->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="8dp"
+                            android:gravity="center"
+                            android:text="CONTENT"
+                            android:id="@+id/hotSpotContent"/>
+                    </LinearLayout>
+
                 </LinearLayout>
-                <!--评论列表，列表项在hotspot_detail_comment.xml-->
-                <android.support.v7.widget.RecyclerView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/commentArea"
-                    android:scrollbars="vertical"
-                    android:layout_margin="4dp"/>
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="8dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textSize="12sp"
+                        android:text="相关宠物"/>
+                    <!--哪只狗狗-->
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_gravity="center"
+                        android:id="@+id/petNickName"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="28dp"
+                        android:gravity="center_vertical|end">
+                        <!--分享按钮，点击进行分享-->
+                        <ImageButton
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:background="@drawable/ic_share_50"
+                            android:layout_marginRight="16dp"
+                            android:visibility="gone"
+                            android:id="@+id/shareImageBtn"/>
+                        <View
+                            android:layout_width="0.5dp"
+                            android:layout_height="28dp"
+                            android:background="@color/colorLightGray"
+                            android:layout_marginRight="8dp"/>
+                        <!--点赞按钮，点击进行点赞和取消点赞-->
+                        <ImageButton
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/praise"
+                            android:id="@+id/likeImageBtn"
+                            android:layout_marginRight="8dp"/>
+                        <View
+                            android:layout_width="0.5dp"
+                            android:layout_height="28dp"
+                            android:layout_marginRight="8dp"
+                            android:background="@color/colorLightGray"/>
+                        <ImageButton
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/ic_reply_50"
+                            android:id="@+id/commentImageBtn"
+                            android:layout_marginRight="16dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:background="@color/colorLightGray"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="@color/colorGray"
+                        android:text="------以下是评论区------"
+                        android:layout_margin="4dp"/>
+                    <!--评论列表，列表项在hotspot_detail_comment.xml-->
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/commentArea"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:scrollbars="vertical" />
+                </LinearLayout>
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
