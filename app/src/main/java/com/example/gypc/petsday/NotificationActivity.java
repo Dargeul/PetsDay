@@ -9,12 +9,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.NotificationAdapter;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
+import com.example.gypc.petsday.model.Hotspot;
 import com.example.gypc.petsday.model.UserNotification;
 import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
@@ -34,6 +37,7 @@ public class NotificationActivity extends AppCompatActivity {
     private RecyclerView notificationsRV;
     private RecyclerView notificationsReadedRV;
     private TextView tips;
+    private ImageView back;
 
     private NotificationAdapter notificationAdapter;
     private NotificationAdapter notificationReadedAdapter;
@@ -58,6 +62,13 @@ public class NotificationActivity extends AppCompatActivity {
         //网络请求
         getNotification();
 
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
     private void init(){
@@ -74,12 +85,13 @@ public class NotificationActivity extends AppCompatActivity {
         notificationsReadedRV = (RecyclerView)findViewById(R.id.notificationReadedRV);
 
         tips = (TextView)findViewById(R.id.tips);
+        back = (ImageView)findViewById(R.id.back);
     }
 
     private void getNotification(){
         userId = (int) app.getLoginUserInfo().get("user_id");
         objectService
-                .getNotificationByUserId(userId+"")
+                .getNotificationByUserId(userId + "")
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<UserNotification>>() {
@@ -90,7 +102,7 @@ public class NotificationActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.e("NotificationActivity","getNotification",e);
+                        Log.e("NotificationActivity","getNotification", e);
                     }
 
                     @Override
@@ -138,8 +150,8 @@ public class NotificationActivity extends AppCompatActivity {
         notificationAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-                Intent intent = new Intent(NotificationActivity.this,HotSpotDetailActivity.class);
-                startActivity(intent);
+                jumpToHotspotDdetail(notificationsNotReaded.get(i).getCom_hs());
+                Toast.makeText(NotificationActivity.this, "notificationsNotReaded:" + i, Toast.LENGTH_SHORT).show();
             }
         });
         notificationsRV.setAdapter(notificationAdapter);
@@ -174,6 +186,39 @@ public class NotificationActivity extends AppCompatActivity {
                     ViewCompat.getMinimumHeight(notificationsRV));
             setMeasuredDimension(width, height * notificationsNotReaded.size());
         }
+    }
+
+    private void jumpToHotspotDdetail(final int hs_id) {
+        objectService
+                .getHotspotById(String.valueOf(hs_id))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Hotspot>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("NotificationActivity", "getHotspotById", throwable);
+                    }
+
+                    @Override
+                    public void onNext(List<Hotspot> hs) {
+                        if (!hs.isEmpty()) {
+                            Intent intent = new Intent(NotificationActivity.this, HotSpotDetailActivity.class);
+
+                            Bundle bundle = hs.get(0).getBundle();
+                            bundle.putInt("hs_id", hs_id);
+                            bundle.putBoolean("fromHotspotFragment", false);
+                            intent.putExtras(bundle);
+
+                            NotificationActivity.this.startActivityForResult(intent, MainActivity.HOTSPOT_DETAIL_REQ_CODE);
+
+                        }
+                    }
+                });
     }
 
     //使Recyclerview一定程度上自适应。

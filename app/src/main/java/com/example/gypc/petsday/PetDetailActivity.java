@@ -23,6 +23,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.HotSpotAdapter;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Hotspot;
+import com.example.gypc.petsday.utils.AppContext;
 import com.example.gypc.petsday.utils.ImageUriConverter;
 
 import java.util.ArrayList;
@@ -63,10 +64,12 @@ public class PetDetailActivity extends AppCompatActivity {
     private TextView petWeightTextView;
     private TextView petBirthTextView;
     private TextView petSexTextView;
-
     private ImageButton backBtn;
+    private ImageView followIV;
+    private TextView detail_followTV;
 
     private int petId;
+    private int petOwner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,8 @@ public class PetDetailActivity extends AppCompatActivity {
         petBirthTextView = (TextView)findViewById(R.id.petBirth);
         petSexTextView = (TextView)findViewById(R.id.petSex);
         backBtn = (ImageButton)findViewById(R.id.backBtn);
+        followIV = (ImageView)findViewById(R.id.followIV);
+        detail_followTV = (TextView)findViewById(R.id.detail_followTV);
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +99,7 @@ public class PetDetailActivity extends AppCompatActivity {
         Bundle dataBundle = getIntent().getExtras();
         petId = dataBundle.getInt("pet_id");
         String imageFilename = dataBundle.getString("pet_photo");
+        Log.i("PetDetailActivity","count: " + dataBundle.getString("count"));
         try {
             Uri avatarUri = ImageUriConverter.getCacheFileUriFromName(this, imageFilename);
             if (avatarUri == null)
@@ -114,6 +120,11 @@ public class PetDetailActivity extends AppCompatActivity {
         petWeightTextView.setText(dataBundle.getString("pet_weight"));
         petBirthTextView.setText(dataBundle.getString("pet_birth"));
         petSexTextView.setText(dataBundle.getString("pet_sex"));
+        detail_followTV.setText(dataBundle.getString("count"));
+        petOwner = dataBundle.getInt("pet_owner");
+
+        //if (petOwner == AppContext.getInstance().getLoginUserInfo().get("user_id")) {}
+
 
         getAxisXLables();//获取x轴的标注
         getAxisPoints();//获取坐标点
