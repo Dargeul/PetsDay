@@ -62,10 +62,8 @@ public class NotificationActivity extends AppCompatActivity {
 
         init();
 
-        //区分已读和未读通知
-        identifyNotification();
-        //设置两种通知列表的adapter
-        setNoticeAdapter();
+        //网络请求
+        getNotification();
 
     }
 
@@ -91,6 +89,39 @@ public class NotificationActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void getNotification(){
+        userId = (int) app.getLoginUserInfo().get("user_id");
+        objectService
+                .getNotificationByUserId(userId+"")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<UserNotification>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e("NotificationActivity","getNotification",e);
+                    }
+
+                    @Override
+                    public void onNext(List<UserNotification> userNotifications) {
+                        try{
+                            notifications.removeAll(notifications);
+                            notifications.addAll(userNotifications);
+                            //区分已读和未读通知
+                            identifyNotification();
+                            //设置两种通知列表的adapter
+                            setNoticeAdapter();
+                        }catch (Exception e){
+                            Log.e("NotificationActivity","getNotification",e);
+                        }
+                    }
+                });
     }
 
 
@@ -126,7 +157,7 @@ public class NotificationActivity extends AppCompatActivity {
                 });
     }
 
-    public void identifyNotification(){
+    private void identifyNotification(){
         if(notifications.size() == 0){
             tips.setText("---当前没有任何通知---");
         }else{
@@ -214,6 +245,12 @@ public class NotificationActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        changeNotificationState();
+        finish();
     }
 
     class MyLayoutManager extends LinearLayoutManager {
