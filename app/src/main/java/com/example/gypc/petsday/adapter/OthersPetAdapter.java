@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -21,7 +22,6 @@ import java.util.List;
  */
 
 public class OthersPetAdapter extends BaseQuickAdapter<Pet,BaseViewHolder> {
-
     public OthersPetAdapter (@LayoutRes int layoutResId, @Nullable List<Pet> data){
         super(layoutResId, data);
     }
@@ -33,6 +33,7 @@ public class OthersPetAdapter extends BaseQuickAdapter<Pet,BaseViewHolder> {
         helper.setText(R.id.petnameTV,item.getPet_nickname());
         helper.setText(R.id.pettypeTV,item.getPet_type());
         helper.setText(R.id.followTV,item.getCount()+"");
+        helper.addOnClickListener(R.id.loveIV);
 
         Uri localImageUri;
         String remoteImagePath;

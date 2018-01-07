@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -71,6 +72,7 @@ public class NewpetActivity extends BaseActivity {
     private EditText dateET;
     private Button newPetSubmitBtn;
     private DatePicker dialogDatePicker;
+    private ImageView backIV;
 
     private static final int REQUEST_CODE_CHOOSE = 23;
     private static final int REQUEST_CODE_CAMERA = 32;
@@ -118,6 +120,7 @@ public class NewpetActivity extends BaseActivity {
         weightEditText = (EditText)findViewById(R.id.weightEditText);
         dateET = (EditText) findViewById(R.id.dateET);
         newPetSubmitBtn = (Button)findViewById(R.id.newPetSubmitBtn);
+        backIV = (ImageView)findViewById(R.id.back);
 
         headRIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +140,13 @@ public class NewpetActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 submitForm();
+            }
+        });
+
+        backIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 
