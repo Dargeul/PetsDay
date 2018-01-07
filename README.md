@@ -10,6 +10,10 @@
 
 
 > **内容更新**
+> - 修复通知返回评论者nickname的bug
+> - 增加删除关注信息的接口
+
+
 > - 更新了批量上传动态宠物关联相关信息
 > - 动态返回表里面增加了相应的评论数
 
@@ -76,10 +80,12 @@ curl -X PUT --data "notice_status=0&&notice_id=1" 120.78.169.206:3000/notificati
 ### 删除功能
 - 删除评论
 - 删除点赞
+- 删除关注信息
 
 ```bash
 curl -X DELETE 120.78.169.206:3000/comment\?com_id=1
 curl -X DELETE 120.78.169.206:3000/like\?like_id=1
+curl -X DELETE 120.78.169.206:3000/pet_and_user\?pet_id=1\&user_id=1
 ```
 
 ### 功能点

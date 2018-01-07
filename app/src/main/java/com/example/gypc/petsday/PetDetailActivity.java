@@ -23,10 +23,15 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.HotSpotAdapter;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Hotspot;
+import com.example.gypc.petsday.model.Pet;
+import com.example.gypc.petsday.model.RemoteDBOperationResponse;
+import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
 import com.example.gypc.petsday.utils.ImageUriConverter;
+import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import lecho.lib.hellocharts.gesture.ZoomType;
@@ -38,6 +43,7 @@ import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.ValueShape;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
+import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -50,7 +56,6 @@ public class PetDetailActivity extends AppCompatActivity {
     private LineChartView lineChart;
     private RecyclerView hotSpotRecyclerView;
     private HotSpotAdapter hotSpotAdapter;
-    private EasyRefreshLayout easyRefreshLayout;
 
     private List<Hotspot> datas;
 
@@ -69,16 +74,22 @@ public class PetDetailActivity extends AppCompatActivity {
     private TextView detail_followTV;
 
     private int petId;
-    private int petOwner;
+    private boolean islike;
+    private int countLike;
+    private String userID;
+    private String ownerID;
+
+    private ObjectService objectService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pet_detail);
 
+        objectService = ObjectServiceFactory.getService();
+
         lineChart = (LineChartView)findViewById(R.id.chart);
         hotSpotRecyclerView = (RecyclerView)findViewById(R.id.petHotSpot);
-        easyRefreshLayout = (EasyRefreshLayout)findViewById(R.id.easylayout);
 
         petAvatarImageView = (ImageView)findViewById(R.id.petAvatar);
         petTypeTextView = (TextView)findViewById(R.id.petType);
@@ -99,7 +110,6 @@ public class PetDetailActivity extends AppCompatActivity {
         Bundle dataBundle = getIntent().getExtras();
         petId = dataBundle.getInt("pet_id");
         String imageFilename = dataBundle.getString("pet_photo");
-        Log.i("PetDetailActivity","count: " + dataBundle.getString("count"));
         try {
             Uri avatarUri = ImageUriConverter.getCacheFileUriFromName(this, imageFilename);
             if (avatarUri == null)
@@ -121,10 +131,26 @@ public class PetDetailActivity extends AppCompatActivity {
         petBirthTextView.setText(dataBundle.getString("pet_birth"));
         petSexTextView.setText(dataBundle.getString("pet_sex"));
         detail_followTV.setText(dataBundle.getString("count"));
-        petOwner = dataBundle.getInt("pet_owner");
+        userID = AppContext.getInstance().getLoginUserInfo().get("user_id").toString();
+        ownerID = String.valueOf(dataBundle.getInt("pet_owner"));
+        islike = false;
+        countLike = Integer.valueOf(dataBundle.getString("count")).intValue();
+        if (!userID.equals(ownerID))
+            checkIsFollowedPet(); //判断是否是未关注的宠物，若是将爱心设为空
 
-        //if (petOwner == AppContext.getInstance().getLoginUserInfo().get("user_id")) {}
-
+        followIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 未关注且不是自己的宠物，可以点击关注
+                if (!userID.equals(ownerID)) {
+                    if (!islike) {
+                        followPet();
+                    } else {
+                        unfollowPet();
+                    }
+                }
+            }
+        });
 
         getAxisXLables();//获取x轴的标注
         getAxisPoints();//获取坐标点
@@ -176,8 +202,109 @@ public class PetDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Hotspot> hotspots) {
-                        datas.addAll(hotspots);
-                        hotSpotAdapter.setNewData(datas);
+                    }
+                });
+    }
+
+    private void checkIsFollowedPet() {
+        objectService
+                .getPetListForUser(
+                        userID,
+                        String.valueOf(ObjectServiceFactory.GET_LIKE_PET_STATUS_CODE))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<Pet>>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i("PetDetailActivity", "checkIsFollowedPet: complete");
+                        if (!islike) {
+                            try {
+                                followIV.setImageResource(R.drawable.like);
+                                Toast.makeText(PetDetailActivity.this, "is unfollow", Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                Log.e("PetDetailActivity", e.getMessage(), e);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("PetDetailActivity", "checkIsFollowedPet", throwable);
+                    }
+
+                    @Override
+                    public void onNext(List<Pet> pets) {
+                        for (Pet i:pets) {
+                            if (i.getPet_id() == petId) {
+                                islike = true;
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void followPet() {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("pet_id", String.valueOf(petId));
+        data.put("user_id", userID);
+
+        objectService
+                .userFansPet(JSONRequestBodyGenerator.getJsonObjBody(data))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Result<Integer>>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i("PetDetailActivity", "followPet: complete");
+                        Toast.makeText(PetDetailActivity.this, "关注成功", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("PetDetailActivity", "followPet", throwable);
+                    }
+
+                    @Override
+                    public void onNext(Result<Integer> integerResult) {
+                        try {
+                            followIV.setImageResource(R.drawable.like_fill);
+                            islike = true;
+                            detail_followTV.setText(String.valueOf(++countLike));
+                        } catch (Exception e) {
+                            Log.e("PetDetailActivity", e.getMessage(), e);
+                        }
+                    }
+                });
+    }
+
+    private void unfollowPet() {
+        objectService
+                .cancelUserFansPet(
+                        String.valueOf(petId), userID
+                )
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<RemoteDBOperationResponse>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i("PetDetailActivity", "unfollowPet: complete");
+                        Toast.makeText(PetDetailActivity.this, "取消关注成功", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        Log.e("PetDetailActivity", "unfollowPet", throwable);
+                    }
+
+                    @Override
+                    public void onNext(RemoteDBOperationResponse r) {
+                        try {
+                            followIV.setImageResource(R.drawable.like);
+                            islike = false;
+                            detail_followTV.setText(String.valueOf(--countLike));
+                        } catch (Exception e) {
+                            Log.e("PetDetailActivity", e.getMessage(), e);
+                        }
                     }
                 });
     }
