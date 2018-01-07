@@ -47,7 +47,7 @@
             android:id="@+id/loveIV"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@mipmap/love"
+            android:src="@drawable/like"
             android:layout_margin="16dp"/>
 
         <TextView
