@@ -18,10 +18,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.NotificationAdapter;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.model.Hotspot;
-<<<<<<< HEAD
-=======
 import com.example.gypc.petsday.model.RemoteDBOperationResponse;
->>>>>>> 10aad7908d02a8668b78cd51e57b718202103feb
 import com.example.gypc.petsday.model.UserNotification;
 import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
@@ -43,11 +40,7 @@ public class NotificationActivity extends AppCompatActivity {
     private RecyclerView notificationsRV;
     private RecyclerView notificationsReadedRV;
     private TextView tips;
-<<<<<<< HEAD
-    private ImageView back;
-=======
     private ImageView backIV;
->>>>>>> 10aad7908d02a8668b78cd51e57b718202103feb
 
     private NotificationAdapter notificationAdapter;
     private NotificationAdapter notificationReadedAdapter;
@@ -72,13 +65,6 @@ public class NotificationActivity extends AppCompatActivity {
         //网络请求
         getNotification();
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
     }
 
     private void init(){
@@ -95,9 +81,6 @@ public class NotificationActivity extends AppCompatActivity {
         notificationsReadedRV = (RecyclerView)findViewById(R.id.notificationReadedRV);
         backIV = (ImageView)findViewById(R.id.back);
         tips = (TextView)findViewById(R.id.tips);
-<<<<<<< HEAD
-        back = (ImageView)findViewById(R.id.back);
-=======
 
         backIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +89,6 @@ public class NotificationActivity extends AppCompatActivity {
                 finish();
             }
         });
->>>>>>> 10aad7908d02a8668b78cd51e57b718202103feb
     }
 
     private void getNotification(){
@@ -204,12 +186,8 @@ public class NotificationActivity extends AppCompatActivity {
         notificationAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter baseQuickAdapter, View view, int i) {
-<<<<<<< HEAD
                 jumpToHotspotDdetail(notificationsNotReaded.get(i).getCom_hs());
                 Toast.makeText(NotificationActivity.this, "notificationsNotReaded:" + i, Toast.LENGTH_SHORT).show();
-=======
-               getHotSpot(String.valueOf(notificationAdapter.getItem(i).getCom_hs()));
->>>>>>> 10aad7908d02a8668b78cd51e57b718202103feb
             }
         });
         notificationsRV.setAdapter(notificationAdapter);
