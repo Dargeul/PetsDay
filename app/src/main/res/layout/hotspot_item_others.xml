@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp">
+    android:layout_margin="8dp">
     <!--动态内容，他人动态，不可删除-->
     <TextView
         android:layout_width="match_parent"
@@ -14,9 +14,10 @@
         android:textSize="16dp"/>
     <!--动态图片-->
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:scaleType="centerCrop"
+        android:layout_gravity="center"
         android:id="@+id/hotspotImage"/>
 
     <LinearLayout
@@ -29,6 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/userNickname"
+            android:textColor="@color/colorPrimary"
             android:text="NICKNAMR"
             android:layout_marginRight="8dp"/>
         <!--动态发布时间-->
@@ -36,12 +38,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/publishTime"
+            android:textColor="@color/colorGray"
             android:text="PUBLISHTIME"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end">
+            android:gravity="end"
+            android:paddingRight="4dp">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,7 +55,7 @@
                     android:layout_height="20dp"
                     android:background="@drawable/ic_reply_50"
                     android:layout_marginRight="4dp"/>
-                <!--点赞人数-->
+                <!--评论人数-->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

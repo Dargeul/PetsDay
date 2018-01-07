@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -274,7 +275,8 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                                 return;
                             isCommentOK = true;
                             newComId = integerResult.response().body();
-                            commentsList.add(new Comment(newComId, hotspotId, userId, commentTime, commentText, userNickname));
+                            String nickname = (String) AppContext.getInstance().getLoginUserInfo().get("user_nickname");
+                            commentsList.add(new Comment(newComId, hotspotId, userId, commentTime, commentText, nickname));
                             commentAdapter.notifyDataSetChanged();
                         }
                     });
@@ -427,7 +429,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         initWidget();
         initLikeStatus();
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(HotSpotDetailActivity.this);
+        MyLayoutManager layoutManager = new MyLayoutManager(HotSpotDetailActivity.this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         commentAdapter = new CommentAdapter(R.layout.hotspot_detail_comment);
@@ -435,7 +437,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
         commentAreaRV.setLayoutManager(layoutManager);
         commentAreaRV.setAdapter(commentAdapter);
 
-        MyLayoutManager layoutManager1 = new MyLayoutManager(HotSpotDetailActivity.this);
+        LinearLayoutManager layoutManager1 = new MyLayoutManager(HotSpotDetailActivity.this);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
         hsDetailPetAdapter = new HSDetailPetAdapter(R.layout.hotspot_detail_pet);
         hsDetailPetAdapter.addData(pets_choose);
@@ -514,7 +516,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
             final int height = RecyclerView.LayoutManager.chooseSize(heightSpec,
                     getPaddingTop() + getPaddingBottom(),
                     ViewCompat.getMinimumHeight(commentAreaRV));
-            setMeasuredDimension(width, height * 3);
+            setMeasuredDimension(width, height * 5);
         }
     }
 }
