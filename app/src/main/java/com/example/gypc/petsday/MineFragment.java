@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chad.library.adapter.base.animation.ScaleInAnimation;
 import com.example.gypc.petsday.adapter.FollowPetAdapter;
 import com.example.gypc.petsday.adapter.MyPetAdapter;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
@@ -29,6 +31,8 @@ import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
 import java.util.HashMap;
 import java.util.List;
 
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
+import jp.wasabeef.recyclerview.animators.ScaleInBottomAnimator;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -88,12 +92,19 @@ public class MineFragment extends Fragment {
         mineNameTextView.setText(AppContext.getInstance().getLoginUserInfo().get("user_nickname").toString());
 
         // 设置adapter
-        mypetRV.setLayoutManager(new LinearLayoutManager(context));
+        mypetRV.setLayoutManager(new MyLayoutManager1(context));
         myPetAdapter = new MyPetAdapter(mypets, context);
-        mypetRV.setAdapter(myPetAdapter);
-        followpetRV.setLayoutManager(new LinearLayoutManager(context));
+        ScaleInAnimationAdapter animationAdapter = new ScaleInAnimationAdapter(myPetAdapter);
+        animationAdapter.setDuration(300);
+        mypetRV.setAdapter(animationAdapter);
+        mypetRV.setItemAnimator(new ScaleInBottomAnimator());
+
+        followpetRV.setLayoutManager(new MyLayoutManager2(context));
         followPetAdapter = new FollowPetAdapter(followpets, context);
-        followpetRV.setAdapter(followPetAdapter);
+        ScaleInAnimationAdapter animationAdapter1 = new ScaleInAnimationAdapter(followPetAdapter);
+        animationAdapter1.setDuration(300);
+        followpetRV.setAdapter(animationAdapter1);
+        followpetRV.setItemAnimator(new ScaleInBottomAnimator());
 
         addpetLL.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,15 +201,19 @@ public class MineFragment extends Fragment {
         mypetTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mypetTV.setTextColor(getResources().getColor(R.color.colorBlack));
+                followpetTV.setTextColor(getResources().getColor(R.color.colorGray));
                 mypetRV.setVisibility(View.VISIBLE);
-                followpetRV.setVisibility(View.INVISIBLE);
+                followpetRV.setVisibility(View.GONE);
             }
         });
 
         followpetTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mypetRV.setVisibility(View.INVISIBLE);
+                followpetTV.setTextColor(getResources().getColor(R.color.colorBlack));
+                mypetTV.setTextColor(getResources().getColor(R.color.colorGray));
+                mypetRV.setVisibility(View.GONE);
                 followpetRV.setVisibility(View.VISIBLE);
             }
         });
@@ -309,5 +324,37 @@ public class MineFragment extends Fragment {
     public void updateOwnPetList() {
         mypets = AppContext.getInstance().getMypets();
         myPetAdapter.notifyDataSetChanged();
+    }
+
+    class MyLayoutManager1 extends LinearLayoutManager {
+        public MyLayoutManager1(Context context) {
+            super(context);
+        }
+        @Override
+        public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state, int widthSpec, int heightSpec) {
+            final int width = RecyclerView.LayoutManager.chooseSize(widthSpec,
+                    getPaddingLeft() + getPaddingRight(),
+                    ViewCompat.getMinimumWidth(mypetRV));
+            final int height = RecyclerView.LayoutManager.chooseSize(heightSpec,
+                    getPaddingTop() + getPaddingBottom(),
+                    ViewCompat.getMinimumHeight(mypetRV));
+            setMeasuredDimension(width, height * mypets.size());
+        }
+    }
+
+    class MyLayoutManager2 extends LinearLayoutManager {
+        public MyLayoutManager2(Context context) {
+            super(context);
+        }
+        @Override
+        public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state, int widthSpec, int heightSpec) {
+            final int width = RecyclerView.LayoutManager.chooseSize(widthSpec,
+                    getPaddingLeft() + getPaddingRight(),
+                    ViewCompat.getMinimumWidth(followpetRV));
+            final int height = RecyclerView.LayoutManager.chooseSize(heightSpec,
+                    getPaddingTop() + getPaddingBottom(),
+                    ViewCompat.getMinimumHeight(followpetRV));
+            setMeasuredDimension(width, height * followpets.size());
+        }
     }
 }
