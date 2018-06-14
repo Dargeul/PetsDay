@@ -11,12 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.ajguan.library.EasyRefreshLayout;
-import com.allenliu.badgeview.BadgeFactory;
 import com.allenliu.badgeview.BadgeView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.example.gypc.petsday.adapter.HotSpotAdapter;
@@ -27,10 +25,8 @@ import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -177,7 +173,7 @@ public class HotSpotFragment extends Fragment {
 
     private void getRemoteOldHotspot() {
         objectService
-                .getHotspotListByPageNumber(String.valueOf(pageNumber++))
+                .getHotspotListByPageNumber(pageNumber++)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Hotspot>>() {
@@ -193,6 +189,8 @@ public class HotSpotFragment extends Fragment {
 
                     @Override
                     public void onNext(List<Hotspot> hotspots) {
+                        if (hotspots == null)
+                            hotspots = new ArrayList<>();
                         Log.i("HotSpotFragment", "getRemoteOldHotspot: onNext: list size = " + String.valueOf(hotspots.size()));
                         final List<Hotspot> list = new ArrayList<Hotspot>();
                         refreshDataIntoTail(hotspots);
@@ -225,6 +223,8 @@ public class HotSpotFragment extends Fragment {
 
                     @Override
                     public void onNext(List<Hotspot> hotspots) {
+                        if (hotspots == null)
+                            hotspots = new ArrayList<>();
                         Log.i("HotSpotFragment", "getRemoteNewHotspot: onNext: list size = " + String.valueOf(hotspots.size()));
                         refreshDataIntoHead(hotspots);
                         //刷新每次都用setNewData重新加载数据
@@ -254,6 +254,8 @@ public class HotSpotFragment extends Fragment {
 
                     @Override
                     public void onNext(List<UserNotification> userNotifications) {
+                        if (userNotifications == null)
+                            userNotifications = new ArrayList<>();
                         notifications.removeAll(notifications);
                         notifications.addAll(userNotifications);
                         notificationsNotReaded.removeAll(notificationsNotReaded);
@@ -333,8 +335,8 @@ public class HotSpotFragment extends Fragment {
                 return;
             item = datas.get(position);
         }
-        item.setCountComment(countComment);
-        item.setCountLike(item.getCountLike() + countLikeChange);
+        item.setCount_comment(countComment);
+        item.setCount_like(item.getCount_like() + countLikeChange);
         this.datas.set(position, item);
         hotSpotAdapter.notifyDataSetChanged();
     }

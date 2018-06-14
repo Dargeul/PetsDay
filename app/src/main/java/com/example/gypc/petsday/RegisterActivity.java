@@ -1,6 +1,7 @@
 package com.example.gypc.petsday;
 
 import android.os.Bundle;
+import android.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
+import com.example.gypc.petsday.model.User;
 import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
 
@@ -69,7 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
         dataMap.put("username", username);
         dataMap.put("user_nickname", nickname);
         dataMap.put("password", password);
-        dataMap.put("status", ObjectServiceFactory.REGISTER_STATUS_CODE);
+//        dataMap.put("status", ObjectServiceFactory.REGISTER_STATUS_CODE);
         objectService
                 .userRegister(JSONRequestBodyGenerator.getJsonObjBody(dataMap))
                 .subscribeOn(Schedulers.newThread())
@@ -100,14 +102,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void validateUsernameExistence() {
         userExists = true;
-        HashMap<String, Object> dataMap = new HashMap<>();
-        dataMap.put("username", username);
-        dataMap.put("status", ObjectServiceFactory.USERNAME_VALIDATE_STATUS_CODE);
+//        HashMap<String, Object> dataMap = new HashMap<>();
+//        dataMap.put("username", username);
+//        dataMap.put("status", ObjectServiceFactory.USERNAME_VALIDATE_STATUS_CODE);
         objectService
-                .queryUsername(JSONRequestBodyGenerator.getJsonObjBody(dataMap))
+                .queryUsername(username)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ResponseBody>() {
+                .subscribe(new Subscriber<Result<User>>() {
                     @Override
                     public void onCompleted() {
                         submitInfo();
@@ -119,15 +121,22 @@ public class RegisterActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(ResponseBody responseBody) {
-                        try {
-                            String resData = responseBody.string();
-                            JSONArray jsonArray = new JSONArray(resData);
-                            if (jsonArray.length() == 0) {
-                                userExists = false;
-                            }
-                        } catch (Exception e) {
-                            Log.e("RegisterActivity", "validateUsernameExistence", e);
+                    public void onNext(Result<User> userResult) {
+//                        try {
+//                            String resData = responseBody.string();
+//                            JSONArray jsonArray = new JSONArray(resData);
+//                            if (jsonArray.length() == 0) {
+//                                userExists = false;
+//                            }
+//                        } catch (Exception e) {
+//                            Log.e("RegisterActivity", "validateUsernameExistence", e);
+//                        }
+                        if (userResult.isError()) {
+                            Log.e("RegisterActivity", "validateUsernameExistence", userResult.error());
+                        }
+                        if (userResult.response() == null || userResult.response().body() == null) {
+                            userExists = false;
+                            return;
                         }
                     }
                 });

@@ -24,7 +24,7 @@ public class ObjectServiceFactory {
 
     public static final int SEND_COMMENT_NOTIFICATION_STATUS_CODE = 0;
 
-    private static final String BASE_URL = "http://120.78.169.206:3000";
+    private static final String BASE_URL = "http://120.78.78.181:8080";
     private static ObjectService service;
 
     public static ObjectService getService() {

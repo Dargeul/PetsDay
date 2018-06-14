@@ -102,24 +102,24 @@ public class AppContext extends Application {
 
     public void updateOwnPetList() {
         objectService
-                .getPetListForUser(
-                        String.valueOf(userInfoMap.get("user_id")),
-                        String.valueOf(ObjectServiceFactory.GET_OWN_PET_STATUS_CODE))
+                .getPetListForUser((int)userInfoMap.get("user_id"))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Pet>>() {
                     @Override
                     public void onCompleted() {
-                        Log.i("AppContext", "initPetList: complete, mypet.size() = " + String.valueOf(mypets.size()));
+                        Log.i("AppContext", "updateOwnPetList: complete, mypet.size() = " + String.valueOf(mypets.size()));
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        Log.e("AppContext", "initPetList", throwable);
+                        Log.e("AppContext", "updateOwnPetList", throwable);
                     }
 
                     @Override
                     public void onNext(List<Pet> pets) {
+                        if (pets == null)
+                            pets = new ArrayList<>();
                         mypets = pets;
                     }
                 });
@@ -154,24 +154,24 @@ public class AppContext extends Application {
             return;
         }
         objectService
-                .getPetListForUser(
-                        String.valueOf(userInfoMap.get("user_id")),
-                        String.valueOf(ObjectServiceFactory.GET_LIKE_PET_STATUS_CODE))
+                .getUserFollowPetList((int)userInfoMap.get("user_id"))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Pet>>() {
                     @Override
                     public void onCompleted() {
-                        Log.i("AppContext", "initPetList: complete, followpets.size() = " + String.valueOf(followpets.size()));
+                        Log.i("AppContext", "updateFollowPetList: complete, followpets.size() = " + String.valueOf(followpets.size()));
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        Log.e("AppContext", "initPetList", throwable);
+                        Log.e("AppContext", "updateFollowPetList", throwable);
                     }
 
                     @Override
                     public void onNext(List<Pet> pets) {
+                        if (pets == null)
+                            pets = new ArrayList<>();
                         followpets = pets;
                     }
                 });
@@ -196,6 +196,8 @@ public class AppContext extends Application {
 
                     @Override
                     public void onNext(List<HotspotLike> hotspotLikes) {
+                        if (hotspotLikes == null)
+                            hotspotLikes = new ArrayList<>();
                         initLikeList = hotspotLikes;
                     }
                 });

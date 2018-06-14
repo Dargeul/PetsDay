@@ -144,10 +144,10 @@ public class HotSpotDetailActivity extends AppCompatActivity {
 
     private void cancelLikeHotspot() {
         objectService
-                .cancelLike(String.valueOf(likeId))
+                .cancelLike(likeId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<RemoteDBOperationResponse>() {
+                .subscribe(new Subscriber<Boolean>() {
                     @Override
                     public void onCompleted() {
                         Log.i("HotSpotDetailActivity", "cancelLikeHotspot: complete");
@@ -165,8 +165,8 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(RemoteDBOperationResponse response) {
-                        isCancelLikeOK = response.isSuccess();
+                    public void onNext(Boolean ok) {
+                        isCancelLikeOK = ok;
                     }
                 });
     }
@@ -255,6 +255,7 @@ public class HotSpotDetailActivity extends AppCompatActivity {
                                 String toID = String.valueOf(hotspotInfo.getInt("hs_user"));
                                 if (!myID.equals(toID))
                                     sendCommendNotification(newComId);
+                                yourCommentET.setText("");
                             } else {
                                 msgNotify("评论提交失败，请重试！");
                                 submitCommentBtn.setEnabled(true);
@@ -369,6 +370,8 @@ public class HotSpotDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Comment> comments) {
+                        if (comments == null)
+                            comments = new ArrayList<>();
                         commentsList.addAll(comments);
                         Log.i("HotSpotDetailActivity", "initCommentList: commentsList.size() = " + commentsList.size());
                         commentAdapter.setNewData(commentsList);
@@ -394,6 +397,8 @@ public class HotSpotDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Pet> pets) {
+                        if (pets == null)
+                            pets = new ArrayList<>();
                         pets_choose.addAll(pets);
                         Log.i("HotSpotDetailActivity", "initPetList: pets_choose.size() = " + pets_choose.size());
                         hsDetailPetAdapter.setNewData(pets_choose);

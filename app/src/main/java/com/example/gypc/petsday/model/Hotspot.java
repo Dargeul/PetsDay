@@ -1,9 +1,6 @@
 package com.example.gypc.petsday.model;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
-
-import java.util.Date;
 
 /**
  * Created by StellaSong on 2017/12/21.
@@ -15,18 +12,18 @@ public class Hotspot {
     private String hs_content;
     private int hs_id;
     private String hs_photo;
-    private int countLike;
-    private int countComment;
+    private int count_like;
+    private int count_comment;
     private String user_nickname;
 
-    public Hotspot(String hs_time, int hs_user, String hs_content, int hs_id, String hs_photo, int countLike, int countComment, String user_nickname){
+    public Hotspot(String hs_time, int hs_user, String hs_content, int hs_id, String hs_photo, int count_like, int countComment, String user_nickname){
         this.hs_time = hs_time;
         this.hs_user = hs_user;
         this.hs_content = hs_content;
         this.hs_id = hs_id;
         this.hs_photo = hs_photo;
-        this.countLike = countLike;
-        this.countComment = countComment;
+        this.count_like = count_like;
+        this.count_comment = countComment;
         this.user_nickname = user_nickname;
     }
 
@@ -50,12 +47,12 @@ public class Hotspot {
         return hs_photo;
     }
 
-    public int getCountLike() {
-        return countLike;
+    public int getCount_like() {
+        return count_like;
     }
 
-    public void setCountLike(int countLike) {
-        this.countLike = countLike;
+    public void setCount_like(int count_like) {
+        this.count_like = count_like;
     }
 
     public Bundle getBundle() {
@@ -66,8 +63,8 @@ public class Hotspot {
         bundle.putString("hs_content", hs_content);
         bundle.putInt("hs_id", hs_id);
         bundle.putString("hs_photo", hs_photo);
-        bundle.putInt("countLike", countLike);
-        bundle.putInt("countComment", countComment);
+        bundle.putInt("count_like", count_like);
+        bundle.putInt("count_comment", count_comment);
         bundle.putString("user_nickname", user_nickname);
 
         return bundle;
@@ -77,11 +74,11 @@ public class Hotspot {
         return user_nickname;
     }
 
-    public int getCountComment() {
-        return countComment;
+    public int getCount_comment() {
+        return count_comment;
     }
 
-    public void setCountComment(int countComment) {
-        this.countComment = countComment;
+    public void setCount_comment(int count_comment) {
+        this.count_comment = count_comment;
     }
 }

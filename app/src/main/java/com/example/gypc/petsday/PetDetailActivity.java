@@ -224,6 +224,8 @@ public class PetDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Hotspot> hotspots) {
+                        if (hotspots == null)
+                            hotspots = new ArrayList<>();
                         datas.addAll(hotspots);
                         hotSpotAdapter.notifyDataSetChanged();
                     }
@@ -232,9 +234,7 @@ public class PetDetailActivity extends AppCompatActivity {
 
     private void checkIsFollowedPet() {
         objectService
-                .getPetListForUser(
-                        userID,
-                        String.valueOf(ObjectServiceFactory.GET_LIKE_PET_STATUS_CODE))
+                .getUserFollowPetList(Integer.parseInt(userID))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Pet>>() {
@@ -258,6 +258,8 @@ public class PetDetailActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Pet> pets) {
+                        if (pets == null)
+                            pets = new ArrayList<>();
                         for (Pet i:pets) {
                             if (i.getPet_id() == petId) {
                                 islike = true;
@@ -305,11 +307,11 @@ public class PetDetailActivity extends AppCompatActivity {
     private void unfollowPet() {
         objectService
                 .cancelUserFansPet(
-                        String.valueOf(petId), userID
+                        petId, Integer.parseInt(userID)
                 )
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<RemoteDBOperationResponse>() {
+                .subscribe(new Subscriber<Boolean>() {
                     @Override
                     public void onCompleted() {
                         Log.i("PetDetailActivity", "unfollowPet: complete");
@@ -322,7 +324,7 @@ public class PetDetailActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(RemoteDBOperationResponse r) {
+                    public void onNext(Boolean ok) {
                         try {
                             followIV.setImageResource(R.drawable.like);
                             islike = false;

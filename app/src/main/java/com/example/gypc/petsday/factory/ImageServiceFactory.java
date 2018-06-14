@@ -20,7 +20,7 @@ public class ImageServiceFactory {
     public static final String FORMAT_ERR= "formatError";
     public static final String SUCCESS = "success";
 
-    private static final String BASE_URL = "http://120.78.169.206:4000";
+    private static final String BASE_URL = "http://120.78.78.181:8080";
     private static ImageService service;
 
     public static ImageService getService() {

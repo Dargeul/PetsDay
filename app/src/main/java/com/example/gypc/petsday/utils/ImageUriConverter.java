@@ -11,7 +11,7 @@ import java.io.File;
  */
 
 public class ImageUriConverter {
-    private static final String BASE_DOWNLOAD_URL = "http://120.78.169.206:4000/download/";
+    private static final String BASE_DOWNLOAD_URL = "http://120.78.78.181/download/";
 
     public static String getImgRemoteUriFromName(String filename) {
         return BASE_DOWNLOAD_URL + filename.concat(".jpeg");

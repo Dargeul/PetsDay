@@ -28,6 +28,7 @@ import com.example.gypc.petsday.factory.ImageServiceFactory;
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.helper.GifSizeFilter;
 import com.example.gypc.petsday.helper.GlideImageLoader;
+import com.example.gypc.petsday.model.ImageUploadResponse;
 import com.example.gypc.petsday.service.ImageService;
 import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
@@ -175,7 +176,7 @@ public class PublishActivity extends BaseActivity {
                 msgNotify("信息上传失败，请重试！");
                 submitHotspotBtn.setEnabled(true);
             } else if (!isImageUploadOk) {
-                msgNotify("头像上传失败，请重试！");
+                msgNotify("图片上传失败，请重试！");
                 submitHotspotBtn.setEnabled(true);
             } else if (!isCombineOk) {
                 msgNotify("宠物关联信息上传失败，请重试！");
@@ -221,7 +222,7 @@ public class PublishActivity extends BaseActivity {
                 )
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Result<String>>() {
+                .subscribe(new Subscriber<Result<ImageUploadResponse>>() {
                     @Override
                     public void onCompleted() {
                         uploadImageFinish();
@@ -233,15 +234,17 @@ public class PublishActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(Result<String> stringResult) {
-                        if (stringResult.isError()) {
-                            Log.e("PublishActivity", "uploadImage: onNext: ", stringResult.error());
+                    public void onNext(Result<ImageUploadResponse> imageUploadResponseResult) {
+                        if (imageUploadResponseResult.isError()) {
+                            Log.e("PublishActivity", "uploadImage: onNext: ", imageUploadResponseResult.error());
                         }
-                        if (stringResult.response() == null)
+                        if (imageUploadResponseResult.response() == null || imageUploadResponseResult.response().body() == null) {
+                            Log.e("PublishActivity", "uploadImage: response null");
                             return;
-                        imageUploadResultString = stringResult.response().body();
-                        Log.i("PublishActivity", "uploadImage: " + imageUploadResultString);
-                        isImageUploadOk = imageUploadResultString.equals(ImageServiceFactory.SUCCESS);
+                        }
+
+                        Log.i("PublishActivity", "uploadImage: " + imageUploadResponseResult.response().body().getPath());
+                        isImageUploadOk = imageUploadResponseResult.response().body().isSucc();
                     }
                 });
     }
@@ -302,21 +305,24 @@ public class PublishActivity extends BaseActivity {
         if (isCombineOk)
             return;
         isCombineOk = false;
-        String hs_id = String.valueOf(hotspotId);
         List<HashMap<String, Object>> datas = new ArrayList<>();
         for (Integer petId : chosenPetIds) {
             HashMap<String, Object> data = new HashMap<>();
-            data.put("pet_id", String.valueOf(petId));
-            data.put("hs_id", hs_id);
+            data.put("pet_id", petId);
+            data.put("hs_id", hotspotId);
             datas.add(data);
         }
 
-        RequestBody reqBody = JSONRequestBodyGenerator.getJsonArrayBody(datas);
+        HashMap<String, List<HashMap<String, Object>>> datasObj = new HashMap<>();
+        datasObj.put("pet_and_hotspots", datas);
+
+        RequestBody reqBody = JSONRequestBodyGenerator.getJsonArrayBody(datasObj);
+
         objectService
                 .combinePetAndHotspot(reqBody)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Result<Integer>>() {
+                .subscribe(new Subscriber<Result<Boolean>>() {
                     @Override
                     public void onCompleted() {
                         combineHotspotAndPetFinish();
@@ -328,15 +334,15 @@ public class PublishActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(Result<Integer> integerResult) {
-                        if (integerResult.isError()) {
-                            Log.e("PublishActivity", "combineHotspotAndPets", integerResult.error());
+                    public void onNext(Result<Boolean> booleanResult) {
+                        if (booleanResult.isError()) {
+                            Log.e("PublishActivity", "combineHotspotAndPets", booleanResult.error());
                         }
-                        if (integerResult.response() == null || integerResult.response().body() == null)
+                        if (booleanResult.response() == null || booleanResult.response().body() == null) {
+                            Log.i("PublishActivity", "combineHotspotAndPets: response null");
                             return;
-                        int resVal = integerResult.response().body();
-                        if (resVal >= 0)
-                            isCombineOk = true;
+                        }
+                        isCombineOk = booleanResult.response().body();
                     }
                 });
     }

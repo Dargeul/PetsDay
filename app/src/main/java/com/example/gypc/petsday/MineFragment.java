@@ -270,16 +270,17 @@ public class MineFragment extends Fragment {
         final String nickname = newNameET.getText().toString();
 
         HashMap<String, Object> userData = new HashMap<>();
-        userData.put("user_id", AppContext.getInstance().getLoginUserInfo().get("user_id").toString());
+//        userData.put("user_id", AppContext.getInstance().getLoginUserInfo().get("user_id").toString());
         userData.put("username", AppContext.getInstance().getLoginUserInfo().get("username").toString());
         userData.put("password", AppContext.getInstance().getLoginUserInfo().get("password").toString());
         userData.put("user_nickname", nickname);
 
         objectService
-                .updateUser(JSONRequestBodyGenerator.getJsonObjBody(userData))
+                .updateUser(Integer.parseInt(AppContext.getInstance().getLoginUserInfo().get("user_id").toString()),
+                        JSONRequestBodyGenerator.getJsonObjBody(userData))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<RemoteDBOperationResponse>() {
+                .subscribe(new Subscriber<Boolean>() {
                     @Override
                     public void onCompleted() {
                         if (!isFormUploadOK) {
@@ -299,8 +300,8 @@ public class MineFragment extends Fragment {
                     }
 
                     @Override
-                    public void onNext(RemoteDBOperationResponse dboResult) {
-                        if (!dboResult.isSuccess()) {
+                    public void onNext(Boolean ok) {
+                        if (!ok) {
                             Log.i("MineFragment", "updateNickname");
                         }
 

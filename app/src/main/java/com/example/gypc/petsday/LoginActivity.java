@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.gypc.petsday.factory.ObjectServiceFactory;
+import com.example.gypc.petsday.model.User;
 import com.example.gypc.petsday.service.ObjectService;
 import com.example.gypc.petsday.utils.AppContext;
 import com.example.gypc.petsday.utils.JSONRequestBodyGenerator;
@@ -19,6 +20,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import okhttp3.ResponseBody;
+import retrofit2.adapter.rxjava.Result;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -116,13 +118,13 @@ public class LoginActivity extends AppCompatActivity {
         HashMap<String, Object> dataMap = new HashMap<>();
         dataMap.put("username", username);
         dataMap.put("password", password);
-        dataMap.put("status", ObjectServiceFactory.LOGIN_STATUS_CODE);
+//        dataMap.put("status", ObjectServiceFactory.LOGIN_STATUS_CODE);
 
         objectService
                 .userLogin(JSONRequestBodyGenerator.getJsonObjBody(dataMap))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<ResponseBody>() {
+                .subscribe(new Subscriber<Result<User>>() {
                     @Override
                     public void onCompleted() {
                         loginSuccess();
@@ -135,21 +137,33 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(ResponseBody responseBody) {
-                        try {
-                            String resData = responseBody.string();
-                            JSONArray jsonArray = new JSONArray(resData);
-                            if (jsonArray.length() == 0) {
-                                submitResponseStatusCode = SUBMIT_INFO_WRONG;
-                                return;
-                            }
-                            JSONObject jsonObject = jsonArray.getJSONObject(0);
-                            userId = jsonObject.getInt("user_id");
-                            nickname = jsonObject.getString("user_nickname");
-                            submitResponseStatusCode = SUBMIT_OK;
-                        } catch (Exception e) {
+                    public void onNext(Result<User> userResult) {
+//                        try {
+//                            String resData = responseBody.string();
+//                            JSONArray jsonArray = new JSONArray(resData);
+//                            if (jsonArray.length() == 0) {
+//                                submitResponseStatusCode = SUBMIT_INFO_WRONG;
+//                                return;
+//                            }
+//                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+//                            userId = jsonObject.getInt("user_id");
+//                            nickname = jsonObject.getString("user_nickname");
+//                            submitResponseStatusCode = SUBMIT_OK;
+//                        } catch (Exception e) {
+//                            submitResponseStatusCode = SUBMIT_ERROR;
+//                            Log.e("LoginActivity", "submitInfo", e);
+//                        }
+                        if (userResult.isError()) {
+                            Log.e("LoginActivity", "submitInfo", userResult.error());
                             submitResponseStatusCode = SUBMIT_ERROR;
-                            Log.e("LoginActivity", "submitInfo", e);
+                        } else {
+                            if (userResult.response() == null || userResult.response().body() == null) {
+                                submitResponseStatusCode = SUBMIT_INFO_WRONG;
+                            } else {
+                                userId = userResult.response().body().getUser_id();
+                                nickname = userResult.response().body().getUser_nickname();
+                                submitResponseStatusCode = SUBMIT_OK;
+                            }
                         }
                     }
                 });
