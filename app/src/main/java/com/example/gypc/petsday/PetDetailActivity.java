@@ -271,7 +271,7 @@ public class PetDetailActivity extends AppCompatActivity {
 
     private void followPet() {
         HashMap<String, Object> data = new HashMap<>();
-        data.put("pet_id", String.valueOf(petId));
+        data.put("pet_id", petId);
         data.put("user_id", userID);
 
         objectService

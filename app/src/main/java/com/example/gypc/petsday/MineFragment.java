@@ -201,6 +201,7 @@ public class MineFragment extends Fragment {
         mypetTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                updateOwnPetList();
                 mypetTV.setTextColor(getResources().getColor(R.color.colorBlack));
                 followpetTV.setTextColor(getResources().getColor(R.color.colorGray));
                 mypetRV.setVisibility(View.VISIBLE);
@@ -211,6 +212,7 @@ public class MineFragment extends Fragment {
         followpetTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                updateFollowPetList();
                 followpetTV.setTextColor(getResources().getColor(R.color.colorBlack));
                 mypetTV.setTextColor(getResources().getColor(R.color.colorGray));
                 mypetRV.setVisibility(View.GONE);
@@ -318,11 +320,13 @@ public class MineFragment extends Fragment {
     }
 
     public void updateFollowPetList() {
+        AppContext.getInstance().updateFollowPetList(null, false);
         followpets = AppContext.getInstance().getFollowpets();
         followPetAdapter.notifyDataSetChanged();
     }
 
     public void updateOwnPetList() {
+        AppContext.getInstance().updateOwnPetList();
         mypets = AppContext.getInstance().getMypets();
         myPetAdapter.notifyDataSetChanged();
     }

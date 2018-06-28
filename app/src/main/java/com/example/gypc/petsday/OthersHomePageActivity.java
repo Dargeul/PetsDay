@@ -207,7 +207,7 @@ public class OthersHomePageActivity extends AppCompatActivity {
 
     private void follow(int petId) {
         HashMap<String, Object> data = new HashMap<>();
-        data.put("pet_id", String.valueOf(petId));
+        data.put("pet_id", petId);
         data.put("user_id", userID);
 
         objectService
