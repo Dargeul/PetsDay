@@ -137,9 +137,7 @@ public class OthersHomePageActivity extends AppCompatActivity {
 
     public void getOthersPet() {
         objectService
-                .getPetListForUser(
-                        String.valueOf(hotspotDeatilInfo.getInt("hs_user")),
-                        String.valueOf(ObjectServiceFactory.GET_OWN_PET_STATUS_CODE))
+                .getPetListForUser(hotspotDeatilInfo.getInt("hs_user"))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Pet>>() {
@@ -155,6 +153,8 @@ public class OthersHomePageActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Pet> pets) {
+                        if (pets == null)
+                            pets = new ArrayList<>();
                         othersPet = new ArrayList(pets);
                         othersPetAdapter.setNewData(pets);
                         changePetState();
@@ -164,9 +164,7 @@ public class OthersHomePageActivity extends AppCompatActivity {
 
     public void getFollowPet(){
         objectService
-                .getPetListForUser(
-                        String.valueOf(userID),
-                        String.valueOf(ObjectServiceFactory.GET_LIKE_PET_STATUS_CODE))
+                .getUserFollowPetList(userID)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Pet>>() {
@@ -182,6 +180,8 @@ public class OthersHomePageActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Pet> pets) {
+                        if (pets == null)
+                            pets = new ArrayList<>();
                         followPet = new ArrayList(pets);
                         if(isClicked){
                             if(checkIsFollowed() != true){
@@ -207,7 +207,7 @@ public class OthersHomePageActivity extends AppCompatActivity {
 
     private void follow(int petId) {
         HashMap<String, Object> data = new HashMap<>();
-        data.put("pet_id", String.valueOf(petId));
+        data.put("pet_id", petId);
         data.put("user_id", userID);
 
         objectService
@@ -242,11 +242,11 @@ public class OthersHomePageActivity extends AppCompatActivity {
     private void unfollow(int petId) {
         objectService
                 .cancelUserFansPet(
-                        String.valueOf(petId), String.valueOf(userID)
+                        petId, userID
                 )
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<RemoteDBOperationResponse>() {
+                .subscribe(new Subscriber<Boolean>() {
                     @Override
                     public void onCompleted() {
                         getFollowPet();
@@ -261,7 +261,7 @@ public class OthersHomePageActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(RemoteDBOperationResponse r) {
+                    public void onNext(Boolean ok) {
                         try {
                             likeIV.setImageResource(R.drawable.like);
                         } catch (Exception e) {

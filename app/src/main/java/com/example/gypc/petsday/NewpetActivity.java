@@ -33,6 +33,7 @@ import com.example.gypc.petsday.factory.ObjectServiceFactory;
 import com.example.gypc.petsday.helper.GifSizeFilter;
 import com.example.gypc.petsday.helper.GlideImageLoader;
 import com.example.gypc.petsday.helper.XCRoundImageView;
+import com.example.gypc.petsday.model.ImageUploadResponse;
 import com.example.gypc.petsday.model.RemoteDBOperationResponse;
 import com.example.gypc.petsday.service.ImageService;
 import com.example.gypc.petsday.service.ObjectService;
@@ -294,7 +295,7 @@ public class NewpetActivity extends BaseActivity {
             return;
 
         HashMap<String, Object> petData = new HashMap<>();
-        petData.put("pet_id", petId);
+//        petData.put("pet_id", petId);
         petData.put("pet_photo", imageFilename);
         petData.put("pet_nickname", nickname);
         petData.put("pet_type", type);
@@ -332,10 +333,10 @@ public class NewpetActivity extends BaseActivity {
                     });
         } else {
             objectService
-                    .updatePet(JSONRequestBodyGenerator.getJsonObjBody(petData))
+                    .updatePet(petId, JSONRequestBodyGenerator.getJsonObjBody(petData))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<RemoteDBOperationResponse>() {
+                    .subscribe(new Subscriber<Boolean>() {
                         @Override
                         public void onCompleted() {
                             uploadFormFinish();
@@ -347,8 +348,8 @@ public class NewpetActivity extends BaseActivity {
                         }
 
                         @Override
-                        public void onNext(RemoteDBOperationResponse response) {
-                            isFormUploadOK = response.isSuccess();
+                        public void onNext(Boolean ok) {
+                            isFormUploadOK = ok;
                         }
                     });
         }
@@ -387,7 +388,7 @@ public class NewpetActivity extends BaseActivity {
                 )
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Result<String>>() {
+                .subscribe(new Subscriber<Result<ImageUploadResponse>>() {
                     @Override
                     public void onCompleted() {
                         uploadAvatarFinish();
@@ -399,15 +400,20 @@ public class NewpetActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onNext(Result<String> stringResult) {
-                        if (stringResult.isError()) {
-                            Log.e("NewpetActivity", "uploadAvatar: onNext: ", stringResult.error());
+                    public void onNext(Result<ImageUploadResponse> imageUploadResponseResult) {
+                        if (imageUploadResponseResult.isError()) {
+                            Log.e("NewpetActivity", "uploadAvatar: onNext: ", imageUploadResponseResult.error());
                         }
-                        if (stringResult.response() == null)
+                        if (imageUploadResponseResult.response() == null ||imageUploadResponseResult.response().body() == null) {
+                            Log.e("NewpetActivity", "uploadAvatar: response null");
                             return;
-                        avatarUploadResultString = stringResult.response().body();
-                        Log.i("NewpetActivity", "uploadAvatar: " + avatarUploadResultString);
-                        isAvatarUploadOK = avatarUploadResultString.equals(ImageServiceFactory.SUCCESS);
+                        }
+
+                        ImageUploadResponse res = imageUploadResponseResult.response().body();
+
+                        Log.i("NewpetActivity", "uploadAvatar: " + res.getPath()
+                                + (res.isSucc() ? " true" : " false"));
+                        isAvatarUploadOK = imageUploadResponseResult.response().body().isSucc();
                     }
                 });
     }

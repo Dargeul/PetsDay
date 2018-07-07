@@ -26,24 +26,28 @@ public class JSONRequestBodyGenerator {
         return requestBody;
     }
 
-    public static RequestBody getJsonArrayBody(List<HashMap<String, Object>> datas) {
-        String dataStr = "multiPost=" +convertDataArray(datas);
+    public static RequestBody getJsonArrayBody(HashMap<String, List<HashMap<String, Object>>> datasObj) {
+        String dataStr = convertDataArray(datasObj);
         Log.i("ObjectArrayToJsonStr", "getJsonArrayBody: dataStr: " + dataStr);
         RequestBody requestBody = RequestBody.create(okhttp3.MediaType.parse("application/x-www-form-urlencoded"), dataStr);
         return requestBody;
     }
 
-    private static String convertDataArray(List<HashMap<String, Object>> datas) {
+    private static String convertDataArray(HashMap<String, List<HashMap<String, Object>>> datasObj) {
         JSONObject entireObj = new JSONObject();
         try {
-            JSONArray jsonArray = new JSONArray();
-            for (HashMap<String, Object> data : datas) {
-                jsonArray.put(getJsonObjFromMap(data));
+            for (Map.Entry<String, List<HashMap<String, Object>>> entry : datasObj.entrySet()) {
+                List<HashMap<String, Object>> datas = entry.getValue();
+                JSONArray jsonArray = new JSONArray();
+                for (HashMap<String, Object> data : datas) {
+                    jsonArray.put(getJsonObjFromMap(data));
+                }
+                entireObj.put(entry.getKey(), jsonArray);
             }
-            return jsonArray.toString();
+            return entireObj.toString();
         } catch (Exception e) {
             Log.e("ObjectArrayToJsonStr", "convertDataArray", e);
-            return "";
+            return null;
         }
     }
 

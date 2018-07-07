@@ -201,6 +201,7 @@ public class MineFragment extends Fragment {
         mypetTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                updateOwnPetList();
                 mypetTV.setTextColor(getResources().getColor(R.color.colorBlack));
                 followpetTV.setTextColor(getResources().getColor(R.color.colorGray));
                 mypetRV.setVisibility(View.VISIBLE);
@@ -211,6 +212,7 @@ public class MineFragment extends Fragment {
         followpetTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                updateFollowPetList();
                 followpetTV.setTextColor(getResources().getColor(R.color.colorBlack));
                 mypetTV.setTextColor(getResources().getColor(R.color.colorGray));
                 mypetRV.setVisibility(View.GONE);
@@ -270,16 +272,17 @@ public class MineFragment extends Fragment {
         final String nickname = newNameET.getText().toString();
 
         HashMap<String, Object> userData = new HashMap<>();
-        userData.put("user_id", AppContext.getInstance().getLoginUserInfo().get("user_id").toString());
+//        userData.put("user_id", AppContext.getInstance().getLoginUserInfo().get("user_id").toString());
         userData.put("username", AppContext.getInstance().getLoginUserInfo().get("username").toString());
         userData.put("password", AppContext.getInstance().getLoginUserInfo().get("password").toString());
         userData.put("user_nickname", nickname);
 
         objectService
-                .updateUser(JSONRequestBodyGenerator.getJsonObjBody(userData))
+                .updateUser(Integer.parseInt(AppContext.getInstance().getLoginUserInfo().get("user_id").toString()),
+                        JSONRequestBodyGenerator.getJsonObjBody(userData))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<RemoteDBOperationResponse>() {
+                .subscribe(new Subscriber<Boolean>() {
                     @Override
                     public void onCompleted() {
                         if (!isFormUploadOK) {
@@ -299,8 +302,8 @@ public class MineFragment extends Fragment {
                     }
 
                     @Override
-                    public void onNext(RemoteDBOperationResponse dboResult) {
-                        if (!dboResult.isSuccess()) {
+                    public void onNext(Boolean ok) {
+                        if (!ok) {
                             Log.i("MineFragment", "updateNickname");
                         }
 
@@ -317,11 +320,13 @@ public class MineFragment extends Fragment {
     }
 
     public void updateFollowPetList() {
+        AppContext.getInstance().updateFollowPetList(null, false);
         followpets = AppContext.getInstance().getFollowpets();
         followPetAdapter.notifyDataSetChanged();
     }
 
     public void updateOwnPetList() {
+        AppContext.getInstance().updateOwnPetList();
         mypets = AppContext.getInstance().getMypets();
         myPetAdapter.notifyDataSetChanged();
     }

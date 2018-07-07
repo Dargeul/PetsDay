@@ -16,14 +16,14 @@ import retrofit2.http.Multipart;
 
 public class ImageMultipartGenerator {
 
-    private static final String IMG_NAME = "fulAvatar"; //后台接收图片流的参数名
+    private static final String IMG_NAME = "uploadFile"; //后台接收图片流的参数名
 
     public static List<MultipartBody.Part> getParts(String filePath) {
         try {
             File file = new File(filePath);//filePath 图片地址
             MultipartBody.Builder builder = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM);//表单类型
-            RequestBody imageBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
+            RequestBody imageBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
             builder.addFormDataPart(IMG_NAME, file.getName(), imageBody);
 
             List<MultipartBody.Part> parts = builder.build().parts();

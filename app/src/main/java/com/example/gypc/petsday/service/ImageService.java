@@ -1,5 +1,7 @@
 package com.example.gypc.petsday.service;
 
+import com.example.gypc.petsday.model.ImageUploadResponse;
+
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -16,6 +18,6 @@ import rx.Observable;
 
 public interface ImageService {
     @Multipart
-    @POST("/upload")
-    Observable<Result<String>> uploadAvatar(@Part List<MultipartBody.Part> partList);
+    @POST("/upload-handler")
+    Observable<Result<ImageUploadResponse>> uploadAvatar(@Part List<MultipartBody.Part> partList);
 }

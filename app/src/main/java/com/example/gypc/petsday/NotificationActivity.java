@@ -110,6 +110,8 @@ public class NotificationActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<UserNotification> userNotifications) {
+                        if (userNotifications == null)
+                            userNotifications = new ArrayList<>();
                         try{
                             notifications.removeAll(notifications);
                             notifications.addAll(userNotifications);
@@ -125,7 +127,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
 
-    public void getHotSpot(String hotspotId){
+    public void getHotSpot(final String hotspotId){
         objectService
                 .getHotspotById(hotspotId)
                 .subscribeOn(Schedulers.newThread())
@@ -142,6 +144,8 @@ public class NotificationActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Hotspot> hotspots) {
+                        if (hotspots == null)
+                            hotspots = new ArrayList<>();
                         try{
                             Intent intent = new Intent(NotificationActivity.this,HotSpotDetailActivity.class);
 
@@ -215,17 +219,17 @@ public class NotificationActivity extends AppCompatActivity {
             UserNotificationData.put("notice_user",userNotification.getNotice_user());
             UserNotificationData.put("user_nickname",userNotification.getUser_nickname());
             UserNotificationData.put("notice_comment",userNotification.getNotice_comment());
-            UserNotificationData.put("notice_id",userNotification.getNotice_id());
+//            UserNotificationData.put("notice_id",userNotification.getNotice_id());
             UserNotificationData.put("com_time",userNotification.getCom_time());
             UserNotificationData.put("com_user",userNotification.getCom_user());
             UserNotificationData.put("com_hs",userNotification.getCom_hs());
             UserNotificationData.put("com_content",userNotification.getCom_content());
 
             objectService
-                    .haveReadNotification(JSONRequestBodyGenerator.getJsonObjBody(UserNotificationData))
+                    .haveReadNotification(userNotification.getNotice_id(), JSONRequestBodyGenerator.getJsonObjBody(UserNotificationData))
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<RemoteDBOperationResponse>() {
+                    .subscribe(new Subscriber<Boolean>() {
                         @Override
                         public void onCompleted() {
                         }
@@ -236,12 +240,12 @@ public class NotificationActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onNext(RemoteDBOperationResponse remoteDBOperationResponse) {
-                            if(!remoteDBOperationResponse.isSuccess()){
-                                Toast.makeText(NotificationActivity.this,"通知状态改变失败",Toast.LENGTH_SHORT);
+                        public void onNext(Boolean ok) {
+                            if(ok){
+                                Toast.makeText(NotificationActivity.this,"通知状态改变成功",Toast.LENGTH_SHORT);
                             }
                             else{
-                                Toast.makeText(NotificationActivity.this,"通知状态改变成功",Toast.LENGTH_SHORT);
+                                Toast.makeText(NotificationActivity.this,"通知状态改变失败",Toast.LENGTH_SHORT);
                             }
                         }
                     });
@@ -288,6 +292,8 @@ public class NotificationActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(List<Hotspot> hs) {
+                        if (hs == null)
+                            hs = new ArrayList<>();
                         if (!hs.isEmpty()) {
                             Intent intent = new Intent(NotificationActivity.this, HotSpotDetailActivity.class);
 
