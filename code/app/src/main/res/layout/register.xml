@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/nameTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pet's Day"
+        android:textAlignment="center"
+        android:textColor="@color/colorBlack"
+        android:textSize="50dp"
+        android:textStyle="bold"
+        android:paddingTop="100dp"/>
+
+    <EditText
+        android:id="@+id/registerUsernameEditText"
+        style="@style/registLoginEditTextStyle"
+        android:hint="用户名" />
+
+    <EditText
+        android:id="@+id/registerNicknameEditText"
+        style="@style/registLoginEditTextStyle"
+        android:hint="昵称"
+        />
+
+    <EditText
+        android:id="@+id/registerPwdEditText"
+        style="@style/registLoginEditTextStyle"
+        android:hint="密码"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/confirmPwdEditText"
+        style="@style/registLoginEditTextStyle"
+        android:hint="确认密码"
+        android:inputType="textPassword" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/registerBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="注册"
+            android:textSize="18dp"
+            android:layout_weight="1"
+            android:layout_margin="24dp"/>
+    </LinearLayout>
+</LinearLayout>
